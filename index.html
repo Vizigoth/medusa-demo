@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giriş Yap – Bentaş</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Animated custom properties (enables smooth gradient transition in CSS) ── */
+    @property --gx {
+      syntax: '<percentage>';
+      inherits: false;
+      initial-value: 50%;
+    }
+    @property --gy {
+      syntax: '<percentage>';
+      inherits: false;
+      initial-value: 40%;
+    }
+
+    /* ============================================================
+       Design Tokens — Akasya Web (Figma: hRFYsry2NDU6GdgzV6oUfJ)
+       ============================================================ */
+    :root {
+      --color-gray-0:   #ffffff;
+      --color-gray-300: #d1d5db;
+      --color-gray-400: #9ca3af;
+      --color-gray-900: #111827;
+
+      --background-color-primary:   #ffffff;
+      --background-color-secondary: #f3f4f6;
+      --border-color-layout:        #d1d5db;
+      --text-color-primary:         #1f2937;
+      --primary-color:              #0d6efd;
+
+      --bt-text-inverted:  #ffffff;
+      --bt-text-primary:   #111827;
+      --bt-text-tertiary:  #9ca3af;
+      --bt-bg-primary:     #ffffff;
+      --bt-border-primary: #d1d5db;
+
+      --font-family-text:  'Inter', sans-serif;
+      --font-family-label: 'Inter', sans-serif;
+      --font-size-text-1:  13px;
+      --font-size-text-sm: 14px;
+      --font-size-text-lg: 18px;
+      --font-weight-regular:  400;
+      --font-weight-medium:   500;
+      --font-weight-semibold: 600;
+      --font-lh-xs: 16px;
+      --font-lh-sm: 20px;
+      --font-lh-lg: 24px;
+
+      --radius-xs:      4px;
+      --brand-bg:       #05238b;
+      --btn-primary-bg: #3559c7;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    a     { color: inherit; text-decoration: none; }
+    input, button { font-family: inherit; }
+
+    /* ── Page Shell ── */
+    body {
+      font-family: var(--font-family-text);
+      background:  var(--background-color-primary);
+      overflow:    hidden;
+    }
+
+    .login-page {
+      display:    flex;
+      height:     100vh;
+      min-height: 600px;
+    }
+
+    /* ╔══════════════════════════════╗
+       ║  LEFT PANEL                  ║
+       ╚══════════════════════════════╝ */
+    .panel--left {
+      flex:            1 1 62%;
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+      background:      var(--background-color-primary);
+      padding:         40px 32px;
+    }
+
+    .form-wrapper {
+      width:     100%;
+      max-width: 361px;
+    }
+
+    .app-brand {
+      display:     flex;
+      align-items: center;
+      gap:         12px;
+      margin-bottom: 32px;
+    }
+
+    .app-brand__logo {
+      width:         auto;
+      height:        auto;
+      border-radius: 10px;
+      display:       block;
+      flex-shrink:   0;
+    }
+
+    .app-brand__name {
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size:   24px;
+      font-weight: 700;
+      line-height: 1;
+      color:       #0F447D;
+    }
+
+    .form-header { margin-bottom: 28px; }
+
+    .form-title {
+      font-size:     var(--font-size-text-lg);
+      font-weight:   var(--font-weight-semibold);
+      line-height:   var(--font-lh-lg);
+      color:         var(--text-color-primary);
+      margin-bottom: 6px;
+    }
+
+    .form-subtitle {
+      font-size:   var(--font-size-text-sm);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--font-lh-sm);
+      color:       var(--text-color-primary);
+    }
+
+    .login-form {
+      display:        flex;
+      flex-direction: column;
+    }
+
+    .field {
+      display:        flex;
+      flex-direction: column;
+      gap:            8px;
+      margin-bottom:  20px;
+    }
+
+    .field__label {
+      font-family: var(--font-family-label);
+      font-size:   var(--font-size-text-sm);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--font-lh-xs);
+      color:       var(--bt-text-primary);
+    }
+
+    .field__input {
+      width:         100%;
+      height:        36px;
+      padding:       0 8px;
+      border:        1px solid var(--bt-border-primary);
+      border-radius: var(--radius-xs);
+      background:    var(--bt-bg-primary);
+      font-size:     var(--font-size-text-1);
+      font-weight:   var(--font-weight-regular);
+      line-height:   var(--font-lh-xs);
+      color:         var(--bt-text-primary);
+      outline:       none;
+      transition:    border-color 0.15s, box-shadow 0.15s;
+    }
+    .field__input::placeholder { color: var(--bt-text-tertiary); }
+    .field__input:focus {
+      border-color: var(--primary-color);
+      box-shadow:   0 0 0 3px rgba(13,110,253,0.12);
+    }
+
+    .form-meta {
+      display:         flex;
+      align-items:     center;
+      justify-content: space-between;
+      margin-bottom:   20px;
+    }
+
+    .checkbox-label {
+      display:     flex;
+      align-items: center;
+      gap:         8px;
+      cursor:      pointer;
+      user-select: none;
+    }
+
+    .checkbox__input {
+      position: absolute;
+      opacity:  0;
+      width:    0;
+      height:   0;
+    }
+
+    .checkbox__box {
+      display:         inline-flex;
+      align-items:     center;
+      justify-content: center;
+      width:         16px;
+      height:        16px;
+      border:        1px solid var(--color-gray-400);
+      border-radius: 2px;
+      background:    var(--color-gray-0);
+      flex-shrink:   0;
+      transition:    border-color 0.15s, background 0.15s;
+    }
+
+    .checkbox__input:checked + .checkbox__box {
+      background:   var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .checkbox__input:checked + .checkbox__box::after {
+      content:     '';
+      display:     block;
+      width:       4px;
+      height:      7px;
+      border:      2px solid white;
+      border-top:  none;
+      border-left: none;
+      transform:   rotate(45deg) translateY(-1px);
+    }
+
+    .checkbox__text {
+      font-size:   var(--font-size-text-1);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--font-lh-xs);
+      color:       var(--text-color-primary);
+    }
+
+    .link {
+      font-size:   var(--font-size-text-1);
+      font-weight: var(--font-weight-medium);
+      line-height: var(--font-lh-xs);
+      color:       var(--primary-color);
+      cursor:      pointer;
+      transition:  opacity 0.15s;
+    }
+    .link:hover { opacity: 0.8; }
+
+    .btn-primary {
+      width:           100%;
+      height:          32px;
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+      background:      var(--btn-primary-bg);
+      border:          none;
+      border-radius:   var(--radius-xs);
+      color:           var(--bt-text-inverted);
+      font-size:       var(--font-size-text-1);
+      font-weight:     var(--font-weight-regular);
+      line-height:     var(--font-lh-xs);
+      cursor:          pointer;
+      transition:      opacity 0.15s, transform 0.1s;
+      margin-bottom:   16px;
+    }
+    .btn-primary:hover  { opacity: 0.9; }
+    .btn-primary:active { opacity: 0.8; transform: scale(0.99); }
+
+    .form-footer {
+      font-size:   var(--font-size-text-1);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--font-lh-xs);
+      color:       var(--text-color-primary);
+    }
+    .form-footer .link { margin-left: 4px; }
+
+    /* ╔══════════════════════════════╗
+       ║  RIGHT PANEL                 ║
+       ╚══════════════════════════════╝ */
+    .panel--right {
+      flex:       0 0 38%;
+      max-width:  730px;
+      position:   relative;
+      overflow:   hidden;
+      background: var(--brand-bg);
+
+      /* Image width shared between .app-mockup and .right-content padding */
+      --img-w: clamp(400px, 29.2vw, 680px);
+
+      /* Smooth gradient follows --gx / --gy as @property transitions them */
+      transition: --gx 0.45s ease, --gy 0.45s ease;
+
+      background-image:
+        radial-gradient(circle clamp(300px, 24vw, 920px) at var(--gx) var(--gy), rgba(2,239,254,0.45) 0%, transparent 68%),
+        radial-gradient(ellipse 75% 55% at 118% -8%,  rgba(2,239,254,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 90% 65% at -12% 112%, rgba(18,14,207,0.30) 0%, transparent 55%);
+    }
+
+    /* 4×4 invisible hover-zone grid — drives --gx / --gy via :has() */
+    .hover-grid {
+      position:              absolute;
+      inset:                 0;
+      display:               grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows:    repeat(4, 1fr);
+      z-index:               10;
+      pointer-events:        all;
+    }
+    .hz { cursor: default; }
+
+    /* Row 1 (gy≈12%) */
+    .panel--right:has(.hz:nth-child(1):hover)  { --gx: 12%; --gy: 12%; }
+    .panel--right:has(.hz:nth-child(2):hover)  { --gx: 37%; --gy: 12%; }
+    .panel--right:has(.hz:nth-child(3):hover)  { --gx: 62%; --gy: 12%; }
+    .panel--right:has(.hz:nth-child(4):hover)  { --gx: 87%; --gy: 12%; }
+    /* Row 2 (gy≈37%) */
+    .panel--right:has(.hz:nth-child(5):hover)  { --gx: 12%; --gy: 37%; }
+    .panel--right:has(.hz:nth-child(6):hover)  { --gx: 37%; --gy: 37%; }
+    .panel--right:has(.hz:nth-child(7):hover)  { --gx: 62%; --gy: 37%; }
+    .panel--right:has(.hz:nth-child(8):hover)  { --gx: 87%; --gy: 37%; }
+    /* Row 3 (gy≈62%) */
+    .panel--right:has(.hz:nth-child(9):hover)  { --gx: 12%; --gy: 62%; }
+    .panel--right:has(.hz:nth-child(10):hover) { --gx: 37%; --gy: 62%; }
+    .panel--right:has(.hz:nth-child(11):hover) { --gx: 62%; --gy: 62%; }
+    .panel--right:has(.hz:nth-child(12):hover) { --gx: 87%; --gy: 62%; }
+    /* Row 4 (gy≈87%) */
+    .panel--right:has(.hz:nth-child(13):hover) { --gx: 12%; --gy: 87%; }
+    .panel--right:has(.hz:nth-child(14):hover) { --gx: 37%; --gy: 87%; }
+    .panel--right:has(.hz:nth-child(15):hover) { --gx: 62%; --gy: 87%; }
+    .panel--right:has(.hz:nth-child(16):hover) { --gx: 87%; --gy: 87%; }
+
+    /* ── Animated gradient orbs ── */
+    .g-bg {
+      position:       absolute;
+      inset:          0;
+      overflow:       hidden;
+      pointer-events: none;
+      z-index:        0;
+    }
+
+    .g-orb {
+      position:      absolute;
+      border-radius: 50%;
+      filter:        blur(clamp(40px, 3.6vw, 140px));
+      will-change:   transform;
+      opacity:       0.75;
+    }
+
+    .g-orb--1 {
+      width:      clamp(300px, 27vw, 1050px);
+      height:     clamp(300px, 27vw, 1050px);
+      top:        -15%;
+      left:       -20%;
+      background: radial-gradient(circle, #02EFFE 0%, rgba(2,239,254,0.4) 55%, transparent 100%);
+      animation:  gorb1 16s ease-in-out infinite alternate;
+    }
+
+    .g-orb--2 {
+      width:      clamp(250px, 23vw, 900px);
+      height:     clamp(250px, 23vw, 900px);
+      top:        30%;
+      right:      -20%;
+      background: radial-gradient(circle, #308FFF 0%, rgba(48,143,255,0.35) 55%, transparent 100%);
+      animation:  gorb2 20s ease-in-out infinite alternate;
+    }
+
+    .g-orb--3 {
+      width:      clamp(210px, 20vw, 770px);
+      height:     clamp(210px, 20vw, 770px);
+      bottom:     -5%;
+      left:       10%;
+      background: radial-gradient(circle, #02EFFE 0%, rgba(2,239,254,0.35) 55%, transparent 100%);
+      animation:  gorb3 13s ease-in-out infinite alternate;
+    }
+
+    .g-orb--4 {
+      width:      clamp(310px, 28.5vw, 1100px);
+      height:     clamp(310px, 28.5vw, 1100px);
+      top:        -10%;
+      right:      -25%;
+      background: radial-gradient(circle, #02EFFE 0%, rgba(2,239,254,0.4) 55%, transparent 100%);
+      animation:  gorb4 19s ease-in-out infinite alternate;
+    }
+
+    .g-orb--5 {
+      width:      clamp(260px, 24vw, 930px);
+      height:     clamp(260px, 24vw, 930px);
+      bottom:     -20%;
+      left:       -15%;
+      background: radial-gradient(circle, #308FFF 0%, rgba(48,143,255,0.35) 55%, transparent 100%);
+      animation:  gorb5 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes gorb1 {
+      0%   { transform: translate(0%,    0%);   }
+      35%  { transform: translate(90%,   55%);  }
+      70%  { transform: translate(50%,   110%); }
+      100% { transform: translate(110%,  70%);  }
+    }
+    @keyframes gorb2 {
+      0%   { transform: translate(0%,    0%);   }
+      40%  { transform: translate(-80%,  40%);  }
+      75%  { transform: translate(-40%, -55%);  }
+      100% { transform: translate(-100%, 15%);  }
+    }
+    @keyframes gorb3 {
+      0%   { transform: translate(0%,    0%);   }
+      30%  { transform: translate(60%,  -70%);  }
+      65%  { transform: translate(-20%, -45%);  }
+      100% { transform: translate(80%,  -90%);  }
+    }
+    @keyframes gorb4 {
+      0%   { transform: translate(0%,    0%);  }
+      30%  { transform: translate(-70%,  60%); }
+      65%  { transform: translate(-110%, 20%); }
+      100% { transform: translate(-50%,  90%); }
+    }
+    @keyframes gorb5 {
+      0%   { transform: translate(0%,    0%);   }
+      35%  { transform: translate(70%,  -50%);  }
+      70%  { transform: translate(110%, -20%);  }
+      100% { transform: translate(50%,  -85%);  }
+    }
+
+    /* Right panel text — positioned from bottom relative to image top */
+    .right-content {
+      position:       absolute;
+      left:           0;
+      right:          0;
+      /* image height = min(29.2vw × 681/531, 872px); bottom clip = clamp(60px,12.8vh,320px) */
+      bottom:         calc(min(37.45vw, 872px) - clamp(60px, 12.8vh, 320px) + 40px);
+      z-index:        3;
+      pointer-events: none;
+      box-sizing:     border-box;
+      padding:        0 40px 0 calc(100% - var(--img-w) + 2px);
+      display:        flex;
+      flex-direction: column;
+      gap:            clamp(16px, 1.2vw, 32px);
+    }
+
+    .right-quote {
+      font-family:  var(--font-family-text);
+      font-size:    clamp(18px, 0.94vw, 30px);
+      font-weight:  var(--font-weight-semibold);
+      line-height:  1.4;
+      color:        var(--bt-text-inverted);
+      font-style:   normal;
+      width:        100%;
+      max-width:    clamp(280px, 21.9vw, 560px);
+    }
+
+    .right-sub {
+      font-family:   var(--font-family-text);
+      font-size:     clamp(14px, 0.73vw, 22px);
+      font-weight:   var(--font-weight-regular);
+      line-height:   1.5;
+      color:         var(--bt-text-inverted);
+      overflow:      hidden;
+      text-overflow: ellipsis;
+      width:         100%;
+      max-width:     clamp(280px, 21.9vw, 560px);
+    }
+
+    /* Grid behind mockup */
+    .grid-overlay {
+      position:       absolute;
+      inset:          0;
+      pointer-events: none;
+      z-index:        1;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image:
+        linear-gradient(135deg, transparent 15%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.7) 100%);
+      -webkit-mask-image:
+        linear-gradient(135deg, transparent 15%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.7) 100%);
+    }
+
+    /* App mockup image */
+    .app-mockup {
+      position:       absolute;
+      bottom:         clamp(-320px, -12.8vh, -60px);
+      right:          -2px;
+      width:          var(--img-w);
+      border-radius:  10px 0 0 0;
+      box-shadow:     -6px -6px 40px rgba(0,0,0,0.30);
+      display:        block;
+      pointer-events: none;
+      user-select:    none;
+      z-index:        2;
+    }
+</style>
+</head>
+<body>
+
+  <main class="login-page">
+
+    <!-- ══ LEFT PANEL ══ -->
+    <section class="panel--left">
+      <div class="form-wrapper">
+
+        <div class="app-brand">
+          <img class="app-brand__logo" src="assets/medusa-logo.png" alt="Medusa logo">
+          <span class="app-brand__name">Medusa</span>
+        </div>
+
+        <header class="form-header">
+          <h1 class="form-title">Hesabınıza giriş yapın</h1>
+          <p class="form-subtitle">Hesabınıza giriş yapmak için e-posta adresinizi girin.</p>
+        </header>
+
+        <form class="login-form" novalidate>
+
+          <div class="field">
+            <label class="field__label" for="username">Kullanıcı Adı</label>
+            <input class="field__input" type="text" id="username" name="username"
+                   placeholder="emreg@example.com" autocomplete="username">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="password">Şifre</label>
+            <input class="field__input" type="password" id="password" name="password"
+                   autocomplete="current-password">
+          </div>
+
+          <div class="form-meta">
+            <label class="checkbox-label">
+              <input class="checkbox__input" type="checkbox" id="remember" name="remember">
+              <span class="checkbox__box"></span>
+              <span class="checkbox__text">Beni hatırla</span>
+            </label>
+            <a href="#" class="link">Şifremi unuttum</a>
+          </div>
+
+          <button type="submit" class="btn-primary" onclick="window.location.href='dashboard.html'; return false;">Giriş Yap</button>
+
+          <p class="form-footer">
+            Şifrenizi mi unuttunuz?
+            <a href="#" class="link">Şifremi sıfırla</a>
+          </p>
+
+        </form>
+      </div>
+    </section>
+
+    <!-- ══ RIGHT PANEL ══ -->
+    <section class="panel--right">
+
+      <!-- Invisible 4×4 hover-zone grid for CSS-only mouse tracking -->
+      <div class="hover-grid" aria-hidden="true">
+        <div class="hz"></div><div class="hz"></div><div class="hz"></div><div class="hz"></div>
+        <div class="hz"></div><div class="hz"></div><div class="hz"></div><div class="hz"></div>
+        <div class="hz"></div><div class="hz"></div><div class="hz"></div><div class="hz"></div>
+        <div class="hz"></div><div class="hz"></div><div class="hz"></div><div class="hz"></div>
+      </div>
+
+      <!-- Subtle grid behind the mockup image -->
+      <div class="grid-overlay" aria-hidden="true"></div>
+
+      <div class="g-bg" aria-hidden="true">
+        <div class="g-orb g-orb--1"></div>
+        <div class="g-orb g-orb--2"></div>
+        <div class="g-orb g-orb--3"></div>
+        <div class="g-orb g-orb--4"></div>
+        <div class="g-orb g-orb--5"></div>
+      </div>
+
+      <div class="right-content">
+        <blockquote class="right-quote">
+          "İş süreçlerinizi optimize etmek ve verimli bir şekilde yönetmek için geliştirilmiş yazılım çözümlerimizle tanışın"
+        </blockquote>
+        <p class="right-sub">Yenilikçi ve size özel yazılım çözümleri</p>
+      </div>
+
+      <img class="app-mockup" src="assets/visual-placeholder.png"
+           alt="Bentaş uygulama ekranı" aria-hidden="true" draggable="false">
+
+    </section>
+
+  </main>
+
+</body>
+</html>

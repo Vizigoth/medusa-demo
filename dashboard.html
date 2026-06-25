@@ -850,17 +850,12 @@
     .dot--type-onaylandi { background: #22C55E; }
     .dot--type-redded    { background: #EF5350; }
 
-    /* Badge color variants — Durum */
-    .badge.badge--yeni-talep  { background: #EDE7F6; border-color: #B39DDB; }
-    .badge.badge--yeni-talep .badge-text { color: #4527A0; }
-    .badge.badge--onay-bkl    { background: #FFF8E1; border-color: #FFE082; }
-    .badge.badge--onay-bkl .badge-text   { color: #F57F17; }
-    .badge.badge--calisiliyor { background: #E3F2FD; border-color: #90CAF9; }
-    .badge.badge--calisiliyor .badge-text { color: #1565C0; }
-    .badge.badge--tamamlandi  { background: #E8F5E9; border-color: #A5D6A7; }
-    .badge.badge--tamamlandi .badge-text  { color: #2E7D32; }
-    .badge.badge--bilgi-bek   { background: #FBE9E7; border-color: #FFAB91; }
-    .badge.badge--bilgi-bek .badge-text   { color: #BF360C; }
+    /* Badge color variants — Durum (Figma 139:62960) */
+    /* Yeni Talep: default (#fafafa) — no modifier needed, base .badge covers it */
+    .badge.badge--onay-bkl    { background: #f9f2ce; } /* --bt-warning-subtle */
+    .badge.badge--calisiliyor { background: #fed7aa; } /* orange/200 */
+    .badge.badge--tamamlandi  { background: #daede5; } /* green/100 */
+    .badge.badge--bilgi-bek   { background: #f3e8ff; } /* purple/100 */
 
     /* Dot color variants — Öncelik & İş Türü */
     .dot.dot--dusuk   { background: #90CAF9; }
@@ -961,8 +956,8 @@
       flex: 1;
       border-radius: var(--radius-full);
       border: 1px solid var(--bt-border-primary-default);
-      background: var(--bt-base-muted);
-      padding: 2px var(--space-md); /* py:2px (Figma: --radius/xs fallback=2px), px:8px */
+      background: #fafafa; /* --bt-secondary-light */
+      padding: 2px var(--space-md);
     }
 
     .badge-text {

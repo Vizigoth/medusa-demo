@@ -2476,10 +2476,9 @@
         <div class="ep-col">
           <label class="ep-label">Hata / Talep</label>
           <div class="ep-dropdown" id="epHataTalepDd">
-            <button type="button" class="ep-dd-trigger" id="ep-hata-talep-trigger"
-                    aria-haspopup="listbox" aria-expanded="false">
-              <span class="ep-dd-display" id="ep-hata-talep-display">Hata / Talep</span>
-              <span class="ep-dd-clear" id="epHataTalepClear" hidden><i data-lucide="x" style="width:14px;height:14px;display:block;"></i></span>
+            <button type="button" class="ep-dd-trigger ep-dd-ro has-value" id="ep-hata-talep-trigger"
+                    tabindex="-1">
+              <span class="ep-dd-display" id="ep-hata-talep-display">Talep</span>
               <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
             </button>
             <div class="ep-dd-list" id="epHataTalepList" role="listbox" hidden>
@@ -3306,11 +3305,11 @@
       /* Öncelik */
       setDd('epOncelikDd', 'ep-oncelik-trigger', 'ep-oncelik-display', 'epOncelikList', 'epOncelikClear', d.oncelik, 'Öncelik');
       /* Hata / Talep */
-      setDd('epHataTalepDd', 'ep-hata-talep-trigger', 'ep-hata-talep-display', 'epHataTalepList', 'epHataTalepClear', '', 'Hata / Talep');
+      document.getElementById('ep-hata-talep-display').textContent = 'Talep';
       /* Talep Durumu */
       setDd('epDurumDd', 'ep-durum-trigger', 'ep-durum-display', 'epDurumList', 'epDurumClear', d.durum, 'Talep Durumu');
       /* Sorumlu */
-      setDd('epSorumluDd', 'ep-sorumlu-trigger', 'ep-sorumlu-display', 'epSorumluList', 'epSorumluClear', '', 'Sorumlu');
+      setDd('epSorumluDd', 'ep-sorumlu-trigger', 'ep-sorumlu-display', 'epSorumluList', 'epSorumluClear', 'Selda Akdeniz', 'Sorumlu');
       /* Talep Edilen Tarih */
       if (d.talepTarih) {
         const [y, m, day] = d.talepTarih.split('-');
@@ -3387,7 +3386,7 @@
     }
 
     initDd('epOncelikDd',   'ep-oncelik-trigger',   'ep-oncelik-display',   'epOncelikList',   'epOncelikClear',   'Öncelik');
-    initDd('epHataTalepDd','ep-hata-talep-trigger','ep-hata-talep-display','epHataTalepList','epHataTalepClear','Hata / Talep');
+    initDd('epHataTalepDd','ep-hata-talep-trigger','ep-hata-talep-display','epHataTalepList','epHataTalepClear','Talep');
     initDd('epDurumDd',    'ep-durum-trigger',     'ep-durum-display',     'epDurumList',    'epDurumClear',    'Talep Durumu');
     initDd('epSorumluDd',  'ep-sorumlu-trigger',   'ep-sorumlu-display',   'epSorumluList',  'epSorumluClear',  'Sorumlu');
 

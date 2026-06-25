@@ -2627,7 +2627,7 @@
             <div class="ep-act-card__user">
               <div class="ep-act-card__avatar ep-act-card__avatar--blue">SA</div>
               <div class="ep-act-card__info">
-                <span class="name">Selda Akdeniz güncelledi <span class="ep-log-isno">İş Numarası 1000001001</span></span>
+                <span class="name">Selda Akdeniz güncelledi</span>
                 <span class="date">01 / 01 / 2026 - 09:00:00</span>
               </div>
             </div>
@@ -2678,7 +2678,7 @@
             <div class="ep-act-card__user">
               <div class="ep-act-card__avatar ep-act-card__avatar--blue">SA</div>
               <div class="ep-act-card__info">
-                <span class="name">Selda Akdeniz güncelledi <span class="ep-log-isno">İş Numarası 1000001001</span></span>
+                <span class="name">Selda Akdeniz güncelledi</span>
                 <span class="date">01 / 01 / 2026 - 09:00:00</span>
               </div>
             </div>
@@ -2729,7 +2729,7 @@
             <div class="ep-act-card__user">
               <div class="ep-act-card__avatar ep-act-card__avatar--gray">EG</div>
               <div class="ep-act-card__info ep-act-card__info--narrow">
-                <span class="name">Emre Göcer güncelledi <span class="ep-log-isno">İş Numarası 1000001001</span></span>
+                <span class="name">Emre Göcer güncelledi</span>
                 <span class="date">01 / 01 / 2026 - 09:00:00</span>
               </div>
             </div>
@@ -2780,7 +2780,7 @@
             <div class="ep-act-card__user">
               <div class="ep-act-card__avatar ep-act-card__avatar--blue">SA</div>
               <div class="ep-act-card__info">
-                <span class="name">Selda Akdeniz güncelledi <span class="ep-log-isno">İş Numarası 1000001001</span></span>
+                <span class="name">Selda Akdeniz güncelledi</span>
                 <span class="date">01 / 01 / 2026 - 09:00:00</span>
               </div>
             </div>
@@ -2831,7 +2831,7 @@
             <div class="ep-act-card__user">
               <div class="ep-act-card__avatar ep-act-card__avatar--gray">EG</div>
               <div class="ep-act-card__info ep-act-card__info--narrow">
-                <span class="name">Emre Göcer güncelledi <span class="ep-log-isno">İş Numarası 1000001001</span></span>
+                <span class="name">Emre Göcer güncelledi</span>
                 <span class="date">01 / 01 / 2026 - 09:00:00</span>
               </div>
             </div>
@@ -3280,10 +3280,6 @@
       document.getElementById('ep-gun').value = '';
       document.getElementById('ep-is-adi-r').value     = d.isAdi || d.aciklama || '';
       document.getElementById('ep-aciklama-r').value   = d.aciklama || '';
-      /* Aktivite kartlarındaki iş numarasını güncelle */
-      document.querySelectorAll('.ep-log-isno').forEach(el => {
-        el.textContent = 'İş Numarası ' + d.isNo;
-      });
       /* Öncelik */
       setDd('epOncelikDd', 'ep-oncelik-trigger', 'ep-oncelik-display', 'epOncelikList', 'epOncelikClear', d.oncelik, 'Öncelik');
       /* Hata / Talep */

@@ -665,10 +665,7 @@
     .grid-table-wrap {
       flex: 1;
       min-height: 0;
-      display: flex;
-      flex-direction: column;
-      overflow-x: auto;
-      overflow-y: auto;
+      overflow: auto;
     }
 
     /* ── Grid Segmented Control ── */
@@ -708,8 +705,7 @@
     .data-table {
       border-collapse: collapse;
       table-layout: fixed;
-      width: max-content;
-      min-width: 100%;
+      width: 1950px;
     }
 
     /* Column widths — Figma 136:56265 */
@@ -833,29 +829,26 @@
 
     /* Sorumlu avatar */
     .sorumlu-avatar {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: var(--bt-primary-default);
-      color: #fff;
-      font-size: 9px;
-      font-weight: 600;
+      background: var(--bt-surface-primary-subtle, #f5f5f5);
+      border: 1px solid var(--bt-border-primary-default, #d4d4d4);
+      color: var(--bt-text-primary-default, #1a1a1a);
+      font-size: 10px;
+      font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      margin-left: 6px;
+      margin: 2px 0 2px 2px;
     }
 
-    /* Badge color variants — İş Türü */
-    .badge.badge--acik        { background: #E8F5E9; border-color: #A5D6A7; }
-    .badge.badge--acik .badge-text { color: #2E7D32; }
-    .badge.badge--onay-bek    { background: #FFF8E1; border-color: #FFE082; }
-    .badge.badge--onay-bek .badge-text { color: #F57F17; }
-    .badge.badge--onaylandi   { background: #E3F2FD; border-color: #90CAF9; }
-    .badge.badge--onaylandi .badge-text { color: #1565C0; }
-    .badge.badge--reddedilen  { background: #FFEBEE; border-color: #EF9A9A; }
-    .badge.badge--reddedilen .badge-text { color: #B71C1C; }
+    /* Dot color variants — İş Türü */
+    .dot--type-acik      { background: var(--bt-primary-default, #0d4e97); }
+    .dot--type-onay-bek  { background: #F59E0B; }
+    .dot--type-onaylandi { background: #22C55E; }
+    .dot--type-redded    { background: #EF5350; }
 
     /* Badge color variants — Durum */
     .badge.badge--yeni-talep  { background: #EDE7F6; border-color: #B39DDB; }
@@ -869,23 +862,26 @@
     .badge.badge--bilgi-bek   { background: #FBE9E7; border-color: #FFAB91; }
     .badge.badge--bilgi-bek .badge-text   { color: #BF360C; }
 
-    /* Dot color variants — Öncelik */
+    /* Dot color variants — Öncelik & İş Türü */
     .dot.dot--dusuk   { background: #90CAF9; }
     .dot.dot--normal  { background: #66BB6A; }
     .dot.dot--yuksek  { background: #FFA726; }
     .dot.dot--acil    { background: #EF5350; }
+    .dot.dot--type-acik      { background: var(--bt-primary-default, #0d4e97); }
+    .dot.dot--type-onay-bek  { background: #F59E0B; }
+    .dot.dot--type-onaylandi { background: #22C55E; }
+    .dot.dot--type-redded    { background: #EF5350; }
 
     /* ── Data Rows ── */
     .data-table tbody tr { height: 32px; }
     .data-table tbody tr:hover td { background: #f5f5f5; }
 
     .no-record-area {
-      flex: 1;
+      min-height: 300px;
       border: 1px solid var(--bt-border-primary-default);
       border-top: none;
       background: var(--bt-base-default);
-      min-height: 0;
-      min-width: max-content;
+      width: 1950px;
     }
 
     .data-table td {
@@ -2207,221 +2203,80 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Row 1 -->
-          <tr data-is-adi="Cari Kart Talep" data-aciklama="Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı." data-uygulama="Akasya">
-            <td><!-- 1: İş Numarası -->
-              <div class="td-inner">
-                <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
-                <div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div>
-              </div>
-            </td>
-            <td><!-- 2: Adı -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Cari Kart Talep</span></div>
-              </div>
-            </td>
-            <td><!-- 3: Açıklama -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div>
-              </div>
-            </td>
-            <td><!-- 4: İş Türü -->
-              <div class="td-inner">
-                <div class="badge-cell"><div class="badge badge--acik"><span class="badge-text">Açık</span></div></div>
-              </div>
-            </td>
-            <td><!-- 5: H/T -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Talep</span></div>
-              </div>
-            </td>
-            <td><!-- 6: Öncelik -->
-              <div class="td-inner">
-                <div class="badge-cell">
-                  <div class="badge badge--normal" style="gap:4px;">
-                    <span class="dot dot--normal" style="width:6px;height:6px;flex-shrink:0;"></span>
-                    <span class="badge-text">Normal</span>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td><!-- 7: Durum -->
-              <div class="td-inner">
-                <div class="badge-cell"><div class="badge badge--yeni-talep"><span class="badge-text">Yeni Talep</span></div></div>
-              </div>
-            </td>
-            <td><!-- 8: Kullanıcı -->
-              <div class="td-inner">
-                <div class="dot-wrap"><span class="dot dot--normal"></span></div>
-                <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
-              </div>
-            </td>
-            <td><!-- 9: Organizasyon -->
-              <div class="td-inner">
-                <div class="dot-wrap"><span class="dot dot--normal"></span></div>
-                <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
-              </div>
-            </td>
-            <td><!-- 10: Sorumlu -->
-              <div class="td-inner">
-                <div class="sorumlu-avatar">SA</div>
-                <div class="td-cell"><span class="td-text">Selda Akdeniz</span></div>
-              </div>
-            </td>
-            <td><!-- 11: Uygulama -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Akasya</span></div>
-              </div>
-            </td>
-            <td><!-- 12: ClickUp ID -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">YZ-58031</span></div>
-              </div>
-            </td>
+          <!-- Row 1: Açık / Düşük / Yeni Talep -->
+          <tr data-is-adi="Cari kart talep" data-aciklama="Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı." data-uygulama="Akasya">
+            <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Açık</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--dusuk"></span></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
+            <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
+            <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58031</span></div></div></td>
           </tr>
-          <!-- Row 2 -->
-          <tr data-is-adi="İndirim Oranı Kontrolü" data-aciklama="İş emrinde indirim oranı cari kart limitini aşmamalı." data-uygulama="Akasya">
-            <td><!-- 1: İş Numarası -->
-              <div class="td-inner">
-                <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
-                <div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001002</span></div>
-              </div>
-            </td>
-            <td><!-- 2: Adı -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">İndirim Oranı Kontrolü</span></div>
-              </div>
-            </td>
-            <td><!-- 3: Açıklama -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">İş emrinde indirim oranı cari kart limitini aşmamalı.</span></div>
-              </div>
-            </td>
-            <td><!-- 4: İş Türü -->
-              <div class="td-inner">
-                <div class="badge-cell"><div class="badge badge--onay-bek"><span class="badge-text">Onay Bekleyen</span></div></div>
-              </div>
-            </td>
-            <td><!-- 5: H/T -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Hata</span></div>
-              </div>
-            </td>
-            <td><!-- 6: Öncelik -->
-              <div class="td-inner">
-                <div class="badge-cell">
-                  <div class="badge badge--yuksek" style="gap:4px;">
-                    <span class="dot dot--yuksek" style="width:6px;height:6px;flex-shrink:0;"></span>
-                    <span class="badge-text">Yüksek</span>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td><!-- 7: Durum -->
-              <div class="td-inner">
-                <div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div>
-              </div>
-            </td>
-            <td><!-- 8: Kullanıcı -->
-              <div class="td-inner">
-                <div class="dot-wrap"><span class="dot dot--yuksek"></span></div>
-                <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
-              </div>
-            </td>
-            <td><!-- 9: Organizasyon -->
-              <div class="td-inner">
-                <div class="dot-wrap"><span class="dot dot--yuksek"></span></div>
-                <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
-              </div>
-            </td>
-            <td><!-- 10: Sorumlu -->
-              <div class="td-inner">
-                <div class="sorumlu-avatar">SA</div>
-                <div class="td-cell"><span class="td-text">Selda Akdeniz</span></div>
-              </div>
-            </td>
-            <td><!-- 11: Uygulama -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Akasya</span></div>
-              </div>
-            </td>
-            <td><!-- 12: ClickUp ID -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">YZ-58032</span></div>
-              </div>
-            </td>
+          <!-- Row 2: Onay Bekleyen / Normal / Onay Bekliyor -->
+          <tr data-is-adi="Cari kart talep" data-aciklama="Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı." data-uygulama="Akasya">
+            <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onay-bek"></span></div><div class="td-cell"><span class="td-text">Onay Bekleyen</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--normal"></span></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
+            <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
+            <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58031</span></div></div></td>
           </tr>
-          <!-- Row 3 -->
-          <tr data-is-adi="Fatura Entegrasyon Talebi" data-aciklama="Fatura entegrasyon modülünde hata giderilmesi talep edilmektedir." data-uygulama="Medusa">
-            <td><!-- 1: İş Numarası -->
-              <div class="td-inner">
-                <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
-                <div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001003</span></div>
-              </div>
-            </td>
-            <td><!-- 2: Adı -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Fatura Entegrasyon Talebi</span></div>
-              </div>
-            </td>
-            <td><!-- 3: Açıklama -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Fatura entegrasyon modülünde hata giderilmesi talep edilmektedir.</span></div>
-              </div>
-            </td>
-            <td><!-- 4: İş Türü -->
-              <div class="td-inner">
-                <div class="badge-cell"><div class="badge badge--onaylandi"><span class="badge-text">Onaylandı</span></div></div>
-              </div>
-            </td>
-            <td><!-- 5: H/T -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Talep</span></div>
-              </div>
-            </td>
-            <td><!-- 6: Öncelik -->
-              <div class="td-inner">
-                <div class="badge-cell">
-                  <div class="badge badge--acil" style="gap:4px;">
-                    <span class="dot dot--acil" style="width:6px;height:6px;flex-shrink:0;"></span>
-                    <span class="badge-text">Acil</span>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td><!-- 7: Durum -->
-              <div class="td-inner">
-                <div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div>
-              </div>
-            </td>
-            <td><!-- 8: Kullanıcı -->
-              <div class="td-inner">
-                <div class="dot-wrap"><span class="dot dot--acil"></span></div>
-                <div class="td-cell"><span class="td-text">User - Akdeniz</span></div>
-              </div>
-            </td>
-            <td><!-- 9: Organizasyon -->
-              <div class="td-inner">
-                <div class="dot-wrap"><span class="dot dot--acil"></span></div>
-                <div class="td-cell"><span class="td-text">Akdeniz Holding A.Ş</span></div>
-              </div>
-            </td>
-            <td><!-- 10: Sorumlu -->
-              <div class="td-inner">
-                <div class="sorumlu-avatar">SA</div>
-                <div class="td-cell"><span class="td-text">Selda Akdeniz</span></div>
-              </div>
-            </td>
-            <td><!-- 11: Uygulama -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Medusa</span></div>
-              </div>
-            </td>
-            <td><!-- 12: ClickUp ID -->
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">YZ-58033</span></div>
-              </div>
-            </td>
+          <!-- Row 3: Onaylandı / Yüksek / Üzerinde Çalışılıyor -->
+          <tr data-is-adi="Cari kart talep" data-aciklama="Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı." data-uygulama="Akasya">
+            <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onaylandi"></span></div><div class="td-cell"><span class="td-text">Onaylandı</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--yuksek"></span></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
+            <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
+            <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58031</span></div></div></td>
+          </tr>
+          <!-- Row 4: Reddedilen / Acil / Tamamlandı -->
+          <tr data-is-adi="Cari kart talep" data-aciklama="Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı." data-uygulama="Akasya">
+            <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-redded"></span></div><div class="td-cell"><span class="td-text">Reddedilen</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--acil"></span></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
+            <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--tamamlandi"><span class="badge-text">Tamamlandı</span></div></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
+            <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58031</span></div></div></td>
+          </tr>
+          <!-- Row 5: Onay Bekleyen / Acil / Bilgi Bekleniyor -->
+          <tr data-is-adi="Cari kart talep" data-aciklama="Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı." data-uygulama="Akasya">
+            <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onay-bek"></span></div><div class="td-cell"><span class="td-text">Onay Bekleyen</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--acil"></span></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
+            <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--bilgi-bek"><span class="badge-text">Bilgi Bekleniyor</span></div></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
+            <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
+            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58031</span></div></div></td>
           </tr>
         </tbody>
       </table>
@@ -3240,26 +3095,25 @@
           <div class="td-cell"><span class="td-text">${aciklama}</span></div>
         </div></td>
         <td><div class="td-inner">
-          <div class="badge-cell"><div class="badge badge--acik"><span class="badge-text">Açık</span></div></div>
+          <div class="dot-wrap"><span class="dot dot--type-acik"></span></div>
+          <div class="td-cell"><span class="td-text">Açık</span></div>
         </div></td>
         <td><div class="td-inner">
           <div class="td-cell"><span class="td-text">Talep</span></div>
         </div></td>
         <td><div class="td-inner">
-          <div class="badge-cell"><div class="badge badge--normal" style="gap:4px;">
-            <span class="dot dot--normal" style="width:6px;height:6px;flex-shrink:0;"></span>
-            <span class="badge-text">Normal</span>
-          </div></div>
-        </div></td>
-        <td><div class="td-inner">
-          <div class="badge-cell"><div class="badge badge--yeni-talep"><span class="badge-text">Yeni Talep</span></div></div>
-        </div></td>
-        <td><div class="td-inner">
           <div class="dot-wrap"><span class="dot dot--normal"></span></div>
-          <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
+          <div class="td-cell"><span class="td-text">Normal</span></div>
         </div></td>
         <td><div class="td-inner">
-          <div class="dot-wrap"><span class="dot dot--normal"></span></div>
+          <div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div>
+        </div></td>
+        <td><div class="td-inner">
+          <div class="dot-wrap"><span class="dot dot--type-acik"></span></div>
+          <div class="td-cell"><span class="td-text">Mengerler User</span></div>
+        </div></td>
+        <td><div class="td-inner">
+          <div class="dot-wrap"><span class="dot dot--type-acik"></span></div>
           <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
         </div></td>
         <td><div class="td-inner">
@@ -3432,9 +3286,9 @@
         isNo:       tdText(1),
         isAdi:      tr.dataset.isAdi     || tdText(2),
         aciklama:   tr.dataset.aciklama  || tdText(3),
-        isTuru:     tr.querySelector('td:nth-child(4) .badge-text')?.textContent.trim() || '',
+        isTuru:     tdText(4),
         ht:         tdText(5),
-        oncelik:    tr.querySelector('td:nth-child(6) .badge-text')?.textContent.trim() || 'Normal',
+        oncelik:    tdText(6),
         durum:      tr.querySelector('td:nth-child(7) .badge-text')?.textContent.trim() || tdText(7),
         kullanici:  tdText(8),
         org:        tdText(9),

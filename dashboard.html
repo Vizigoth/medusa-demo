@@ -14,22 +14,67 @@
        Kaynak: Figma variables / get_variable_defs
        ============================================================ */
     :root {
-      /* Colors */
+      /* ── Color scale primitives (Figma variables) ── */
+      --gray-0:     #ffffff;
+      --gray-400:   #a3a3a3;
+
+      --blue-500:   #1c7fdb;
+      --blue-600:   #0e62bb;
+
+      --yellow-500: #d4af2c;
+
+      --teal-600:   #0d9488;
+
+      --orange-200: #fed7aa;
+      --orange-600: #ea580c;
+
+      --red-500:    #e84b5b;
+      --red-600:    #d83a52;
+
+      --green-100:  #daede5;
+
+      --purple-100: #f3e8ff;
+
+      /* ── Semantic tokens — Color ── */
       --bt-primary-default:          #0d4e97;
-      --bt-surface-primary-default:  #ffffff;
-      --bt-surface-primary-subtle:   #f5f5f5;
-      --bt-border-primary-default:   #d4d4d4;
-      --bt-text-primary-default:     #1a1a1a;
-      --bt-text-primary-inverted:    #ffffff;
-      --bt-text-primary-emphasis:    #727272;
-      --bt-icon-primary-strong:      #535353;
-      --bt-text-primary-muted:       #a3a3a3;
+      --bt-secondary-light:          #fafafa;
+      --bt-warning-subtle:           #f9f2ce;
       --bt-base-default:             #ffffff;
       --bt-base-muted:               #e6e6e6;
+
+      /* ── Semantic tokens — Surface ── */
+      --bt-surface-primary-default:  #ffffff;
+      --bt-surface-primary-subtle:   #f5f5f5;
       --bt-surface-primary-light:    #fafafa;
       --bt-surface-brand-subtle:     #e2edfc;
       --bt-surface-brand-light:      #f1f7fe;
+
+      /* ── Semantic tokens — Border ── */
+      --bt-border-primary-default:   #d4d4d4;
+
+      /* ── Semantic tokens — Text ── */
+      --bt-text-primary-default:     #1a1a1a;
+      --bt-text-primary-inverted:    #ffffff;
+      --bt-text-primary-emphasis:    #727272;
+      --bt-text-primary-muted:       #a3a3a3;
+      --bt-text-brand-default:       #0d4e97;
+
+      /* ── Semantic tokens — Icon ── */
+      --bt-icon-primary-default:     #1a1a1a;
+      --bt-icon-primary-strong:      #535353;
+
+      /* ── Interaction states (local tokens) ── */
+      --bt-primary-hover:            #0b4485;
+      --bt-primary-active:           #093a72;
+      --bt-surface-tab-default:      #f3f4f6;
+      --bt-surface-tab-hover:        #e8e9eb;
+
+      /* ── Legacy / non-Figma ── */
       --color-gray-900:              #111827;
+      --color-gray-800:              #1f2937;
+      --color-gray-500:              #6b7280;
+      --color-gray-300:              #d1d5db;
+      --color-activity-success:      #448871;
 
       /* Spacing */
       --space-none: 0px;
@@ -123,8 +168,8 @@
       border-radius: var(--radius-xs);
       transition: background 0.15s, transform 0.1s;
     }
-    .menu-toggle:hover  { background: #0b4485; }
-    .menu-toggle:active { background: #093a72; transform: scale(0.95); }
+    .menu-toggle:hover  { background: var(--bt-primary-hover); }
+    .menu-toggle:active { background: var(--bt-primary-active); transform: scale(0.95); }
     .menu-toggle i { width: 14px; height: 14px; display: block; }
 
     .logo-area {
@@ -406,7 +451,7 @@
       font-size: var(--text-sm);
       font-weight: 400;
       line-height: var(--lh-sm);
-      color: #1f2937;
+      color: var(--color-gray-800);
       white-space: nowrap;
     }
     .uw-email {
@@ -414,7 +459,7 @@
       font-size: var(--text-xs);
       font-weight: 400;
       line-height: var(--lh-xs);
-      color: #6b7280;
+      color: var(--color-gray-500);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -461,7 +506,7 @@
       font-size: var(--text-sm);
       font-weight: 400;
       line-height: var(--lh-sm);
-      color: #1f2937;
+      color: var(--color-gray-800);
     }
 
     .uw-item-suffix {
@@ -554,8 +599,8 @@
       color: var(--bt-text-primary-inverted);
       border: none;
     }
-    .btn-primary:hover  { background: #0b4485; }
-    .btn-primary:active { background: #093a72; transform: scale(0.97); }
+    .btn-primary:hover  { background: var(--bt-primary-hover); }
+    .btn-primary:active { background: var(--bt-primary-active); transform: scale(0.97); }
 
     .btn-outline {
       background: transparent;
@@ -687,12 +732,12 @@
       font-weight: 400;
       line-height: var(--lh-xs);
       color: var(--bt-text-primary-default);
-      background: #f3f4f6;
+      background: var(--bt-surface-tab-default);
       cursor: pointer;
       white-space: nowrap;
       transition: background 0.12s;
     }
-    .sc-tab:hover:not(.is-active) { background: #e8e9eb; }
+    .sc-tab:hover:not(.is-active) { background: var(--bt-surface-tab-hover); }
     .sc-tab.is-active {
       background: var(--bt-surface-brand-subtle);
       color: var(--bt-primary-default);
@@ -832,9 +877,9 @@
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      background: var(--bt-surface-primary-subtle, #f5f5f5);
-      border: 1px solid var(--bt-border-primary-default, #d4d4d4);
-      color: var(--bt-text-primary-default, #1a1a1a);
+      background: var(--bt-surface-primary-subtle);
+      border: 1px solid var(--bt-border-primary-default);
+      color: var(--bt-text-primary-default);
       font-size: 10px;
       font-weight: 500;
       display: flex;
@@ -845,31 +890,32 @@
     }
 
     /* Dot color variants — İş Türü (Figma 139:108995) */
-    .dot--type-acik      { background: #1C7FDB; }
-    .dot--type-onay-bek  { background: #D4AF2C; }
-    .dot--type-onaylandi { background: #0D9488; }
-    .dot--type-redded    { background: #E84B5B; }
+    .dot--type-acik      { background: var(--blue-500); }
+    .dot--type-onay-bek  { background: var(--yellow-500); }
+    .dot--type-onaylandi { background: var(--teal-600); }
+    .dot--type-redded    { background: var(--red-500); }
 
     /* Badge color variants — Durum (Figma 139:62960) */
-    /* Yeni Talep: default (#fafafa) — no modifier needed, base .badge covers it */
-    .badge.badge--onay-bkl    { background: #f9f2ce; } /* --bt-warning-subtle */
-    .badge.badge--calisiliyor { background: #fed7aa; } /* orange/200 */
-    .badge.badge--tamamlandi  { background: #daede5; } /* green/100 */
-    .badge.badge--bilgi-bek   { background: #f3e8ff; } /* purple/100 */
+    /* Yeni Talep: default — base .badge uses --bt-secondary-light */
+    .badge.badge--onay-bkl    { background: var(--bt-warning-subtle); }
+    .badge.badge--calisiliyor { background: var(--orange-200); }
+    .badge.badge--tamamlandi  { background: var(--green-100); }
+    .badge.badge--bilgi-bek   { background: var(--purple-100); }
 
-    /* Dot color variants — Öncelik (Figma 139:116342) */
-    .dot.dot--dusuk   { background: #A3A3A3; }
-    .dot.dot--normal  { background: #0E62BB; }
-    .dot.dot--yuksek  { background: #EA580C; }
-    .dot.dot--acil    { background: #D83A52; }
-    .dot.dot--type-acik      { background: #1C7FDB; }
-    .dot.dot--type-onay-bek  { background: #D4AF2C; }
-    .dot.dot--type-onaylandi { background: #0D9488; }
-    .dot.dot--type-redded    { background: #E84B5B; }
+    /* Öncelik — flag-triangle-right Lucide icon */
+    .oncelik-icon { width: 14px; height: 14px; display: block; flex-shrink: 0; }
+    .oncelik-icon--dusuk  { color: var(--gray-400); }
+    .oncelik-icon--normal { color: var(--blue-600); }
+    .oncelik-icon--yuksek { color: var(--orange-600); }
+    .oncelik-icon--acil   { color: var(--red-600); }
+    .dot.dot--type-acik      { background: var(--blue-500); }
+    .dot.dot--type-onay-bek  { background: var(--yellow-500); }
+    .dot.dot--type-onaylandi { background: var(--teal-600); }
+    .dot.dot--type-redded    { background: var(--red-500); }
 
     /* ── Data Rows ── */
     .data-table tbody tr { height: 32px; }
-    .data-table tbody tr:hover td { background: #f5f5f5; }
+    .data-table tbody tr:hover td { background: var(--bt-surface-primary-subtle); }
 
     .no-record-area {
       min-height: 300px;
@@ -956,7 +1002,7 @@
       flex: 1;
       border-radius: var(--radius-full);
       border: 1px solid var(--bt-border-primary-default);
-      background: #fafafa; /* --bt-secondary-light */
+      background: var(--bt-secondary-light);
       padding: 2px var(--space-md);
     }
 
@@ -1291,7 +1337,7 @@
       display: none;
       width: 12px;
       height: 12px;
-      color: #ffffff;
+      color: var(--bt-text-primary-inverted);
       flex-shrink: 0;
     }
     .checkbox-box.is-checked svg { display: block; }
@@ -1358,7 +1404,7 @@
       align-items: center;
       padding: var(--space-sm) 20px;
       background: var(--bt-surface-primary-default);
-      border-bottom: 1px solid #d1d5db;
+      border-bottom: 1px solid var(--color-gray-300);
       gap: 10px;
     }
 
@@ -1441,7 +1487,7 @@
       font-size: var(--text-xs);
       font-weight: 500;
       line-height: var(--lh-xs);
-      color: #ffffff;
+      color: var(--bt-text-primary-inverted);
     }
     .ep-activity-avatar--subtle {
       background: var(--bt-surface-primary-subtle);
@@ -1709,12 +1755,12 @@
       font-weight: 400;
       line-height: var(--lh-xs);
       color: var(--bt-text-primary-default);
-      background: #f3f4f6;
+      background: var(--bt-surface-tab-default);
       cursor: pointer;
       white-space: nowrap;
       transition: background 0.12s;
     }
-    .ep-tab:hover:not(.is-active) { background: #e8e9eb; }
+    .ep-tab:hover:not(.is-active) { background: var(--bt-surface-tab-hover); }
     .ep-tab.is-active {
       background: var(--bt-surface-brand-subtle);
       color: var(--bt-primary-default);
@@ -1788,7 +1834,7 @@
       line-height: var(--lh-xs);
       flex-shrink: 0;
     }
-    .ep-act-card__avatar--blue { background: var(--bt-primary-default); color: #fff; }
+    .ep-act-card__avatar--blue { background: var(--bt-primary-default); color: var(--bt-text-primary-inverted); }
     .ep-act-card__avatar--gray { background: var(--bt-surface-primary-subtle); color: var(--bt-text-primary-default); }
     .ep-act-card__info {
       display: flex;
@@ -1810,7 +1856,7 @@
     }
     .ep-act-card__log .lbl  { font-weight: 500; color: var(--bt-text-primary-default); }
     .ep-act-card__log .from { font-weight: 500; color: var(--bt-primary-default); }
-    .ep-act-card__log .to   { font-weight: 500; color: #448871; }
+    .ep-act-card__log .to   { font-weight: 500; color: var(--color-activity-success); }
     .ep-act-card__log .arr  {
       display: flex; align-items: center; justify-content: center;
       width: 24px; height: 16px; color: var(--bt-icon-primary-strong);
@@ -2205,7 +2251,7 @@
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Açık</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--dusuk"></span></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="flag-triangle-right" class="oncelik-icon oncelik-icon--dusuk"></i></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
@@ -2220,7 +2266,7 @@
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onay-bek"></span></div><div class="td-cell"><span class="td-text">Onay Bekleyen</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--normal"></span></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="flag-triangle-right" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
@@ -2235,7 +2281,7 @@
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onaylandi"></span></div><div class="td-cell"><span class="td-text">Onaylanan</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--yuksek"></span></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="flag-triangle-right" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
@@ -2250,7 +2296,7 @@
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-redded"></span></div><div class="td-cell"><span class="td-text">Reddedilen</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--acil"></span></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="flag-triangle-right" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--tamamlandi"><span class="badge-text">Tamamlandı</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
@@ -2265,7 +2311,7 @@
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onay-bek"></span></div><div class="td-cell"><span class="td-text">Onay Bekleyen</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--acil"></span></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="flag-triangle-right" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--bilgi-bek"><span class="badge-text">Bilgi Bekleniyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
@@ -3097,7 +3143,7 @@
           <div class="td-cell"><span class="td-text">Talep</span></div>
         </div></td>
         <td><div class="td-inner">
-          <div class="dot-wrap"><span class="dot dot--normal"></span></div>
+          <div class="dot-wrap"><i data-lucide="flag-triangle-right" class="oncelik-icon oncelik-icon--normal"></i></div>
           <div class="td-cell"><span class="td-text">Normal</span></div>
         </div></td>
         <td><div class="td-inner">

@@ -2570,26 +2570,26 @@
         </div>
       </div>
 
-      <!-- Talep Konusu + Hedef Bitiş Tarihi -->
-      <div class="ep-row ep-row--lg">
+      <!-- Gün + Planlanan Tarih -->
+      <div class="ep-row">
         <div class="ep-col">
-          <label class="ep-label">Talep Konusu</label>
-          <input type="text" class="ep-input-edit" id="ep-talep-konusu" placeholder="Talep konusu...">
+          <label class="ep-label">Gün</label>
+          <input type="text" class="ep-input-edit" id="ep-gun" placeholder="Gün">
         </div>
         <div class="ep-col">
-          <label class="ep-label">Hedef Bitiş Tarihi</label>
+          <label class="ep-label">Planlanan Tarih</label>
           <div class="ep-datepicker">
-            <button class="ep-dp-icon" id="epHedefDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
-            <input type="text" class="ep-dp-input" id="ep-hedef-tarih" placeholder="01 / 01 / 2026" readonly>
-            <input type="date" class="ep-dp-native" id="ep-hedef-tarih-n" tabindex="-1" aria-hidden="true">
+            <button class="ep-dp-icon" id="epPlanlananDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
+            <input type="text" class="ep-dp-input" id="ep-planlanan-tarih" placeholder="01 / 01 / 2026" readonly>
+            <input type="date" class="ep-dp-native" id="ep-planlanan-tarih-n" tabindex="-1" aria-hidden="true">
           </div>
         </div>
       </div>
 
-      <!-- Açıklama -->
+      <!-- Fatura Edilecek Gün (full width) -->
       <div class="ep-field">
-        <label class="ep-label">Açıklama</label>
-        <textarea class="ep-input-ro ep-textarea-ro" id="ep-aciklama" readonly></textarea>
+        <label class="ep-label">Fatura Edilecek Gün</label>
+        <input type="text" class="ep-input-edit" id="ep-fatura-gun" placeholder="Fatura Edilecek Gün">
       </div>
 
     </div><!-- /edit-panel__left -->
@@ -2607,7 +2607,7 @@
         <!-- İşin Adı (readonly) -->
         <div class="ep-field">
           <label class="ep-label">İşin Adı</label>
-          <input type="text" class="ep-input-ro" id="ep-is-adi-r" readonly>
+          <input type="text" class="ep-input-ro" id="ep-is-adi-r" value="Cari Kart Talep" readonly>
         </div>
 
         <!-- Açıklama (readonly textarea) -->
@@ -3302,7 +3302,7 @@
       document.getElementById('ep-aciklama').value = d.aciklama;
       document.getElementById('ep-org-display').textContent      = d.org      || '—';
       document.getElementById('ep-uygulama-display').textContent = d.uygulama || '—';
-      document.getElementById('ep-talep-konusu').value = '';
+      document.getElementById('ep-gun').value = '';
       document.getElementById('ep-is-adi-r').value     = d.isAdi || d.aciklama || '';
       document.getElementById('ep-aciklama-r').value   = d.aciklama || '';
       /* Aktivite kartlarındaki iş numarasını güncelle */
@@ -3325,7 +3325,7 @@
         document.getElementById('ep-talep-tarih').value = '';
       }
       document.getElementById('ep-onay-tarih').value  = '';
-      document.getElementById('ep-hedef-tarih').value = '';
+      document.getElementById('ep-planlanan-tarih').value = '';
     }
 
     function setDd(ddId, triggerId, displayId, listId, clearId, value, placeholder) {
@@ -3417,7 +3417,7 @@
 
     initDp('epTalepDpBtn', 'ep-talep-tarih', 'ep-talep-tarih-n');
     initDp('epOnayDpBtn',  'ep-onay-tarih',  'ep-onay-tarih-n');
-    initDp('epHedefDpBtn', 'ep-hedef-tarih', 'ep-hedef-tarih-n');
+    initDp('epPlanlananDpBtn', 'ep-planlanan-tarih', 'ep-planlanan-tarih-n');
 
     /* ── Activity card collapse/expand ── */
     editPanel.addEventListener('click', (e) => {

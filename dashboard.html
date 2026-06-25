@@ -711,6 +711,15 @@
       flex: 1;
       min-height: 0;
       overflow: auto;
+      margin: 0 -16px -16px -16px; /* kenarlar padding'i iptal et */
+    }
+
+    /* Inner wrapper: scroll viewport yüksekliğini doldurur */
+    .grid-table-inner {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      width: 1950px;
     }
 
     /* ── Grid Segmented Control ── */
@@ -919,11 +928,10 @@
     .data-table tbody tr:hover td { background: var(--bt-surface-primary-subtle); }
 
     .no-record-area {
-      min-height: 300px;
+      flex: 1;
       border: 1px solid var(--bt-border-primary-default);
       border-top: none;
       background: var(--bt-base-default);
-      width: 1950px;
     }
 
     .data-table td {
@@ -2136,6 +2144,7 @@
         </div>
 
         <div class="grid-table-wrap">
+        <div class="grid-table-inner">
         <table class="data-table" aria-label="Atanmamış İşler">
         <colgroup>
           <col class="col-is-no">
@@ -2324,6 +2333,7 @@
       </table>
       <!-- No Record Available — kalan alanı dolduran boş satır (Figma: 8:11363) -->
       <div class="no-record-area"></div>
+        </div><!-- /grid-table-inner -->
         </div><!-- /grid-table-wrap -->
       </div><!-- /grid-card -->
     </div><!-- /table-container -->

@@ -667,7 +667,8 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow-x: auto;
+      overflow-y: auto;
     }
 
     /* ── Grid Segmented Control ── */
@@ -707,21 +708,23 @@
     .data-table {
       border-collapse: collapse;
       table-layout: fixed;
-      width: 100%;
+      width: max-content;
       min-width: 100%;
     }
 
-    /* Column widths (from Figma layout) */
-    /* Oranlar: Figma 1640px içerik genişliğine göre */
-    .col-is-no     { width: 11%; }   /* 180px */
-    .col-aciklama  { width: 18%; }   /* 301px */
-    .col-oncelik   { width: 9%;  }   /* 150px */
-    .col-kullanici { width: 9%;  }   /* 150px */
-    .col-org       { width: 7%;  }   /* 120px */
-    .col-ht        { width: 7%;  }   /* 120px */
-    .col-durum     { width: 9.75%; }   /* 160px — 20px daraltıldı */
-    .col-uygulama  { width: 9.75%; }   /* 160px — 20px daraltıldı */
-    .col-clickup   { width: auto; }  /* flex-[1_0_0] — kalan alan */
+    /* Column widths — Figma 136:56265 */
+    .col-is-no     { width: 149px; }
+    .col-adi       { width: 170px; }
+    .col-aciklama  { width: 320px; }
+    .col-is-turu   { width: 129px; }
+    .col-ht        { width: 88px; }
+    .col-oncelik   { width: 150px; }
+    .col-durum     { width: 157px; }
+    .col-kullanici { width: 150px; }
+    .col-org       { width: 131px; }
+    .col-sorumlu   { width: 157px; }
+    .col-uygulama  { width: 154px; }
+    .col-clickup   { width: 195px; }
 
     /* ── Header Row ── */
     .data-table thead tr { height: 36px; }
@@ -808,6 +811,70 @@
     .th-filter { padding: 2px; }
     .icon-filter { width: 12px; height: 12px; display: block; color: var(--bt-icon-primary-strong); }
 
+    /* ── Frozen first column ── */
+    .data-table th:first-child,
+    .data-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: var(--bt-base-default);
+    }
+    /* Corner cell: sticky top + left → highest z-index */
+    .data-table thead th:first-child { z-index: 4; }
+
+    /* İş Numarası link */
+    .td-isno-link {
+      color: var(--bt-primary-default);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .td-isno-link:hover { text-decoration: underline; }
+
+    /* Sorumlu avatar */
+    .sorumlu-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--bt-primary-default);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-left: 6px;
+    }
+
+    /* Badge color variants — İş Türü */
+    .badge.badge--acik        { background: #E8F5E9; border-color: #A5D6A7; }
+    .badge.badge--acik .badge-text { color: #2E7D32; }
+    .badge.badge--onay-bek    { background: #FFF8E1; border-color: #FFE082; }
+    .badge.badge--onay-bek .badge-text { color: #F57F17; }
+    .badge.badge--onaylandi   { background: #E3F2FD; border-color: #90CAF9; }
+    .badge.badge--onaylandi .badge-text { color: #1565C0; }
+    .badge.badge--reddedilen  { background: #FFEBEE; border-color: #EF9A9A; }
+    .badge.badge--reddedilen .badge-text { color: #B71C1C; }
+
+    /* Badge color variants — Durum */
+    .badge.badge--yeni-talep  { background: #EDE7F6; border-color: #B39DDB; }
+    .badge.badge--yeni-talep .badge-text { color: #4527A0; }
+    .badge.badge--onay-bkl    { background: #FFF8E1; border-color: #FFE082; }
+    .badge.badge--onay-bkl .badge-text   { color: #F57F17; }
+    .badge.badge--calisiliyor { background: #E3F2FD; border-color: #90CAF9; }
+    .badge.badge--calisiliyor .badge-text { color: #1565C0; }
+    .badge.badge--tamamlandi  { background: #E8F5E9; border-color: #A5D6A7; }
+    .badge.badge--tamamlandi .badge-text  { color: #2E7D32; }
+    .badge.badge--bilgi-bek   { background: #FBE9E7; border-color: #FFAB91; }
+    .badge.badge--bilgi-bek .badge-text   { color: #BF360C; }
+
+    /* Dot color variants — Öncelik */
+    .dot.dot--dusuk   { background: #90CAF9; }
+    .dot.dot--normal  { background: #66BB6A; }
+    .dot.dot--yuksek  { background: #FFA726; }
+    .dot.dot--acil    { background: #EF5350; }
+
     /* ── Data Rows ── */
     .data-table tbody tr { height: 32px; }
     .data-table tbody tr:hover td { background: #f5f5f5; }
@@ -818,6 +885,7 @@
       border-top: none;
       background: var(--bt-base-default);
       min-height: 0;
+      min-width: max-content;
     }
 
     .data-table td {
@@ -2033,18 +2101,21 @@
         <table class="data-table" aria-label="Atanmamış İşler">
         <colgroup>
           <col class="col-is-no">
+          <col class="col-adi">
           <col class="col-aciklama">
+          <col class="col-is-turu">
+          <col class="col-ht">
           <col class="col-oncelik">
+          <col class="col-durum">
           <col class="col-kullanici">
           <col class="col-org">
-          <col class="col-ht">
-          <col class="col-durum">
+          <col class="col-sorumlu">
           <col class="col-uygulama">
           <col class="col-clickup">
         </colgroup>
         <thead>
           <tr>
-            <!-- İş Numarası (checkbox + label + filter) -->
+            <!-- 1: İş Numarası (checkbox + label + filter) -->
             <th scope="col">
               <div class="th-inner">
                 <div class="th-checkbox">
@@ -2056,48 +2127,77 @@
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
               </div>
             </th>
+            <!-- 2: Adı -->
+            <th scope="col">
+              <div class="th-inner">
+                <div class="th-label-area"><span class="th-label">Adı</span></div>
+                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
+              </div>
+            </th>
+            <!-- 3: Açıklama -->
             <th scope="col">
               <div class="th-inner">
                 <div class="th-label-area"><span class="th-label">Açıklama</span></div>
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
               </div>
             </th>
+            <!-- 4: İş Türü -->
             <th scope="col">
               <div class="th-inner">
-                <div class="th-label-area"><span class="th-label">Öncelik</span></div>
+                <div class="th-label-area"><span class="th-label">İş Türü</span></div>
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
               </div>
             </th>
-            <th scope="col">
-              <div class="th-inner">
-                <div class="th-label-area"><span class="th-label">Kullanıcı</span></div>
-                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
-              </div>
-            </th>
-            <th scope="col">
-              <div class="th-inner">
-                <div class="th-label-area"><span class="th-label">Organizasyon</span></div>
-                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
-              </div>
-            </th>
+            <!-- 5: H/T -->
             <th scope="col">
               <div class="th-inner">
                 <div class="th-label-area"><span class="th-label">H / T</span></div>
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
               </div>
             </th>
+            <!-- 6: Öncelik -->
+            <th scope="col">
+              <div class="th-inner">
+                <div class="th-label-area"><span class="th-label">Öncelik</span></div>
+                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
+              </div>
+            </th>
+            <!-- 7: Durum -->
             <th scope="col">
               <div class="th-inner">
                 <div class="th-label-area"><span class="th-label">Durum</span></div>
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
               </div>
             </th>
+            <!-- 8: Kullanıcı -->
+            <th scope="col">
+              <div class="th-inner">
+                <div class="th-label-area"><span class="th-label">Kullanıcı</span></div>
+                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
+              </div>
+            </th>
+            <!-- 9: Organizasyon -->
+            <th scope="col">
+              <div class="th-inner">
+                <div class="th-label-area"><span class="th-label">Organizasyon</span></div>
+                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
+              </div>
+            </th>
+            <!-- 10: Sorumlu -->
+            <th scope="col">
+              <div class="th-inner">
+                <div class="th-label-area"><span class="th-label">Sorumlu</span></div>
+                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
+              </div>
+            </th>
+            <!-- 11: Uygulama -->
             <th scope="col">
               <div class="th-inner">
                 <div class="th-label-area"><span class="th-label">Uygulama</span></div>
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div>
               </div>
             </th>
+            <!-- 12: ClickUp ID -->
             <th scope="col">
               <div class="th-inner">
                 <div class="th-label-area"><span class="th-label">ClickUp ID</span></div>
@@ -2108,161 +2208,218 @@
         </thead>
         <tbody>
           <!-- Row 1 -->
-          <tr>
-            <td>
+          <tr data-is-adi="Cari Kart Talep" data-aciklama="Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı." data-uygulama="Akasya">
+            <td><!-- 1: İş Numarası -->
               <div class="td-inner">
                 <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
-                <div class="td-cell"><span class="td-text">1000001001</span></div>
+                <div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 2: Adı -->
               <div class="td-inner">
-                <div class="td-cell">
-                  <span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span>
-                </div>
+                <div class="td-cell"><span class="td-text">Cari Kart Talep</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 3: Açıklama -->
               <div class="td-inner">
-                <div class="badge-cell"><div class="badge"><span class="badge-text">Normal</span></div></div>
+                <div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 4: İş Türü -->
               <div class="td-inner">
-                <div class="dot-wrap"><span class="dot"></span></div>
-                <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
+                <div class="badge-cell"><div class="badge badge--acik"><span class="badge-text">Açık</span></div></div>
               </div>
             </td>
-            <td>
-              <div class="td-inner">
-                <div class="dot-wrap"><span class="dot"></span></div>
-                <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
-              </div>
-            </td>
-            <td>
+            <td><!-- 5: H/T -->
               <div class="td-inner">
                 <div class="td-cell"><span class="td-text">Talep</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 6: Öncelik -->
               <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Yeni Talep</span></div>
+                <div class="badge-cell">
+                  <div class="badge badge--normal" style="gap:4px;">
+                    <span class="dot dot--normal" style="width:6px;height:6px;flex-shrink:0;"></span>
+                    <span class="badge-text">Normal</span>
+                  </div>
+                </div>
               </div>
             </td>
-            <td>
+            <td><!-- 7: Durum -->
+              <div class="td-inner">
+                <div class="badge-cell"><div class="badge badge--yeni-talep"><span class="badge-text">Yeni Talep</span></div></div>
+              </div>
+            </td>
+            <td><!-- 8: Kullanıcı -->
+              <div class="td-inner">
+                <div class="dot-wrap"><span class="dot dot--normal"></span></div>
+                <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
+              </div>
+            </td>
+            <td><!-- 9: Organizasyon -->
+              <div class="td-inner">
+                <div class="dot-wrap"><span class="dot dot--normal"></span></div>
+                <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
+              </div>
+            </td>
+            <td><!-- 10: Sorumlu -->
+              <div class="td-inner">
+                <div class="sorumlu-avatar">SA</div>
+                <div class="td-cell"><span class="td-text">Selda Akdeniz</span></div>
+              </div>
+            </td>
+            <td><!-- 11: Uygulama -->
               <div class="td-inner">
                 <div class="td-cell"><span class="td-text">Akasya</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 12: ClickUp ID -->
               <div class="td-inner">
                 <div class="td-cell"><span class="td-text">YZ-58031</span></div>
               </div>
             </td>
           </tr>
           <!-- Row 2 -->
-          <tr>
-            <td>
+          <tr data-is-adi="İndirim Oranı Kontrolü" data-aciklama="İş emrinde indirim oranı cari kart limitini aşmamalı." data-uygulama="Akasya">
+            <td><!-- 1: İş Numarası -->
               <div class="td-inner">
                 <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
-                <div class="td-cell"><span class="td-text">1000001002</span></div>
+                <div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001002</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 2: Adı -->
               <div class="td-inner">
-                <div class="td-cell">
-                  <span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span>
+                <div class="td-cell"><span class="td-text">İndirim Oranı Kontrolü</span></div>
+              </div>
+            </td>
+            <td><!-- 3: Açıklama -->
+              <div class="td-inner">
+                <div class="td-cell"><span class="td-text">İş emrinde indirim oranı cari kart limitini aşmamalı.</span></div>
+              </div>
+            </td>
+            <td><!-- 4: İş Türü -->
+              <div class="td-inner">
+                <div class="badge-cell"><div class="badge badge--onay-bek"><span class="badge-text">Onay Bekleyen</span></div></div>
+              </div>
+            </td>
+            <td><!-- 5: H/T -->
+              <div class="td-inner">
+                <div class="td-cell"><span class="td-text">Hata</span></div>
+              </div>
+            </td>
+            <td><!-- 6: Öncelik -->
+              <div class="td-inner">
+                <div class="badge-cell">
+                  <div class="badge badge--yuksek" style="gap:4px;">
+                    <span class="dot dot--yuksek" style="width:6px;height:6px;flex-shrink:0;"></span>
+                    <span class="badge-text">Yüksek</span>
+                  </div>
                 </div>
               </div>
             </td>
-            <td>
+            <td><!-- 7: Durum -->
               <div class="td-inner">
-                <div class="badge-cell"><div class="badge"><span class="badge-text">Normal</span></div></div>
+                <div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div>
               </div>
             </td>
-            <td>
+            <td><!-- 8: Kullanıcı -->
               <div class="td-inner">
-                <div class="dot-wrap"><span class="dot"></span></div>
+                <div class="dot-wrap"><span class="dot dot--yuksek"></span></div>
                 <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 9: Organizasyon -->
               <div class="td-inner">
-                <div class="dot-wrap"><span class="dot"></span></div>
+                <div class="dot-wrap"><span class="dot dot--yuksek"></span></div>
                 <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 10: Sorumlu -->
               <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Talep</span></div>
+                <div class="sorumlu-avatar">SA</div>
+                <div class="td-cell"><span class="td-text">Selda Akdeniz</span></div>
               </div>
             </td>
-            <td>
-              <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Yeni Talep</span></div>
-              </div>
-            </td>
-            <td>
+            <td><!-- 11: Uygulama -->
               <div class="td-inner">
                 <div class="td-cell"><span class="td-text">Akasya</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 12: ClickUp ID -->
               <div class="td-inner">
-                <div class="td-cell"><span class="td-text">YZ-58031</span></div>
+                <div class="td-cell"><span class="td-text">YZ-58032</span></div>
               </div>
             </td>
           </tr>
           <!-- Row 3 -->
-          <tr>
-            <td>
+          <tr data-is-adi="Fatura Entegrasyon Talebi" data-aciklama="Fatura entegrasyon modülünde hata giderilmesi talep edilmektedir." data-uygulama="Medusa">
+            <td><!-- 1: İş Numarası -->
               <div class="td-inner">
                 <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
-                <div class="td-cell"><span class="td-text">1000001003</span></div>
+                <div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001003</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 2: Adı -->
               <div class="td-inner">
-                <div class="td-cell">
-                  <span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span>
-                </div>
+                <div class="td-cell"><span class="td-text">Fatura Entegrasyon Talebi</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 3: Açıklama -->
               <div class="td-inner">
-                <div class="badge-cell"><div class="badge"><span class="badge-text">Normal</span></div></div>
+                <div class="td-cell"><span class="td-text">Fatura entegrasyon modülünde hata giderilmesi talep edilmektedir.</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 4: İş Türü -->
               <div class="td-inner">
-                <div class="dot-wrap"><span class="dot"></span></div>
-                <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
+                <div class="badge-cell"><div class="badge badge--onaylandi"><span class="badge-text">Onaylandı</span></div></div>
               </div>
             </td>
-            <td>
-              <div class="td-inner">
-                <div class="dot-wrap"><span class="dot"></span></div>
-                <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
-              </div>
-            </td>
-            <td>
+            <td><!-- 5: H/T -->
               <div class="td-inner">
                 <div class="td-cell"><span class="td-text">Talep</span></div>
               </div>
             </td>
-            <td>
+            <td><!-- 6: Öncelik -->
               <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Yeni Talep</span></div>
+                <div class="badge-cell">
+                  <div class="badge badge--acil" style="gap:4px;">
+                    <span class="dot dot--acil" style="width:6px;height:6px;flex-shrink:0;"></span>
+                    <span class="badge-text">Acil</span>
+                  </div>
+                </div>
               </div>
             </td>
-            <td>
+            <td><!-- 7: Durum -->
               <div class="td-inner">
-                <div class="td-cell"><span class="td-text">Akasya</span></div>
+                <div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div>
               </div>
             </td>
-            <td>
+            <td><!-- 8: Kullanıcı -->
               <div class="td-inner">
-                <div class="td-cell"><span class="td-text">YZ-58031</span></div>
+                <div class="dot-wrap"><span class="dot dot--acil"></span></div>
+                <div class="td-cell"><span class="td-text">User - Akdeniz</span></div>
+              </div>
+            </td>
+            <td><!-- 9: Organizasyon -->
+              <div class="td-inner">
+                <div class="dot-wrap"><span class="dot dot--acil"></span></div>
+                <div class="td-cell"><span class="td-text">Akdeniz Holding A.Ş</span></div>
+              </div>
+            </td>
+            <td><!-- 10: Sorumlu -->
+              <div class="td-inner">
+                <div class="sorumlu-avatar">SA</div>
+                <div class="td-cell"><span class="td-text">Selda Akdeniz</span></div>
+              </div>
+            </td>
+            <td><!-- 11: Uygulama -->
+              <div class="td-inner">
+                <div class="td-cell"><span class="td-text">Medusa</span></div>
+              </div>
+            </td>
+            <td><!-- 12: ClickUp ID -->
+              <div class="td-inner">
+                <div class="td-cell"><span class="td-text">YZ-58033</span></div>
               </div>
             </td>
           </tr>
@@ -3069,37 +3226,51 @@
       const newNo = lastNo + 1;
 
       // Yeni satır
+      const isAdiVal = document.getElementById('tp-is-adi').value.trim() || '—';
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><div class="td-inner">
           <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
-          <div class="td-cell"><span class="td-text">${newNo}</span></div>
+          <div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">${newNo}</span></div>
+        </div></td>
+        <td><div class="td-inner">
+          <div class="td-cell"><span class="td-text">${isAdiVal}</span></div>
         </div></td>
         <td><div class="td-inner">
           <div class="td-cell"><span class="td-text">${aciklama}</span></div>
         </div></td>
         <td><div class="td-inner">
-          <div class="badge-cell"><div class="badge"><span class="badge-text">Normal</span></div></div>
-        </div></td>
-        <td><div class="td-inner">
-          <div class="dot-wrap"><span class="dot"></span></div>
-          <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
-        </div></td>
-        <td><div class="td-inner">
-          <div class="dot-wrap"><span class="dot"></span></div>
-          <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
+          <div class="badge-cell"><div class="badge badge--acik"><span class="badge-text">Açık</span></div></div>
         </div></td>
         <td><div class="td-inner">
           <div class="td-cell"><span class="td-text">Talep</span></div>
         </div></td>
         <td><div class="td-inner">
-          <div class="td-cell"><span class="td-text">Yeni Talep</span></div>
+          <div class="badge-cell"><div class="badge badge--normal" style="gap:4px;">
+            <span class="dot dot--normal" style="width:6px;height:6px;flex-shrink:0;"></span>
+            <span class="badge-text">Normal</span>
+          </div></div>
+        </div></td>
+        <td><div class="td-inner">
+          <div class="badge-cell"><div class="badge badge--yeni-talep"><span class="badge-text">Yeni Talep</span></div></div>
+        </div></td>
+        <td><div class="td-inner">
+          <div class="dot-wrap"><span class="dot dot--normal"></span></div>
+          <div class="td-cell"><span class="td-text">User - Mengerler</span></div>
+        </div></td>
+        <td><div class="td-inner">
+          <div class="dot-wrap"><span class="dot dot--normal"></span></div>
+          <div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div>
+        </div></td>
+        <td><div class="td-inner">
+          <div class="sorumlu-avatar">SA</div>
+          <div class="td-cell"><span class="td-text">Selda Akdeniz</span></div>
         </div></td>
         <td><div class="td-inner">
           <div class="td-cell"><span class="td-text">${uygulama}</span></div>
         </div></td>
         <td><div class="td-inner">
-          <div class="td-cell"><span class="td-text">YZ-58031</span></div>
+          <div class="td-cell"><span class="td-text">—</span></div>
         </div></td>
       `;
       tr.dataset.isAdi      = document.getElementById('tp-is-adi').value.trim();
@@ -3190,7 +3361,7 @@
         if (!filterValue) {
           tr.classList.remove('sc-hidden');
         } else {
-          const durum = tr.querySelector('td:nth-child(7) .td-text')?.textContent.trim() || '';
+          const durum = tr.querySelector('td:nth-child(7) .badge-text')?.textContent.trim() || '';
           tr.classList.toggle('sc-hidden', durum !== filterValue);
         }
       });
@@ -3259,16 +3430,28 @@
       const tdText = (n) => tr.querySelector(`td:nth-child(${n}) .td-text`)?.textContent.trim() || '';
       return {
         isNo:       tdText(1),
-        aciklama:   tr.dataset.aciklama  || tdText(2),
-        oncelik:    tr.querySelector('td:nth-child(3) .badge-text')?.textContent.trim() || 'Normal',
-        org:        tdText(5),
-        durum:      tdText(7),
-        uygulama:   tr.dataset.uygulama  || tdText(8),
-        clickupId:  tdText(9),
-        isAdi:      tr.dataset.isAdi     || '',
+        isAdi:      tr.dataset.isAdi     || tdText(2),
+        aciklama:   tr.dataset.aciklama  || tdText(3),
+        isTuru:     tr.querySelector('td:nth-child(4) .badge-text')?.textContent.trim() || '',
+        ht:         tdText(5),
+        oncelik:    tr.querySelector('td:nth-child(6) .badge-text')?.textContent.trim() || 'Normal',
+        durum:      tr.querySelector('td:nth-child(7) .badge-text')?.textContent.trim() || tdText(7),
+        kullanici:  tdText(8),
+        org:        tdText(9),
+        sorumlu:    tdText(10),
+        uygulama:   tr.dataset.uygulama  || tdText(11),
+        clickupId:  tdText(12),
         talepTarih: tr.dataset.talepTarih || '',
       };
     }
+
+    /* ── İş Numarası link → open edit ── */
+    document.querySelector('.data-table tbody').addEventListener('click', (e) => {
+      const link = e.target.closest('[data-action="open-edit"]');
+      if (!link) return;
+      const tr = link.closest('tr');
+      if (tr) openEditPanel(tr);
+    });
 
     /* ── Fill fields ── */
     function fillEditPanel(d) {

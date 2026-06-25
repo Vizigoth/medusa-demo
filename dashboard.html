@@ -889,11 +889,12 @@
       margin: 2px 0 2px 2px;
     }
 
-    /* Dot color variants — İş Türü (Figma 139:108995) */
-    .dot--type-acik      { background: var(--blue-500); }
-    .dot--type-onay-bek  { background: var(--yellow-500); }
-    .dot--type-onaylandi { background: var(--teal-600); }
-    .dot--type-redded    { background: var(--red-500); }
+    /* İş Türü — loader Lucide icon (Figma 139:108995) */
+    .is-turu-icon { width: 16px; height: 16px; display: block; flex-shrink: 0; }
+    .is-turu-icon--acik      { color: var(--blue-500); }
+    .is-turu-icon--onay-bek  { color: var(--yellow-500); }
+    .is-turu-icon--onaylandi { color: var(--teal-600); }
+    .is-turu-icon--redded    { color: var(--red-500); }
 
     /* Badge color variants — Durum (Figma 139:62960) */
     /* Yeni Talep: default — base .badge uses --bt-secondary-light */
@@ -2249,7 +2250,7 @@
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Açık</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="loader" class="is-turu-icon is-turu-icon--acik"></i></div><div class="td-cell"><span class="td-text">Açık</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--dusuk"></i></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
@@ -2264,7 +2265,7 @@
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onay-bek"></span></div><div class="td-cell"><span class="td-text">Onay Bekleyen</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="loader" class="is-turu-icon is-turu-icon--onay-bek"></i></div><div class="td-cell"><span class="td-text">Onay Bekleyen</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
@@ -2279,7 +2280,7 @@
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onaylandi"></span></div><div class="td-cell"><span class="td-text">Onaylanan</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="loader" class="is-turu-icon is-turu-icon--onaylandi"></i></div><div class="td-cell"><span class="td-text">Onaylanan</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div></div></td>
@@ -2294,7 +2295,7 @@
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-redded"></span></div><div class="td-cell"><span class="td-text">Reddedilen</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="loader" class="is-turu-icon is-turu-icon--redded"></i></div><div class="td-cell"><span class="td-text">Reddedilen</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--tamamlandi"><span class="badge-text">Tamamlandı</span></div></div></div></td>
@@ -2309,7 +2310,7 @@
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001001</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari kart talep</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-onay-bek"></span></div><div class="td-cell"><span class="td-text">Onay Bekleyen</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="loader" class="is-turu-icon is-turu-icon--onay-bek"></i></div><div class="td-cell"><span class="td-text">Onay Bekleyen</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--bilgi-bek"><span class="badge-text">Bilgi Bekleniyor</span></div></div></div></td>
@@ -3136,7 +3137,7 @@
           <div class="td-cell"><span class="td-text">${aciklama}</span></div>
         </div></td>
         <td><div class="td-inner">
-          <div class="dot-wrap"><span class="dot dot--type-acik"></span></div>
+          <div class="dot-wrap"><i data-lucide="loader" class="is-turu-icon is-turu-icon--acik"></i></div>
           <div class="td-cell"><span class="td-text">Açık</span></div>
         </div></td>
         <td><div class="td-inner">

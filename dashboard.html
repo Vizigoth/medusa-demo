@@ -1765,19 +1765,19 @@
       transition: color 0.15s;
     }
     .ep-act-card__chevron:hover { color: var(--bt-text-primary-default); }
+    .ep-act-card__chevron svg { transition: transform 0.2s ease; }
+    .ep-act-card.is-open .ep-act-card__chevron svg { transform: rotate(180deg); }
 
-    /* ── Edit Panel: Note box ── */
-    .ep-note-box {
-      border: 1px solid var(--bt-border-primary-default);
-      border-radius: var(--radius-sm);
+    /* ── Activity Card Body (collapsible) ── */
+    .ep-act-card__body {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-3xl);
+      padding: var(--space-2xl) 20px;
+      border-top: 1px solid var(--bt-border-primary-default);
       background: var(--bt-surface-primary-default);
-      min-height: 64px;
-      padding: var(--space-sm) var(--space-xl);
-      font-family: var(--font-text);
-      font-size: var(--text-xs);
-      color: var(--bt-text-primary-muted);
-      line-height: var(--lh-xs);
     }
+    .ep-act-card.is-open .ep-act-card__body { display: flex; }
 
     /* ── Edit Panel: File list ── */
     .ep-file-list { display: flex; flex-direction: column; }
@@ -2565,21 +2565,21 @@
           <p>Talep durumu ile ilgili tüm detaylar</p>
         </div>
 
-        <!-- Konu -->
+        <!-- İşin Adı (readonly) -->
         <div class="ep-field">
-          <label class="ep-label">Konu</label>
-          <input type="text" class="ep-input-edit" id="ep-konu" placeholder="Durum güncelleme konusu...">
+          <label class="ep-label">İşin Adı</label>
+          <input type="text" class="ep-input-ro" id="ep-is-adi-r" readonly>
         </div>
 
-        <!-- Not -->
+        <!-- Açıklama (readonly textarea) -->
         <div class="ep-field">
-          <label class="ep-label">Not</label>
-          <div class="ep-note-box" id="ep-not">Cari karta YP için yada işçilik için girilen bir indirim oranı varsa iş emrinde bu oran aşılmamalı.</div>
+          <label class="ep-label">Açıklama</label>
+          <textarea class="ep-input-ro ep-textarea-ro" id="ep-aciklama-r" style="height:64px;" readonly></textarea>
         </div>
 
-        <!-- Dosya Ekleri -->
+        <!-- Dosyalar Ekleri -->
         <div class="ep-field">
-          <label class="ep-label">Dosya Ekleri</label>
+          <label class="ep-label">Dosyalar Ekleri</label>
           <div class="ep-file-list">
             <div class="ep-file-item">
               <div class="ep-file-info">
@@ -2605,7 +2605,51 @@
         </div>
       </div>
 
-      <!-- Aktivite Log Kartı 1: SA – Onaylandı → Üzerinde Çalışılıyor -->
+      <!-- Aktivite Log Kartı 1: SA – Onaylandı → Üzerinde Çalışılıyor (EXPANDED) -->
+      <div class="ep-act-card is-open">
+        <div class="ep-act-card__header">
+          <div class="ep-act-card__user-log">
+            <div class="ep-act-card__user">
+              <div class="ep-act-card__avatar ep-act-card__avatar--blue">SA</div>
+              <div class="ep-act-card__info">
+                <span class="name">Selda Akdeniz güncelledi <span class="ep-log-isno">İş Numarası 1000001001</span></span>
+                <span class="date">01 / 01 / 2026 - 09:00:00</span>
+              </div>
+            </div>
+            <div class="ep-act-card__log">
+              <span class="lbl">Durum Güncellemesi</span>
+              <span class="lbl">-</span>
+              <span class="from">Onaylandı</span>
+              <span class="arr"><i data-lucide="chevron-right" style="width:16px;height:16px;"></i></span>
+              <span class="to">Üzerinde Çalışılıyor</span>
+            </div>
+          </div>
+          <button class="ep-act-card__chevron"><i data-lucide="chevron-down" style="width:24px;height:24px;"></i></button>
+        </div>
+        <div class="ep-act-card__body">
+          <div class="ep-field">
+            <label class="ep-label">Açıklama</label>
+            <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly>Description for additional information displayed below the title to clarify the purpose of the section.</textarea>
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">Dosyalar Ekleri</label>
+            <div class="ep-file-list">
+              <div class="ep-file-item">
+                <div class="ep-file-info">
+                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                  <div class="ep-file-meta">
+                    <span class="ep-file-name">Document Name click to preview.txt</span>
+                    <span class="ep-file-type">Dosya Eki</span>
+                  </div>
+                </div>
+                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aktivite Log Kartı 2: SA – Onaylandı → Üzerinde Çalışılıyor (collapsed) -->
       <div class="ep-act-card">
         <div class="ep-act-card__header">
           <div class="ep-act-card__user-log">
@@ -2626,32 +2670,30 @@
           </div>
           <button class="ep-act-card__chevron"><i data-lucide="chevron-down" style="width:24px;height:24px;"></i></button>
         </div>
-      </div>
-
-      <!-- Aktivite Log Kartı 2: SA – Onaylandı → Üzerinde Çalışılıyor -->
-      <div class="ep-act-card">
-        <div class="ep-act-card__header">
-          <div class="ep-act-card__user-log">
-            <div class="ep-act-card__user">
-              <div class="ep-act-card__avatar ep-act-card__avatar--blue">SA</div>
-              <div class="ep-act-card__info">
-                <span class="name">Selda Akdeniz güncelledi <span class="ep-log-isno">İş Numarası 1000001001</span></span>
-                <span class="date">01 / 01 / 2026 - 09:00:00</span>
+        <div class="ep-act-card__body">
+          <div class="ep-field">
+            <label class="ep-label">Açıklama</label>
+            <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly></textarea>
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">Dosyalar Ekleri</label>
+            <div class="ep-file-list">
+              <div class="ep-file-item">
+                <div class="ep-file-info">
+                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                  <div class="ep-file-meta">
+                    <span class="ep-file-name">Document Name click to preview.txt</span>
+                    <span class="ep-file-type">Dosya Eki</span>
+                  </div>
+                </div>
+                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
               </div>
             </div>
-            <div class="ep-act-card__log">
-              <span class="lbl">Durum Güncellemesi</span>
-              <span class="lbl">-</span>
-              <span class="from">Onaylandı</span>
-              <span class="arr"><i data-lucide="chevron-right" style="width:16px;height:16px;"></i></span>
-              <span class="to">Üzerinde Çalışılıyor</span>
-            </div>
           </div>
-          <button class="ep-act-card__chevron"><i data-lucide="chevron-down" style="width:24px;height:24px;"></i></button>
         </div>
       </div>
 
-      <!-- Aktivite Log Kartı 3: EG – Bilgi Bekleniyor → Onaylandı -->
+      <!-- Aktivite Log Kartı 3: EG – Bilgi Bekleniyor → Onaylandı (collapsed) -->
       <div class="ep-act-card">
         <div class="ep-act-card__header">
           <div class="ep-act-card__user-log ep-act-card__user-log--wide">
@@ -2672,9 +2714,30 @@
           </div>
           <button class="ep-act-card__chevron"><i data-lucide="chevron-down" style="width:24px;height:24px;"></i></button>
         </div>
+        <div class="ep-act-card__body">
+          <div class="ep-field">
+            <label class="ep-label">Açıklama</label>
+            <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly></textarea>
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">Dosyalar Ekleri</label>
+            <div class="ep-file-list">
+              <div class="ep-file-item">
+                <div class="ep-file-info">
+                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                  <div class="ep-file-meta">
+                    <span class="ep-file-name">Document Name click to preview.txt</span>
+                    <span class="ep-file-type">Dosya Eki</span>
+                  </div>
+                </div>
+                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Aktivite Log Kartı 4: SA – Onay Bekliyor → Bilgi Bekleniyor -->
+      <!-- Aktivite Log Kartı 4: SA – Onay Bekliyor → Bilgi Bekleniyor (collapsed) -->
       <div class="ep-act-card">
         <div class="ep-act-card__header">
           <div class="ep-act-card__user-log">
@@ -2695,9 +2758,30 @@
           </div>
           <button class="ep-act-card__chevron"><i data-lucide="chevron-down" style="width:24px;height:24px;"></i></button>
         </div>
+        <div class="ep-act-card__body">
+          <div class="ep-field">
+            <label class="ep-label">Açıklama</label>
+            <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly></textarea>
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">Dosyalar Ekleri</label>
+            <div class="ep-file-list">
+              <div class="ep-file-item">
+                <div class="ep-file-info">
+                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                  <div class="ep-file-meta">
+                    <span class="ep-file-name">Document Name click to preview.txt</span>
+                    <span class="ep-file-type">Dosya Eki</span>
+                  </div>
+                </div>
+                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Aktivite Log Kartı 5: EG – Yeni Talep → Onay Bekliyor -->
+      <!-- Aktivite Log Kartı 5: EG – Yeni Talep → Onay Bekliyor (collapsed) -->
       <div class="ep-act-card">
         <div class="ep-act-card__header">
           <div class="ep-act-card__user-log ep-act-card__user-log--wide">
@@ -2717,6 +2801,27 @@
             </div>
           </div>
           <button class="ep-act-card__chevron"><i data-lucide="chevron-down" style="width:24px;height:24px;"></i></button>
+        </div>
+        <div class="ep-act-card__body">
+          <div class="ep-field">
+            <label class="ep-label">Açıklama</label>
+            <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly></textarea>
+          </div>
+          <div class="ep-field">
+            <label class="ep-label">Dosyalar Ekleri</label>
+            <div class="ep-file-list">
+              <div class="ep-file-item">
+                <div class="ep-file-info">
+                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                  <div class="ep-file-meta">
+                    <span class="ep-file-name">Document Name click to preview.txt</span>
+                    <span class="ep-file-type">Dosya Eki</span>
+                  </div>
+                </div>
+                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -3124,7 +3229,8 @@
       document.getElementById('ep-org-display').textContent      = d.org      || '—';
       document.getElementById('ep-uygulama-display').textContent = d.uygulama || '—';
       document.getElementById('ep-talep-konusu').value = '';
-      document.getElementById('ep-konu').value          = '';
+      document.getElementById('ep-is-adi-r').value     = d.isAdi || d.aciklama || '';
+      document.getElementById('ep-aciklama-r').value   = d.aciklama || '';
       /* Aktivite kartlarındaki iş numarasını güncelle */
       document.querySelectorAll('.ep-log-isno').forEach(el => {
         el.textContent = 'İş Numarası ' + d.isNo;
@@ -3238,6 +3344,15 @@
     initDp('epTalepDpBtn', 'ep-talep-tarih', 'ep-talep-tarih-n');
     initDp('epOnayDpBtn',  'ep-onay-tarih',  'ep-onay-tarih-n');
     initDp('epHedefDpBtn', 'ep-hedef-tarih', 'ep-hedef-tarih-n');
+
+    /* ── Activity card collapse/expand ── */
+    editPanel.addEventListener('click', (e) => {
+      const chevron = e.target.closest('.ep-act-card__chevron');
+      if (!chevron) return;
+      const card = chevron.closest('.ep-act-card');
+      card.classList.toggle('is-open');
+      lucide.createIcons();
+    });
   })();
 </script>
 </body>

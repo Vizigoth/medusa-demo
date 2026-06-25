@@ -1702,6 +1702,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
+      cursor: pointer;
       padding: var(--space-md) var(--space-xs) var(--space-md) 20px;
     }
     .ep-act-card__user-log {
@@ -1771,14 +1772,6 @@
     .ep-act-card__chevron i { transition: transform 0.25s ease; display: block; }
     .ep-act-card.is-open .ep-act-card__chevron i { transform: rotate(180deg); }
 
-    /* ── Activity Card: header — only top corners rounded ── */
-    .ep-act-card__header {
-      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-    }
-    .ep-act-card:not(.is-open) .ep-act-card__header {
-      border-radius: var(--radius-sm);
-    }
-
     /* ── Activity Card Body (collapsible with animation) ── */
     .ep-act-card__body {
       display: flex;
@@ -1786,22 +1779,15 @@
       gap: var(--space-3xl);
       overflow: hidden;
       max-height: 0;
-      padding-top: 0;
-      padding-bottom: 0;
-      padding-left: 20px;
-      padding-right: 20px;
-      border-bottom: 0px solid var(--bt-border-primary-default);
-      border-left:   1px solid var(--bt-border-primary-default);
-      border-right:  1px solid var(--bt-border-primary-default);
-      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      padding: 0 20px;
+      /* inset shadow = header/body separator, invisible when height is 0 */
+      box-shadow: inset 0 1px 0 var(--bt-border-primary-default);
       background: var(--bt-surface-primary-default);
-      transition: max-height 0.3s ease, padding 0.3s ease, border-bottom-width 0.3s ease;
+      transition: max-height 0.3s ease, padding 0.3s ease;
     }
     .ep-act-card.is-open .ep-act-card__body {
       max-height: 500px;
-      padding-top: var(--space-2xl);
-      padding-bottom: var(--space-2xl);
-      border-bottom-width: 1px;
+      padding: var(--space-2xl) 20px;
     }
 
     /* ── Log arrow (move-down rotated -90deg = right arrow) ── */
@@ -3419,9 +3405,9 @@
 
     /* ── Activity card collapse/expand ── */
     editPanel.addEventListener('click', (e) => {
-      const chevron = e.target.closest('.ep-act-card__chevron');
-      if (!chevron) return;
-      const card = chevron.closest('.ep-act-card');
+      const header = e.target.closest('.ep-act-card__header');
+      if (!header) return;
+      const card = header.closest('.ep-act-card');
       card.classList.toggle('is-open');
     });
   })();

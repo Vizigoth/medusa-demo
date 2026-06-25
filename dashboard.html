@@ -1228,16 +1228,14 @@
       background: var(--bt-primary-default);
       border-color: var(--bt-primary-default);
     }
-    .checkbox-box.is-checked::after {
-      content: '';
-      width: 4px;
-      height: 7px;
-      border: 2px solid white;
-      border-top: none;
-      border-left: none;
-      transform: rotate(45deg) translateY(-1px);
+    .checkbox-box i {
+      display: none;
+      width: 12px;
+      height: 12px;
+      color: #ffffff;
       flex-shrink: 0;
     }
+    .checkbox-box.is-checked i { display: block; }
 
     /* Selected row highlight */
     .data-table tbody tr.is-selected-row td { background: var(--bt-surface-brand-subtle); }
@@ -2050,7 +2048,7 @@
             <th scope="col">
               <div class="th-inner">
                 <div class="th-checkbox">
-                  <div class="checkbox-box" role="checkbox" aria-label="Tümünü seç" tabindex="0"></div>
+                  <div class="checkbox-box" role="checkbox" aria-label="Tümünü seç" tabindex="0"><i data-lucide="check"></i></div>
                 </div>
                 <div class="th-label-area">
                   <span class="th-label">İş Numarası</span>
@@ -2113,7 +2111,7 @@
           <tr>
             <td>
               <div class="td-inner">
-                <div class="td-checkbox"><div class="checkbox-box"></div></div>
+                <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
                 <div class="td-cell"><span class="td-text">1000001001</span></div>
               </div>
             </td>
@@ -2166,7 +2164,7 @@
           <tr>
             <td>
               <div class="td-inner">
-                <div class="td-checkbox"><div class="checkbox-box"></div></div>
+                <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
                 <div class="td-cell"><span class="td-text">1000001002</span></div>
               </div>
             </td>
@@ -2219,7 +2217,7 @@
           <tr>
             <td>
               <div class="td-inner">
-                <div class="td-checkbox"><div class="checkbox-box"></div></div>
+                <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
                 <div class="td-cell"><span class="td-text">1000001003</span></div>
               </div>
             </td>
@@ -3074,7 +3072,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><div class="td-inner">
-          <div class="td-checkbox"><div class="checkbox-box"></div></div>
+          <div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div>
           <div class="td-cell"><span class="td-text">${newNo}</span></div>
         </div></td>
         <td><div class="td-inner">

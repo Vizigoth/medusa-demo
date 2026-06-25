@@ -1768,16 +1768,39 @@
     .ep-act-card__chevron svg { transition: transform 0.2s ease; }
     .ep-act-card.is-open .ep-act-card__chevron svg { transform: rotate(180deg); }
 
+    /* ── Activity Card: header — only top corners rounded ── */
+    .ep-act-card__header {
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+    .ep-act-card:not(.is-open) .ep-act-card__header {
+      border-radius: var(--radius-sm);
+    }
+
     /* ── Activity Card Body (collapsible) ── */
     .ep-act-card__body {
       display: none;
       flex-direction: column;
       gap: var(--space-3xl);
       padding: var(--space-2xl) 20px;
-      border-top: 1px solid var(--bt-border-primary-default);
+      border-bottom: 1px solid var(--bt-border-primary-default);
+      border-left:   1px solid var(--bt-border-primary-default);
+      border-right:  1px solid var(--bt-border-primary-default);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
       background: var(--bt-surface-primary-default);
     }
     .ep-act-card.is-open .ep-act-card__body { display: flex; }
+
+    /* ── Log arrow (move-down rotated -90deg = right arrow) ── */
+    .ep-log-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 16px;
+      flex-shrink: 0;
+      transform: rotate(-90deg);
+      color: var(--bt-text-primary-emphasis);
+    }
 
     /* ── Edit Panel: File list ── */
     .ep-file-list { display: flex; flex-direction: column; }
@@ -2620,7 +2643,7 @@
               <span class="lbl">Durum Güncellemesi</span>
               <span class="lbl">-</span>
               <span class="from">Onaylandı</span>
-              <span class="arr"><i data-lucide="chevron-right" style="width:16px;height:16px;"></i></span>
+              <span class="ep-log-arrow"><i data-lucide="move-down" style="width:16px;height:16px;"></i></span>
               <span class="to">Üzerinde Çalışılıyor</span>
             </div>
           </div>
@@ -2631,19 +2654,26 @@
             <label class="ep-label">Açıklama</label>
             <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly>Description for additional information displayed below the title to clarify the purpose of the section.</textarea>
           </div>
-          <div class="ep-field">
-            <label class="ep-label">Dosyalar Ekleri</label>
-            <div class="ep-file-list">
-              <div class="ep-file-item">
-                <div class="ep-file-info">
-                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
-                  <div class="ep-file-meta">
-                    <span class="ep-file-name">Document Name click to preview.txt</span>
-                    <span class="ep-file-type">Dosya Eki</span>
-                  </div>
+          <div class="ep-file-list">
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
                 </div>
-                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
               </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+            </div>
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
+                </div>
+              </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
             </div>
           </div>
         </div>
@@ -2664,7 +2694,7 @@
               <span class="lbl">Durum Güncellemesi</span>
               <span class="lbl">-</span>
               <span class="from">Onaylandı</span>
-              <span class="arr"><i data-lucide="chevron-right" style="width:16px;height:16px;"></i></span>
+              <span class="ep-log-arrow"><i data-lucide="move-down" style="width:16px;height:16px;"></i></span>
               <span class="to">Üzerinde Çalışılıyor</span>
             </div>
           </div>
@@ -2675,19 +2705,26 @@
             <label class="ep-label">Açıklama</label>
             <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly></textarea>
           </div>
-          <div class="ep-field">
-            <label class="ep-label">Dosyalar Ekleri</label>
-            <div class="ep-file-list">
-              <div class="ep-file-item">
-                <div class="ep-file-info">
-                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
-                  <div class="ep-file-meta">
-                    <span class="ep-file-name">Document Name click to preview.txt</span>
-                    <span class="ep-file-type">Dosya Eki</span>
-                  </div>
+          <div class="ep-file-list">
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
                 </div>
-                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
               </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+            </div>
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
+                </div>
+              </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
             </div>
           </div>
         </div>
@@ -2708,7 +2745,7 @@
               <span class="lbl">Durum Güncellemesi</span>
               <span class="lbl">-</span>
               <span class="from">Bilgi Bekleniyor</span>
-              <span class="arr"><i data-lucide="chevron-right" style="width:16px;height:16px;"></i></span>
+              <span class="ep-log-arrow"><i data-lucide="move-down" style="width:16px;height:16px;"></i></span>
               <span class="to">Onaylandı</span>
             </div>
           </div>
@@ -2719,19 +2756,26 @@
             <label class="ep-label">Açıklama</label>
             <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly></textarea>
           </div>
-          <div class="ep-field">
-            <label class="ep-label">Dosyalar Ekleri</label>
-            <div class="ep-file-list">
-              <div class="ep-file-item">
-                <div class="ep-file-info">
-                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
-                  <div class="ep-file-meta">
-                    <span class="ep-file-name">Document Name click to preview.txt</span>
-                    <span class="ep-file-type">Dosya Eki</span>
-                  </div>
+          <div class="ep-file-list">
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
                 </div>
-                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
               </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+            </div>
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
+                </div>
+              </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
             </div>
           </div>
         </div>
@@ -2752,7 +2796,7 @@
               <span class="lbl">Durum Güncellemesi</span>
               <span class="lbl">-</span>
               <span class="from">Onay Bekliyor</span>
-              <span class="arr"><i data-lucide="chevron-right" style="width:16px;height:16px;"></i></span>
+              <span class="ep-log-arrow"><i data-lucide="move-down" style="width:16px;height:16px;"></i></span>
               <span class="to">Bilgi Bekleniyor</span>
             </div>
           </div>
@@ -2763,19 +2807,26 @@
             <label class="ep-label">Açıklama</label>
             <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly></textarea>
           </div>
-          <div class="ep-field">
-            <label class="ep-label">Dosyalar Ekleri</label>
-            <div class="ep-file-list">
-              <div class="ep-file-item">
-                <div class="ep-file-info">
-                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
-                  <div class="ep-file-meta">
-                    <span class="ep-file-name">Document Name click to preview.txt</span>
-                    <span class="ep-file-type">Dosya Eki</span>
-                  </div>
+          <div class="ep-file-list">
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
                 </div>
-                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
               </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+            </div>
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
+                </div>
+              </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
             </div>
           </div>
         </div>
@@ -2796,7 +2847,7 @@
               <span class="lbl">Durum Güncellemesi</span>
               <span class="lbl">-</span>
               <span class="from">Yeni Talep</span>
-              <span class="arr"><i data-lucide="chevron-right" style="width:16px;height:16px;"></i></span>
+              <span class="ep-log-arrow"><i data-lucide="move-down" style="width:16px;height:16px;"></i></span>
               <span class="to">Onay Bekliyor</span>
             </div>
           </div>
@@ -2807,19 +2858,26 @@
             <label class="ep-label">Açıklama</label>
             <textarea class="ep-input-ro ep-textarea-ro" style="height:64px;" readonly></textarea>
           </div>
-          <div class="ep-field">
-            <label class="ep-label">Dosyalar Ekleri</label>
-            <div class="ep-file-list">
-              <div class="ep-file-item">
-                <div class="ep-file-info">
-                  <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
-                  <div class="ep-file-meta">
-                    <span class="ep-file-name">Document Name click to preview.txt</span>
-                    <span class="ep-file-type">Dosya Eki</span>
-                  </div>
+          <div class="ep-file-list">
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
                 </div>
-                <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
               </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
+            </div>
+            <div class="ep-file-item">
+              <div class="ep-file-info">
+                <span class="ep-file-icon"><i data-lucide="file" style="width:20px;height:20px;"></i></span>
+                <div class="ep-file-meta">
+                  <span class="ep-file-name">Document Name click to preview.txt</span>
+                  <span class="ep-file-type">Dosya Eki</span>
+                </div>
+              </div>
+              <button class="ep-file-dl" title="İndir"><i data-lucide="download" style="width:16px;height:16px;"></i></button>
             </div>
           </div>
         </div>

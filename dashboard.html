@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -62,7 +62,13 @@
 
       /* ── Semantic tokens — Icon ── */
       --bt-icon-primary-default:     #1a1a1a;
+      --bt-icon-brand-default:       #0d4e97;
       --bt-icon-primary-strong:      #535353;
+      --bt-icon-error-default:       #b31d38;
+
+      /* ── Semantic tokens — Surface Error ── */
+      --bt-surface-error-subtle:     #fde6e6;
+      --bt-surface-error-light:      #fef2f2;
 
       /* ── Interaction states (local tokens) ── */
       --bt-primary-hover:            #0b4485;
@@ -541,6 +547,7 @@
       flex-direction: column;
       height: 100%;
       overflow: hidden;
+      position: relative;
     }
     .main-content[hidden] { display: none !important; }
 
@@ -862,7 +869,9 @@
     }
 
     /* Hidden row (filtered out) */
-    .data-table tbody tr.sc-hidden { display: none; }
+    .data-table tbody tr.sc-hidden     { display: none; }
+    .data-table tbody tr.fp-hidden     { display: none; }
+    .data-table tbody tr.search-hidden { display: none; }
 
     .data-table {
       border-collapse: collapse;
@@ -967,8 +976,57 @@
       flex-shrink: 0;
       color: var(--bt-icon-primary-strong);
     }
-    .th-filter { padding: 2px; }
-    .icon-filter { width: 12px; height: 12px; display: block; color: var(--bt-icon-primary-strong); }
+    .th-filter { padding: 2px; cursor: pointer; border-radius: 3px; transition: background 0.12s; }
+    .th-filter:hover { background: var(--bt-surface-primary-subtle, rgba(0,0,0,0.05)); }
+    .icon-filter { width: 12px; height: 12px; display: block; color: var(--bt-icon-primary-strong); transition: color 0.12s; }
+    .th-filter--active .icon-filter { color: var(--bt-primary-default); }
+    .th-filter--active { background: var(--bt-surface-brand-subtle, #e8f0fe); }
+    .data-table tbody tr.cf-hidden { display: none; }
+
+    /* ── Column filter floating panel ── */
+    .col-fp {
+      position: fixed; z-index: 400;
+      min-width: 200px; max-width: 280px;
+      background: var(--bt-surface-primary-default);
+      border: 1px solid var(--bt-border-primary-default);
+      border-radius: var(--radius-sm, 6px);
+      box-shadow: 0 4px 12px rgba(16,24,40,0.14);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .col-fp[hidden] { display: none; }
+    .col-fp-search { padding: 8px 8px 6px; }
+    .col-fp-input {
+      width: 100%; box-sizing: border-box; height: 28px;
+      border: 1px solid var(--bt-border-primary-default);
+      border-radius: var(--radius-xs, 4px);
+      padding: 0 8px; font-size: var(--text-xs); font-family: var(--font-text);
+      color: var(--bt-text-primary-default); background: var(--bt-surface-primary-light);
+      outline: none;
+    }
+    .col-fp-input:focus { border-color: var(--bt-primary-default); }
+    .col-fp-list { overflow-y: auto; max-height: 200px; padding: 4px 0; }
+    .col-fp-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 10px; cursor: pointer;
+      font-size: var(--text-xs); font-family: var(--font-text);
+      color: var(--bt-text-primary-default); user-select: none;
+    }
+    .col-fp-item:hover { background: var(--bt-surface-primary-subtle, rgba(0,0,0,0.04)); }
+    .col-fp-item-check {
+      width: 14px; height: 14px; flex-shrink: 0;
+      border: 1.5px solid var(--bt-border-primary-default);
+      border-radius: 3px; display: flex; align-items: center; justify-content: center;
+      font-size: 9px; color: #fff;
+    }
+    .col-fp-item.is-checked .col-fp-item-check {
+      background: var(--bt-primary-default); border-color: var(--bt-primary-default);
+    }
+    .col-fp-item.is-checked .col-fp-item-check::after { content: '✓'; }
+    .col-fp-divider { height: 1px; background: var(--bt-border-primary-subtle, #eee); margin: 2px 0; }
+    .col-fp-footer {
+      padding: 6px 8px; display: flex; gap: 6px; justify-content: flex-end;
+      border-top: 1px solid var(--bt-border-primary-subtle, #eee);
+    }
 
     /* ── Column sort ── */
     th[data-col] { cursor: pointer; user-select: none; }
@@ -1081,6 +1139,202 @@
     }
     .col-sw.is-on .col-sw-thumb { transform: translateX(12px); }
 
+    /* ── BNT Grid Footer ── */
+    .bnt-grid-footer {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 8px var(--space-xl);
+      border-top: 1px solid var(--bt-border-primary-default);
+      background: var(--bt-base-default);
+      flex-shrink: 0;
+    }
+    .bnt-grid-footer.is-visible { display: flex; }
+    .bnt-footer-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bnt-footer-item[hidden] { display: none; }
+
+    /* ── BNT Filter Panel — task-panel ile aynı stiller ── */
+    .filter-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 653px;
+      height: 100vh;
+      z-index: 101;
+      display: flex;
+      flex-direction: column;
+      background: var(--bt-surface-primary-light);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+    .filter-panel.is-open { transform: translateX(0); }
+    .filter-panel.is-fullscreen { width: 100vw; }
+    .filter-panel.is-fullscreen .filter-panel-body { align-items: center; }
+    .filter-panel.is-fullscreen .filter-panel-inner {
+      width: 653px;
+    }
+    #bntFilterExpand svg,
+    #bntFilterExpand svg * { stroke-width: 1 !important; }
+
+    .filter-panel-header {
+      height: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-xl);
+      background: var(--bt-surface-primary-default);
+      border-bottom: 1px solid var(--bt-border-primary-default);
+      box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.08);
+    }
+    .filter-panel-header-left,
+    .filter-panel-header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .filter-panel-title {
+      font-family: var(--font-title);
+      font-size: var(--text-md);
+      font-weight: 400;
+      line-height: var(--lh-md);
+      color: var(--color-gray-900);
+    }
+    .fp-icon-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      padding: var(--space-sm);
+      border: none;
+      background: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--bt-text-primary-default);
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .fp-icon-btn:hover { background: var(--bt-surface-primary-subtle); }
+    .fp-icon-btn svg { width: 16px; height: 16px; display: block; }
+    /* More button dropdown */
+    .fp-more-wrap { position: relative; }
+    .fp-more-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 160px;
+      background: var(--bt-surface-primary-default);
+      border-radius: var(--radius-sm);
+      box-shadow:
+        0px 2px 4px rgba(16, 24, 40, 0.06),
+        0px 4px 8px rgba(16, 24, 40, 0.10);
+      z-index: 200;
+      overflow: hidden;
+    }
+    .fp-more-menu[hidden] { display: none; }
+    .fp-more-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      border: none;
+      background: none;
+      font-family: var(--font-text);
+      font-size: var(--text-xs);
+      font-weight: 400;
+      line-height: var(--lh-xs);
+      color: var(--bt-text-primary-default);
+      cursor: pointer;
+      text-align: left;
+    }
+    .fp-more-option:hover { background: var(--bt-surface-primary-subtle); }
+    .fp-more-option-icon { width: 14px; height: 14px; display: block; flex-shrink: 0; }
+
+    .filter-panel-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-2xl);
+      background: var(--bt-surface-primary-light);
+    }
+    .filter-panel-inner {
+      flex: 1;
+      background: var(--bt-surface-primary-default);
+      border: 1px solid var(--bt-border-primary-default);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    /* filter-panel dropdown list z-index — task-panel__card overflow:auto içinde görünür kalsın */
+    .filter-panel-inner { overflow: visible !important; }
+    .filter-panel-inner .tp-dropdown-list { z-index: 10; }
+
+    /* Switch Basic (filter panel) */
+    .fp-switch-basic {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: var(--bt-surface-primary-light);
+      border: 1px solid var(--bt-border-primary-default);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+    }
+    .fp-switch-basic-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .fp-switch-basic-label {
+      font-family: var(--font-title);
+      font-size: var(--text-xs);
+      font-weight: 400;
+      line-height: var(--lh-xs);
+      color: var(--bt-text-primary-default);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .fp-switch-basic-desc {
+      font-family: var(--font-text);
+      font-size: var(--text-xs);
+      font-weight: 400;
+      line-height: var(--lh-xs);
+      color: var(--bt-text-primary-emphasis);
+    }
+
+    /* active-filter indicator on toolbar button */
+    .toolbar-search-clear.fp-active { color: var(--bt-primary-default); }
+    .toolbar-search-clear.fp-active svg { stroke: var(--bt-primary-default); }
+    .bnt-footer-item + .bnt-footer-item:not([hidden]) {
+      padding-left: 16px;
+      border-left: 1px solid var(--bt-border-primary-default);
+    }
+    .bnt-footer-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--bt-text-primary-emphasis);
+    }
+    .bnt-footer-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--bt-primary-default);
+    }
+
     /* Column hide classes (col 2–12) */
     .data-table.col-hidden-2  thead tr th:nth-child(2),  .data-table.col-hidden-2  tbody tr td:nth-child(2)  { display: none; }
     .data-table.col-hidden-3  thead tr th:nth-child(3),  .data-table.col-hidden-3  tbody tr td:nth-child(3)  { display: none; }
@@ -1160,6 +1414,7 @@
     .badge.badge--calisiliyor { background: var(--orange-200); }
     .badge.badge--tamamlandi  { background: var(--green-100); }
     .badge.badge--bilgi-bek   { background: var(--purple-100); }
+    .badge.badge--redded      { background: var(--red-100, #fee2e2); }
 
     /* Öncelik — flag-triangle-right Lucide icon */
     .oncelik-icon { width: 16px; height: 16px; display: block; flex-shrink: 0; }
@@ -1691,6 +1946,17 @@
       gap: var(--space-2xl);
       padding: 20px;
     }
+
+    #editPanel.edit-panel--bnt #epLeftMst,
+    #editPanel.edit-panel--mst #epLeftBnt { display: none; }
+
+    /* Toolbar button visibility by mode */
+    #editPanel.edit-panel--mst #epTalepDurumuBtn,
+    #editPanel.edit-panel--mst #epOnayaGonderBtn,
+    #editPanel.edit-panel--mst #epTalepTamamlamaBtn,
+    #editPanel.edit-panel--mst #epClickupIsAcBtn { display: none; }
+    #editPanel.edit-panel--bnt #epMstOnayBtn,
+    #editPanel.edit-panel--bnt #epMstReddetBtn { display: none; }
 
     /* Right panel — fills remaining */
     .edit-panel__right {
@@ -2235,6 +2501,134 @@
       cursor: pointer; transition: background 0.15s;
     }
     .btn-flat-sm:hover { background: var(--bt-surface-primary-subtle); }
+    .btn-flat-sm--danger {
+      color: #b31d38;
+      border: 1px solid #b31d38;
+      border-radius: var(--radius-sm);
+    }
+    .btn-flat-sm--danger:hover { background: #fef2f2; }
+
+    /* ── Alert Dialog CSS ── */
+    .alert-dialog-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(16,24,40,0.32);
+      align-items: center;
+      justify-content: center;
+    }
+    .alert-dialog-overlay.is-open { display: flex; }
+    .alert-dialog {
+      background: var(--bt-surface-primary-default, #ffffff);
+      border-radius: var(--radius-sm);
+      /* Shadow/lg token: 0 4px 6px #10182808, 0 12px 16px #10182814 */
+      box-shadow: 0 4px 6px rgba(16,24,40,0.03), 0 12px 16px rgba(16,24,40,0.08);
+      width: 420px;
+      min-height: 204px;
+      display: flex;
+      flex-direction: column;
+    }
+    .alert-dialog__body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);      /* Space/xs = 4px */
+      padding: 20px var(--space-3xl, 20px);
+    }
+    /* Control container: Space/md = 8px padding on all sides */
+    .alert-dialog__icon-control {
+      width: 56px; height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    /* Pictogram outer circle: Blue/50 = #f1f7fe */
+    .alert-dialog__pictogram {
+      position: relative;
+      width: 40px; height: 40px;
+      border-radius: var(--radius-full);
+      background: #f1f7fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    /* Inner ring: Blue/100 = #e2edfc, 34px centered */
+    .alert-dialog__pictogram::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px; height: 34px;
+      border-radius: var(--radius-full);
+      background: #e2edfc;
+      pointer-events: none;
+    }
+    .alert-dialog__pictogram i,
+    .alert-dialog__pictogram svg {
+      position: relative;
+      z-index: 1;
+      color: var(--bt-icon-brand-default);
+      stroke: var(--bt-icon-brand-default);
+      width: 20px; height: 20px;
+      flex-shrink: 0;
+      display: block;
+    }
+    .alert-dialog__title {
+      font-family: var(--font-title);
+      font-size: var(--text-sm);     /* Font/Size/text-sm = 14px */
+      font-weight: 500;              /* Font/Weight/Medium */
+      line-height: var(--lh-xs);     /* Font/Line-Height/text-lh-sm = 16px */
+      color: #1a1a1a;                /* Gray/900 */
+      text-align: center;
+      width: 100%;
+    }
+    .alert-dialog__desc {
+      font-family: var(--font-text);
+      font-size: var(--text-xs);     /* Font/Size/text-xs = 12px */
+      font-weight: 400;              /* Font/Weight/Regular */
+      line-height: var(--lh-xs);     /* Font/Line-Height/text-lh-xs = 16px */
+      color: #1a1a1a;                /* Gray/900 */
+      text-align: center;
+      width: 100%;
+    }
+    .alert-dialog__footer {
+      flex-shrink: 0;
+      border-top: 1px solid var(--bt-border-primary-muted);  /* Border/Primary/--bt-border-primary-muted = #e6e6e6 */
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2xl, 16px);   /* Space/2xl = 16px */
+      padding: 12px var(--space-3xl, 20px); /* py: Radius/2xl=12px, px: Space/3xl=20px */
+    }
+    /* Error variant pictogram: Red/50 bg, Red/100 inner ring, Error icon #b31d38 */
+    .alert-dialog__pictogram--error {
+      background: var(--bt-surface-error-light, #fef2f2);
+    }
+    .alert-dialog__pictogram--error::before {
+      background: var(--bt-surface-error-subtle, #fde6e6);
+    }
+    .alert-dialog__pictogram--error i,
+    .alert-dialog__pictogram--error svg {
+      color: var(--bt-icon-error-default, #b31d38);
+      stroke: var(--bt-icon-error-default, #b31d38);
+    }
+    /* info icon rotated 180deg → exclamation effect */
+    .alert-dialog__icon-rotate {
+      transform: rotate(180deg);
+    }
+    /* Danger (destructive) button — extend .btn base */
+    .btn-danger {
+      background: var(--bt-icon-error-default, #b31d38);
+      color: #ffffff;
+      border: none;
+    }
+    .btn-danger:hover  { background: #961630; }
+    .btn-danger:active { background: #7d1228; transform: scale(0.97); }
 
     /* ── Talep Durumu Dialog CSS ── */
     .tdg-overlay {
@@ -2549,15 +2943,16 @@
       color: var(--bt-text-primary-muted);
       pointer-events: none;
     }
-  /* ── MST: Organizasyon, ClickUp ID — grid'de gizli, data DOM'da saklı ── */
-  #tableMst th[data-col="9"], #tableMst td:nth-child(9),
-  #tableMst th[data-col="12"], #tableMst td:nth-child(12) { display: none; }
-  #tableMst col.col-org, #tableMst col.col-clickup { width: 0 !important; }
+  /* MST son kolon Uygulama (col 10) — border-right + container padding hizalaması */
+  #tableMst th[data-col="10"], #tableMst td:nth-child(10) { border-right: 1px solid var(--bt-border-primary-default); }
+  #tableMst th[data-col="10"] .th-inner,
+  #tableMst td:nth-child(10) .td-inner { padding-right: var(--space-xl); }
   /* MST Açıklama kolonu BNT'den daha dar (görünür alan sığdırmak için 320→200px) */
   #tableMst col.col-aciklama { width: 200px; }
-  /* Toplam görünür genişlik: 149+170+200+129+88+150+157+150+157+154 = 1504px */
-  #tableMst { width: 1504px; }
-  #mainMst .grid-table-inner { width: 1504px; }
+  /* Uygulama kolonu kalan alanı doldurur — diğer kolonlar sabit (toplam 1350px) */
+  #tableMst col.col-uygulama { width: auto; }
+  #tableMst { width: 100%; min-width: 1350px; }
+  #mainMst .grid-table-inner { width: 100%; min-width: 1350px; }
   </style>
 </head>
 <body>
@@ -2723,21 +3118,52 @@
           </div>
         </div>
       </div>
+        <!-- Görünüm toggle -->
+        <div class="col-toggle-wrap" id="gorunumWrap">
+        <button class="btn-flat-sm" id="gorunumBtn" aria-haspopup="true" aria-expanded="false" aria-label="Görünüm seçenekleri">
+          <i data-lucide="loader" class="btn-icon"></i>
+          Görünüm
+        </button>
+        <div class="col-toggle-menu" id="gorunumMenu" role="menu">
+          <div class="col-toggle-menu-titles">
+            <span class="col-toggle-menu-title">Görünüm</span>
+            <span class="col-toggle-menu-subtitle">Görünüm seçeneklerini düzenleyin</span>
+          </div>
+          <div class="col-toggle-list">
+            <div class="col-toggle-item">
+              <div class="col-sw" id="swAcik"><div class="col-sw-thumb"></div></div>
+              <span class="col-toggle-name">Toplam İş Sayısı</span>
+            </div>
+            <div class="col-toggle-item">
+              <div class="col-sw" id="swOnayBek"><div class="col-sw-thumb"></div></div>
+              <span class="col-toggle-name">Toplam Onay Bekleyen</span>
+            </div>
+            <div class="col-toggle-item">
+              <div class="col-sw" id="swCalisilan"><div class="col-sw-thumb"></div></div>
+              <span class="col-toggle-name">Toplam Üzerinde Çalışılan</span>
+            </div>
+            <div class="col-toggle-item">
+              <div class="col-sw" id="swTamamlanan"><div class="col-sw-thumb"></div></div>
+              <span class="col-toggle-name">Toplam Tamamlanan</span>
+            </div>
+          </div>
+        </div>
+        </div>
       </div><!-- /toolbar-actions -->
 
       <div class="toolbar-search">
         <!-- Placeholder Text: pl:12px pr:4px py:4px -->
         <div class="toolbar-search-text">
-          <input class="toolbar-search-input" type="text" placeholder="Ara" aria-label="Tabloda ara">
+          <input class="toolbar-search-input" id="bntSearchInput" type="text" placeholder="Ara" aria-label="Tabloda ara">
         </div>
-        <!-- Clear Control: p:2px, 24×24 -->
-        <button class="toolbar-search-clear" aria-label="Temizle">
+        <!-- Filter Control: p:2px, 24×24 -->
+        <button class="toolbar-search-clear" id="bntFilterBtn" aria-label="Gelişmiş filtre">
           <i data-lucide="sliders-horizontal" class="icon-search-clear"></i>
         </button>
         <!-- Right Separator: 1px × 28px -->
         <div class="toolbar-search-sep" aria-hidden="true"></div>
         <!-- Search Control: p:2px, 24×24 -->
-        <button class="toolbar-search-btn" aria-label="Ara">
+        <button class="toolbar-search-btn" id="bntSearchBtn" aria-label="Ara">
           <i data-lucide="search" class="icon-search-toolbar"></i>
         </button>
       </div>
@@ -3306,8 +3732,182 @@
       <div class="no-record-area"></div>
         </div><!-- /grid-table-inner -->
         </div><!-- /grid-table-wrap -->
+      <div class="bnt-grid-footer" id="bntGridFooter">
+        <div class="bnt-footer-item" id="ftrAcik" hidden><span class="bnt-footer-label">Toplam Açık İş</span><span class="bnt-footer-count" id="cntAcik">0</span></div>
+        <div class="bnt-footer-item" id="ftrOnayBek" hidden><span class="bnt-footer-label">Toplam Onay Bekleyen</span><span class="bnt-footer-count" id="cntOnayBek">0</span></div>
+        <div class="bnt-footer-item" id="ftrCalisilan" hidden><span class="bnt-footer-label">Toplam Üzerinde Çalışılan</span><span class="bnt-footer-count" id="cntCalisilan">0</span></div>
+        <div class="bnt-footer-item" id="ftrTamamlanan" hidden><span class="bnt-footer-label">Toplam Tamamlanan</span><span class="bnt-footer-count" id="cntTamamlanan">0</span></div>
+      </div>
       </div><!-- /grid-card -->
     </div><!-- /table-container -->
+
+    <!-- BNT Advanced Filter Panel -->
+    <div class="filter-panel" id="bntFilterPanel" aria-hidden="true">
+      <div class="filter-panel-header">
+        <div class="filter-panel-header-left">
+          <div style="display:flex;align-items:center;gap:2px;">
+            <button class="fp-icon-btn" id="bntFilterClose" aria-label="Kapat">
+              <i data-lucide="x"></i>
+            </button>
+            <button class="fp-icon-btn" id="bntFilterExpand" aria-label="Tam ekran">
+              <i data-lucide="expand"></i>
+            </button>
+          </div>
+          <span class="filter-panel-title">Filtre</span>
+        </div>
+        <div class="filter-panel-header-right">
+          <button class="btn btn-primary" id="bntFilterApply" disabled>Filtrele</button>
+          <div class="fp-more-wrap" id="fpMoreWrap">
+            <button class="btn btn-outline" id="bntFilterMore" aria-label="Daha fazla" aria-haspopup="true" aria-expanded="false" style="width:28px;padding:0;">
+              <i data-lucide="ellipsis" class="btn-icon"></i>
+            </button>
+            <div class="fp-more-menu" id="fpMoreMenu" hidden>
+              <button class="fp-more-option" id="fpClearFilters">Filtre Temizle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="filter-panel-body">
+        <div class="filter-panel-inner">
+
+          <!-- İş Numarası -->
+          <div class="tp-field">
+            <label class="tp-label" for="fpIsNo">İş Numarası</label>
+            <div class="tp-input-wrap">
+              <input class="tp-input" id="fpIsNo" type="text" placeholder="İş Numarası">
+            </div>
+          </div>
+
+          <!-- İş Türü dropdown -->
+          <div class="tp-field">
+            <label class="tp-label" id="fp-is-turu-label">İş Türü</label>
+            <div class="tp-dropdown" id="fpIsTuruDropdown">
+              <div class="tp-input-wrap">
+                <button type="button" class="tp-dropdown-trigger" id="fpIsTuruTrigger"
+                        aria-haspopup="listbox" aria-expanded="false" aria-labelledby="fp-is-turu-label">
+                  <span class="tp-dropdown-display">İş Türü</span>
+                </button>
+                <div class="tp-input-icon">
+                  <i data-lucide="chevron-down" class="icon-tp-sm"></i>
+                </div>
+              </div>
+              <div class="tp-dropdown-list" role="listbox" aria-labelledby="fp-is-turu-label" hidden>
+                <div class="tp-dropdown-option" role="option" data-value="Açık">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="locate" class="icon-tp-option"></i></span>
+                  <span>Açık</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Onay Bekleyen">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="locate" class="icon-tp-option"></i></span>
+                  <span>Onay Bekleyen</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Onaylanan">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="locate" class="icon-tp-option"></i></span>
+                  <span>Onaylanan</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Reddedilen">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="locate" class="icon-tp-option"></i></span>
+                  <span>Reddedilen</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Öncelik dropdown -->
+          <div class="tp-field">
+            <label class="tp-label" id="fp-oncelik-label">Öncelik</label>
+            <div class="tp-dropdown" id="fpOncelikDropdown">
+              <div class="tp-input-wrap">
+                <button type="button" class="tp-dropdown-trigger" id="fpOncelikTrigger"
+                        aria-haspopup="listbox" aria-expanded="false" aria-labelledby="fp-oncelik-label">
+                  <span class="tp-dropdown-display">Öncelik</span>
+                </button>
+                <div class="tp-input-icon">
+                  <i data-lucide="chevron-down" class="icon-tp-sm"></i>
+                </div>
+              </div>
+              <div class="tp-dropdown-list" role="listbox" aria-labelledby="fp-oncelik-label" hidden>
+                <div class="tp-dropdown-option" role="option" data-value="Düşük">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="siren" class="icon-tp-option"></i></span>
+                  <span>Düşük</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Normal">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="siren" class="icon-tp-option"></i></span>
+                  <span>Normal</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Yüksek">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="siren" class="icon-tp-option"></i></span>
+                  <span>Yüksek</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Acil">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="siren" class="icon-tp-option"></i></span>
+                  <span>Acil</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Durum dropdown -->
+          <div class="tp-field">
+            <label class="tp-label" id="fp-durum-label">Durum</label>
+            <div class="tp-dropdown" id="fpDurumDropdown">
+              <div class="tp-input-wrap">
+                <button type="button" class="tp-dropdown-trigger" id="fpDurumTrigger"
+                        aria-haspopup="listbox" aria-expanded="false" aria-labelledby="fp-durum-label">
+                  <span class="tp-dropdown-display">Durum</span>
+                </button>
+                <div class="tp-input-icon">
+                  <i data-lucide="chevron-down" class="icon-tp-sm"></i>
+                </div>
+              </div>
+              <div class="tp-dropdown-list" role="listbox" aria-labelledby="fp-durum-label" hidden>
+                <div class="tp-dropdown-option" role="option" data-value="Yeni Talep">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="circle" class="icon-tp-option"></i></span>
+                  <span>Yeni Talep</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Onay Bekliyor">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="circle" class="icon-tp-option"></i></span>
+                  <span>Onay Bekliyor</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Üzerinde Çalışılıyor">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="circle" class="icon-tp-option"></i></span>
+                  <span>Üzerinde Çalışılıyor</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Tamamlandı">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="circle" class="icon-tp-option"></i></span>
+                  <span>Tamamlandı</span>
+                </div>
+                <div class="tp-dropdown-option" role="option" data-value="Reddedilen">
+                  <span class="tp-dropdown-option-icon"><i data-lucide="circle" class="icon-tp-option"></i></span>
+                  <span>Reddedilen</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Switch Basic -->
+          <div class="fp-switch-basic">
+            <div class="fp-switch-basic-content">
+              <span class="fp-switch-basic-label">Sorumlu Kişi Bilgisini Tabloda Gösterme</span>
+              <span class="fp-switch-basic-desc">Sorumlu sadece ben olduğum için ihtiyacım olmamasından kaynaklı bu switchi aktif.</span>
+            </div>
+            <div class="col-sw" id="fpSwSorumlu"><div class="col-sw-thumb"></div></div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /bntFilterPanel -->
+
+    <!-- BNT column header filter panel -->
+    <div class="col-fp" id="bntColFP" hidden>
+      <div class="col-fp-search">
+        <input class="col-fp-input" id="bntColFPInput" type="text" placeholder="Ara...">
+      </div>
+      <div class="col-fp-list" id="bntColFPList"></div>
+      <div class="col-fp-footer">
+        <button class="btn btn-outline" id="bntColFPClear" style="height:26px;font-size:11px;padding:0 10px;">Temizle</button>
+        <button class="btn btn-primary" id="bntColFPApply" style="height:26px;font-size:11px;padding:0 10px;">Uygula</button>
+      </div>
+    </div>
 
   </main>
 
@@ -3348,8 +3948,8 @@
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="6"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Öncelik</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="7"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Durum</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="8"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Kullanıcı</span></div>
-            <div class="col-toggle-item"><div class="col-sw is-on" data-col="10"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Sorumlu</span></div>
-            <div class="col-toggle-item"><div class="col-sw is-on" data-col="11"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Uygulama</span></div>
+            <div class="col-toggle-item"><div class="col-sw is-on" data-col="9"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Sorumlu</span></div>
+            <div class="col-toggle-item"><div class="col-sw is-on" data-col="10"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Uygulama</span></div>
           </div>
         </div>
       </div>
@@ -3388,18 +3988,16 @@
         <div class="grid-table-inner">
         <table class="data-table" id="tableMst" aria-label="Atanmamış İşler">
         <colgroup>
-          <col class="col-is-no">
-          <col class="col-adi">
-          <col class="col-aciklama">
-          <col class="col-is-turu">
-          <col class="col-ht">
-          <col class="col-oncelik">
-          <col class="col-durum">
-          <col class="col-kullanici">
-          <col class="col-org" style="width:0">
-          <col class="col-sorumlu">
+          <col class="col-is-no"    style="width:149px">
+          <col class="col-adi"      style="width:170px">
+          <col class="col-aciklama" style="width:200px">
+          <col class="col-is-turu"  style="width:129px">
+          <col class="col-ht"       style="width:88px">
+          <col class="col-oncelik"  style="width:150px">
+          <col class="col-durum"    style="width:157px">
+          <col class="col-kullanici" style="width:150px">
+          <col class="col-sorumlu"  style="width:157px">
           <col class="col-uygulama">
-          <col class="col-clickup" style="width:0">
         </colgroup>
         <thead>
           <tr>
@@ -3464,31 +4062,17 @@
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div><div class="th-sort"><i data-lucide="chevrons-up-down" class="icon-sort"></i></div>
               </div>
             </th>
-            <!-- 9: Organizasyon -->
+            <!-- 9: Sorumlu -->
             <th scope="col" data-col="9">
-              <div class="th-inner">
-                <div class="th-label-area"><span class="th-label">Organizasyon</span></div>
-                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div><div class="th-sort"><i data-lucide="chevrons-up-down" class="icon-sort"></i></div>
-              </div>
-            </th>
-            <!-- 10: Sorumlu -->
-            <th scope="col" data-col="10">
               <div class="th-inner">
                 <div class="th-label-area"><span class="th-label">Sorumlu</span></div>
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div><div class="th-sort"><i data-lucide="chevrons-up-down" class="icon-sort"></i></div>
               </div>
             </th>
-            <!-- 11: Uygulama -->
-            <th scope="col" data-col="11">
+            <!-- 10: Uygulama -->
+            <th scope="col" data-col="10">
               <div class="th-inner">
                 <div class="th-label-area"><span class="th-label">Uygulama</span></div>
-                <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div><div class="th-sort"><i data-lucide="chevrons-up-down" class="icon-sort"></i></div>
-              </div>
-            </th>
-            <!-- 12: ClickUp ID -->
-            <th scope="col" data-col="12">
-              <div class="th-inner">
-                <div class="th-label-area"><span class="th-label">ClickUp ID</span></div>
                 <div class="th-filter"><i data-lucide="filter" class="icon-filter"></i></div><div class="th-sort"><i data-lucide="chevrons-up-down" class="icon-sort"></i></div>
               </div>
             </th>
@@ -3504,10 +4088,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--dusuk"></i></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58031</span></div></div></td>
           </tr>
           <tr data-is-adi="Stok sayim formu" data-aciklama="Sayim esnasinda fark cikan kalemlerde otomatik duzeltme onerilmeli." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001002</span></div></div></td>
@@ -3518,10 +4100,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58032</span></div></div></td>
           </tr>
           <tr data-is-adi="Fatura onay akisi" data-aciklama="Fatura onayinda cok seviyeli yetkilendirme yapisi kurulmali, limit asiminda ust onaya yonlendirilmeli." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001003</span></div></div></td>
@@ -3532,10 +4112,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58033</span></div></div></td>
           </tr>
           <tr data-is-adi="Musteri segmentasyon raporu" data-aciklama="Satin alma davranisina gore musteriler A/B/C segmentlerine ayrilmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001004</span></div></div></td>
@@ -3546,10 +4124,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--redded"><span class="badge-text">Reddedilen</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58034</span></div></div></td>
           </tr>
           <tr data-is-adi="Is emri kapatma akisi" data-aciklama="Is emri kapatilirken malzeme ve iscilik maliyetleri otomatik hesaplanmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001005</span></div></div></td>
@@ -3560,10 +4136,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58035</span></div></div></td>
           </tr>
           <tr data-is-adi="Kullanici yetki matrisi" data-aciklama="Rol bazli erisim kontrolu icin yetki matrisi tanimlanmali ve periyodik denetim yapilmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001006</span></div></div></td>
@@ -3574,10 +4148,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58036</span></div></div></td>
           </tr>
           <tr data-is-adi="Siparis takip modulu" data-aciklama="Siparis durumu degisikliklerinde musteriye otomatik SMS/e-posta bildirimi gonderilmeli." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001007</span></div></div></td>
@@ -3588,10 +4160,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58037</span></div></div></td>
           </tr>
           <tr data-is-adi="Depo transfer talebi" data-aciklama="Depolar arasi transfer islemlerinde cift onay zorunlu olmali, stok rezervasyonu aninda yapilmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001008</span></div></div></td>
@@ -3602,10 +4172,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--dusuk"></i></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58038</span></div></div></td>
           </tr>
           <tr data-is-adi="Banka mutabakat raporu" data-aciklama="Aylik banka ekstreleri ile muhasebe kayitlari otomatik karsilastirarak fark raporu olusturulmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001009</span></div></div></td>
@@ -3616,10 +4184,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58039</span></div></div></td>
           </tr>
           <tr data-is-adi="Personel masraf beyani" data-aciklama="Personelin yurt ici/disi masraf beyanlarini fatura ekleriyle mobil onaya sunacak modul gerekli." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001010</span></div></div></td>
@@ -3630,10 +4196,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58040</span></div></div></td>
           </tr>
           <tr data-is-adi="Uretim planlama takvimi" data-aciklama="Makine kapasitesi ve is gucu kisitlari dikkate alinarak haftalik uretim plani otomatik olusturulmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001011</span></div></div></td>
@@ -3644,10 +4208,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58041</span></div></div></td>
           </tr>
           <tr data-is-adi="API entegrasyon katmani" data-aciklama="ERP sistemi ile e-ticaret platformu arasinda gercek zamanli stok ve siparis senkronizasyonu saglanmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001012</span></div></div></td>
@@ -3658,10 +4220,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58042</span></div></div></td>
           </tr>
           <tr data-is-adi="Kalite kontrol check-list" data-aciklama="Uretim hattinda her operasyon sonrasi dijital kalite kontrol formu doldurulmasi zorunlu kilinmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001013</span></div></div></td>
@@ -3672,10 +4232,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58043</span></div></div></td>
           </tr>
           <tr data-is-adi="Raporlama dashboardu" data-aciklama="Yonetim kademesi icin gercek zamanli KPI dashboard ekrani tasarlanmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001014</span></div></div></td>
@@ -3686,10 +4244,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--tamamlandi"><span class="badge-text">Tamamlandı</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58044</span></div></div></td>
           </tr>
           <tr data-is-adi="Odeme plani hatirlatici" data-aciklama="Vadesi yaklasan odeme planlari icin otomatik hatirlatma e-postasi ve push bildirimi atilmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001015</span></div></div></td>
@@ -3700,10 +4256,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--dusuk"></i></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58045</span></div></div></td>
           </tr>
           <tr data-is-adi="Izin yonetim sistemi" data-aciklama="Yillik, mazeret ve hastalik izinlerinin cevrimici talep ve onay akisiyla yonetilmesi saglanmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001016</span></div></div></td>
@@ -3714,10 +4268,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--tamamlandi"><span class="badge-text">Tamamlandı</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58046</span></div></div></td>
           </tr>
           <tr data-is-adi="Tedarikci portal entegrasyonu" data-aciklama="Tedarikci sip. durumlarini ve sevkiyat bilgilerini kendi portallarindan takip edebilmesi saglanmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001017</span></div></div></td>
@@ -3728,10 +4280,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58047</span></div></div></td>
           </tr>
           <tr data-is-adi="Malzeme ihtiyac planlamasi" data-aciklama="Uretim programina gore MRP hesaplamasi yapilarak satin alma onerileri otomatik olusturulmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001018</span></div></div></td>
@@ -3742,10 +4292,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58048</span></div></div></td>
           </tr>
           <tr data-is-adi="Proje maliyet takibi" data-aciklama="Proje bazinda butce-gerceklesme karsilastirmasi yapilarak sapma raporlari otomatik olusturulmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001019</span></div></div></td>
@@ -3756,10 +4304,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--dusuk"></i></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--tamamlandi"><span class="badge-text">Tamamlandı</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58049</span></div></div></td>
           </tr>
           <tr data-is-adi="Musteri sikayet kaydi" data-aciklama="Musterilerden gelen sikayetlerin kayit altina alinarak cozum sureci takibinin yapilabilmesi saglanmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001020</span></div></div></td>
@@ -3770,10 +4316,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--redded"><span class="badge-text">Reddedilen</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58050</span></div></div></td>
           </tr>
           <tr data-is-adi="Satis hedef takibi" data-aciklama="Aylik satis hedeflerinin temsilci bazinda gerceklesme oranlariyla izlenebilmesi icin panel gerekli." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001021</span></div></div></td>
@@ -3784,10 +4328,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58051</span></div></div></td>
           </tr>
           <tr data-is-adi="Arac bakim takip sistemi" data-aciklama="Filo araclarinin periyodik bakim zamanlarinin takibi ve servis randevu yonetimi yapilmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001022</span></div></div></td>
@@ -3798,10 +4340,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--dusuk"></i></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58052</span></div></div></td>
           </tr>
           <tr data-is-adi="Sozlesme yonetim modulu" data-aciklama="Musteri ve tedarikci sozlesmelerinin dijital olarak saklanmasi, suresi dolmadan 30 gun once uyari gonderilmeli." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001023</span></div></div></td>
@@ -3812,10 +4352,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--bilgi-bek"><span class="badge-text">Bilgi Bekleniyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58053</span></div></div></td>
           </tr>
           <tr data-is-adi="E-fatura arsiv sistemi" data-aciklama="Gelen ve giden e-faturalarin yasal saklama sureleri boyunca arsivlenmesi ve aranabilmesi saglanmali." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001024</span></div></div></td>
@@ -3826,10 +4364,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--onay-bkl"><span class="badge-text">Onay Bekliyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58054</span></div></div></td>
           </tr>
           <tr data-is-adi="Zimmet takip modulu" data-aciklama="Personele verilen demirbaslarin zimmet kaydi, devir ve iade sureclerinin sistematik yonetimi gerekli." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001025</span></div></div></td>
@@ -3840,10 +4376,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--acil"></i></div><div class="td-cell"><span class="td-text">Acil</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58055</span></div></div></td>
           </tr>
           <tr data-is-adi="Kasa yonetimi modulu" data-aciklama="Gunluk kasa acilis/kapanis islemleri, giris/cikis hareketleri ve mutabakat raporlarinin dijitallesmesi." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001026</span></div></div></td>
@@ -3854,10 +4388,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--normal"></i></div><div class="td-cell"><span class="td-text">Normal</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--redded"><span class="badge-text">Reddedilen</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58056</span></div></div></td>
           </tr>
           <tr data-is-adi="Donemsel kapanis sihirbazi" data-aciklama="Ay/yil sonu muhasebe kapanis islemlerini adim adim yonlendiren ve kontrol listesiyle destekleyen sihirbaz ekrani." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001027</span></div></div></td>
@@ -3868,10 +4400,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--dusuk"></i></div><div class="td-cell"><span class="td-text">Düşük</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--bilgi-bek"><span class="badge-text">Bilgi Bekleniyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58057</span></div></div></td>
           </tr>
           <tr data-is-adi="Personel performans degerlendirme" data-aciklama="360 derece geri bildirim sistemiyle yillik performans degerlendirme surecinin dijital ortama tasinmasi." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001028</span></div></div></td>
@@ -3882,10 +4412,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">EG</div><div class="td-cell"><span class="td-text">Emre Göcer</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58058</span></div></div></td>
           </tr>
           <tr data-is-adi="Stok yönetimi optimizasyonu" data-aciklama="Depo stok seviyelerinin gerçek zamanlı takibi ve otomatik yenileme süreçlerinin sisteme entegre edilmesi gereklidir." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001029</span></div></div></td>
@@ -3896,10 +4424,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58059</span></div></div></td>
           </tr>
           <tr data-is-adi="Müşteri sipariş takip modülü" data-aciklama="Müşterilerin sipariş durumlarını anlık olarak görüntüleyebileceği ve bildirim alabileceği bir takip modülü geliştirilmelidir." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001030</span></div></div></td>
@@ -3910,10 +4436,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58060</span></div></div></td>
           </tr>
           <tr data-is-adi="Fatura otomasyonu geliştirmesi" data-aciklama="Aylık fatura kesme süreçlerinin otomatikleştirilerek muhasebe sistemine entegre edilmesi ve e-fatura gönderiminin sağlanması beklenmektedir." data-uygulama="Akasya">
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001031</span></div></div></td>
@@ -3924,10 +4448,8 @@
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge badge--calisiliyor"><span class="badge-text">Üzerinde Çalışılıyor</span></div></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler User</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><span class="dot dot--type-acik"></span></div><div class="td-cell"><span class="td-text">Mengerler Otomotiv A.Ş</span></div></div></td>
             <td><div class="td-inner"><div class="sorumlu-avatar">SA</div><div class="td-cell"><span class="td-text">Selda Akdeniz</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Akasya</span></div></div></td>
-            <td><div class="td-inner"><div class="td-cell"><span class="td-text">YZ-58061</span></div></div></td>
           </tr>
         </tbody>
       </table>
@@ -4194,12 +4716,15 @@
       </button>
       <span class="edit-panel__title" id="editPanelTitle">İş Numarası</span>
     </div>
-    <button class="btn btn-primary" id="editPanelSave">Kaydet</button>
   </div>
 
   <!-- Toolbar -->
   <div class="edit-panel__toolbar">
-    <button class="btn btn-primary" id="epTalepDurumuBtn">
+    <button class="btn btn-primary" id="epOnayaGonderBtn">
+      <i data-lucide="loader" class="btn-icon"></i>
+      Onaya Gönder
+    </button>
+    <button class="btn-flat-sm" id="epTalepDurumuBtn">
       <i data-lucide="loader" class="btn-icon"></i>
       Talep Durumu
     </button>
@@ -4211,23 +4736,33 @@
       <i data-lucide="loader" class="btn-icon"></i>
       ClickUp İş Aç
     </button>
+    <button class="btn btn-primary" id="epMstOnayBtn">
+      <i data-lucide="loader" class="btn-icon"></i>
+      Onayla
+    </button>
+    <button class="btn-flat-sm" id="epMstReddetBtn">
+      <i data-lucide="loader" class="btn-icon"></i>
+      Reddet
+    </button>
   </div>
 
   <!-- Body -->
   <div class="edit-panel__body">
 
     <!-- ── LEFT PANEL ── -->
-    <div class="edit-panel__left">
+
+    <!-- BNT left panel (original layout) -->
+    <div class="edit-panel__left" id="epLeftBnt">
 
       <!-- İş Numarası + ClickUp ID (readonly) -->
-      <div class="ep-row ep-row--lg">
+      <div class="ep-row">
         <div class="ep-col">
           <label class="ep-label">İş Numarası</label>
-          <input type="text" class="ep-input-ro" id="ep-is-no" readonly>
+          <input type="text" class="ep-input-ro" id="bnt-ep-is-no" readonly>
         </div>
         <div class="ep-col">
           <label class="ep-label">ClickUp ID</label>
-          <input type="text" class="ep-input-ro" id="ep-clickup" readonly>
+          <input type="text" class="ep-input-ro" id="bnt-ep-clickup" readonly>
         </div>
       </div>
 
@@ -4236,9 +4771,144 @@
         <div class="ep-col">
           <label class="ep-label">Organizasyon</label>
           <button type="button" class="ep-dd-trigger ep-dd-ro has-value" tabindex="-1">
-            <span class="ep-dd-display" id="ep-org-display">—</span>
+            <span class="ep-dd-display" id="bnt-ep-org-display">—</span>
             <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
           </button>
+        </div>
+        <div class="ep-col">
+          <label class="ep-label">Uygulama</label>
+          <button type="button" class="ep-dd-trigger ep-dd-ro has-value" tabindex="-1">
+            <span class="ep-dd-display" id="bnt-ep-uygulama-display">—</span>
+            <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hata / Talep + Öncelik -->
+      <div class="ep-row">
+        <div class="ep-col">
+          <label class="ep-label">Hata / Talep</label>
+          <div class="ep-dropdown" id="bntEpHataTalepDd">
+            <button type="button" class="ep-dd-trigger ep-dd-ro has-value" id="bnt-ep-hata-talep-trigger"
+                    tabindex="-1">
+              <span class="ep-dd-display" id="bnt-ep-hata-talep-display">Talep</span>
+              <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
+            </button>
+            <div class="ep-dd-list" id="bntEpHataTalepList" role="listbox" hidden>
+              <div class="ep-dd-option" data-value="Talep">Talep</div>
+              <div class="ep-dd-option" data-value="Hata">Hata</div>
+            </div>
+          </div>
+        </div>
+        <div class="ep-col">
+          <label class="ep-label">Öncelik</label>
+          <div class="ep-dropdown" id="bntEpOncelikDd">
+            <button type="button" class="ep-dd-trigger has-value" id="bnt-ep-oncelik-trigger"
+                    aria-haspopup="listbox" aria-expanded="false">
+              <span class="ep-dd-display" id="bnt-ep-oncelik-display">Normal</span>
+              <span class="ep-dd-clear" id="bntEpOncelikClear"><i data-lucide="x" style="width:14px;height:14px;display:block;"></i></span>
+              <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
+            </button>
+            <div class="ep-dd-list" id="bntEpOncelikList" role="listbox" hidden>
+              <div class="ep-dd-option" data-value="Düşük">Düşük</div>
+              <div class="ep-dd-option is-selected" data-value="Normal">Normal</div>
+              <div class="ep-dd-option" data-value="Yüksek">Yüksek</div>
+              <div class="ep-dd-option" data-value="Acil">Acil</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sorumlu (full width) -->
+      <div class="ep-field">
+        <label class="ep-label">Sorumlu</label>
+        <div class="ep-dropdown" id="bntEpSorumluDd">
+          <button type="button" class="ep-dd-trigger" id="bnt-ep-sorumlu-trigger"
+                  aria-haspopup="listbox" aria-expanded="false">
+            <span class="ep-dd-display" id="bnt-ep-sorumlu-display">Sorumlu</span>
+            <span class="ep-dd-clear" id="bntEpSorumluClear" hidden><i data-lucide="x" style="width:14px;height:14px;display:block;"></i></span>
+            <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
+          </button>
+          <div class="ep-dd-list" id="bntEpSorumluList" role="listbox" hidden>
+            <div class="ep-dd-option" data-value="Selda Akdeniz">Selda Akdeniz</div>
+            <div class="ep-dd-option" data-value="Emre Göcer">Emre Göcer</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Talep Durumu (full width) -->
+      <div class="ep-field">
+        <label class="ep-label">Talep Durumu</label>
+        <div class="ep-dropdown" id="bntEpDurumDd">
+          <button type="button" class="ep-dd-trigger ep-dd-ro" id="bnt-ep-durum-trigger"
+                  tabindex="-1" aria-disabled="true">
+            <span class="ep-dd-display" id="bnt-ep-durum-display">Talep Durumu</span>
+            <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
+          </button>
+          <div class="ep-dd-list" id="bntEpDurumList" role="listbox" hidden>
+            <div class="ep-dd-option" data-value="Yeni Talep">Yeni Talep</div>
+            <div class="ep-dd-option" data-value="Onay Bekliyor">Onay Bekliyor</div>
+            <div class="ep-dd-option" data-value="Bilgi Bekleniyor">Bilgi Bekleniyor</div>
+            <div class="ep-dd-option" data-value="Onaylandı">Onaylandı</div>
+            <div class="ep-dd-option" data-value="Reddedilen">Reddedilen</div>
+            <div class="ep-dd-option" data-value="Üzerinde Çalışılıyor">Üzerinde Çalışılıyor</div>
+            <div class="ep-dd-option" data-value="Tamamlandı">Tamamlandı</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Talep Edilen Tarih + Talep Onay Tarihi -->
+      <div class="ep-row">
+        <div class="ep-col">
+          <label class="ep-label">Talep Edilen Tarih</label>
+          <div class="ep-datepicker ep-datepicker--ro">
+            <button class="ep-dp-icon" id="bntEpTalepDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
+            <input type="text" class="ep-dp-input" id="bnt-ep-talep-tarih" placeholder="01 / 01 / 2026" readonly>
+            <input type="date" class="ep-dp-native" id="bnt-ep-talep-tarih-n" tabindex="-1" aria-hidden="true">
+          </div>
+        </div>
+        <div class="ep-col">
+          <label class="ep-label">Talep Onay Tarihi</label>
+          <div class="ep-datepicker ep-datepicker--ro">
+            <button class="ep-dp-icon" id="bntEpOnayDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
+            <input type="text" class="ep-dp-input" id="bnt-ep-onay-tarih" placeholder="01 / 01 / 2026" readonly>
+            <input type="date" class="ep-dp-native" id="bnt-ep-onay-tarih-n" tabindex="-1" aria-hidden="true">
+          </div>
+        </div>
+      </div>
+
+      <!-- Gün + Planlanan Tarih -->
+      <div class="ep-row">
+        <div class="ep-col">
+          <label class="ep-label">Gün</label>
+          <input type="text" class="ep-input-edit" id="bnt-ep-gun" placeholder="Gün">
+        </div>
+        <div class="ep-col">
+          <label class="ep-label">Planlanan Tarih</label>
+          <div class="ep-datepicker">
+            <button class="ep-dp-icon" id="bntEpPlanlananDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
+            <input type="text" class="ep-dp-input" id="bnt-ep-planlanan-tarih" placeholder="01 / 01 / 2026" readonly>
+            <input type="date" class="ep-dp-native" id="bnt-ep-planlanan-tarih-n" tabindex="-1" aria-hidden="true">
+          </div>
+        </div>
+      </div>
+
+      <!-- Fatura Edilecek Gün (full width) -->
+      <div class="ep-field">
+        <label class="ep-label">Fatura Edilecek Gün</label>
+        <input type="text" class="ep-input-edit" id="bnt-ep-fatura-gun" placeholder="Fatura Edilecek Gün">
+      </div>
+
+    </div><!-- /epLeftBnt -->
+
+    <!-- MST left panel (Figma 178:10590) -->
+    <div class="edit-panel__left" id="epLeftMst">
+
+      <!-- İş Numarası + Uygulama (readonly) -->
+      <div class="ep-row">
+        <div class="ep-col">
+          <label class="ep-label">İş Numarası</label>
+          <input type="text" class="ep-input-ro" id="ep-is-no" readonly>
         </div>
         <div class="ep-col">
           <label class="ep-label">Uygulama</label>
@@ -4284,23 +4954,6 @@
         </div>
       </div>
 
-      <!-- Sorumlu (full width) -->
-      <div class="ep-field">
-        <label class="ep-label">Sorumlu</label>
-        <div class="ep-dropdown" id="epSorumluDd">
-          <button type="button" class="ep-dd-trigger" id="ep-sorumlu-trigger"
-                  aria-haspopup="listbox" aria-expanded="false">
-            <span class="ep-dd-display" id="ep-sorumlu-display">Sorumlu</span>
-            <span class="ep-dd-clear" id="epSorumluClear" hidden><i data-lucide="x" style="width:14px;height:14px;display:block;"></i></span>
-            <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
-          </button>
-          <div class="ep-dd-list" id="epSorumluList" role="listbox" hidden>
-            <div class="ep-dd-option" data-value="Selda Akdeniz">Selda Akdeniz</div>
-            <div class="ep-dd-option" data-value="Emre Göcer">Emre Göcer</div>
-          </div>
-        </div>
-      </div>
-
       <!-- Talep Durumu (full width) -->
       <div class="ep-field">
         <label class="ep-label">Talep Durumu</label>
@@ -4315,6 +4968,7 @@
             <div class="ep-dd-option" data-value="Onay Bekliyor">Onay Bekliyor</div>
             <div class="ep-dd-option" data-value="Bilgi Bekleniyor">Bilgi Bekleniyor</div>
             <div class="ep-dd-option" data-value="Onaylandı">Onaylandı</div>
+            <div class="ep-dd-option" data-value="Reddedilen">Reddedilen</div>
             <div class="ep-dd-option" data-value="Üzerinde Çalışılıyor">Üzerinde Çalışılıyor</div>
             <div class="ep-dd-option" data-value="Tamamlandı">Tamamlandı</div>
           </div>
@@ -4694,6 +5348,66 @@
     <button type="button" class="tt-alert__close" id="ttAlertClose" aria-label="Kapat">
       <i data-lucide="x" style="width:16px;height:16px;display:block;"></i>
     </button>
+  </div>
+</div>
+
+<!-- ── MST Onay Alert Dialog ── -->
+<div id="mstOnayAlertOverlay" class="alert-dialog-overlay" role="dialog" aria-modal="true">
+  <div class="alert-dialog">
+    <div class="alert-dialog__body">
+      <div class="alert-dialog__icon-control">
+        <div class="alert-dialog__pictogram">
+          <i data-lucide="info"></i>
+        </div>
+      </div>
+      <p class="alert-dialog__title">Talep Onaylanacak</p>
+      <p class="alert-dialog__desc">Talep "Onaylandı" olarak kaydedilecektir. Lütfen talep bilgilerini kontrol ettiğinizden ve doğruluğundan emin olun.</p>
+    </div>
+    <div class="alert-dialog__footer">
+      <button class="btn-flat-sm" id="mstOnayAlertVazgec">Vazgeç</button>
+      <button class="btn btn-primary" id="mstOnayAlertOnayla">Onayla</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MST Reddet Alert Dialog ── -->
+<div id="mstReddetAlertOverlay" class="alert-dialog-overlay" role="dialog" aria-modal="true">
+  <div class="alert-dialog">
+    <div class="alert-dialog__body">
+      <div class="alert-dialog__icon-control">
+        <div class="alert-dialog__pictogram alert-dialog__pictogram--error">
+          <i data-lucide="info" class="alert-dialog__icon-rotate"></i>
+        </div>
+      </div>
+      <p class="alert-dialog__title">Talep Reddedilecek</p>
+      <p class="alert-dialog__desc">Talep "Reddedildi" olarak kaydedilecektir. Lütfen talep bilgilerini kontrol ettiğinizden ve doğruluğundan emin olun.</p>
+    </div>
+    <div class="alert-dialog__footer">
+      <button class="btn-flat-sm" id="mstReddetAlertVazgec">Vazgeç</button>
+      <button class="btn btn-danger" id="mstReddetAlertReddet">Reddet</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Onay Talep Et Dialog (BNT Onaya Gönder) ── -->
+<div id="onayTalepOverlay" class="tdg-overlay" role="dialog" aria-modal="true" aria-labelledby="onayTalepTitle">
+  <div class="tdg-dialog" style="width:480px;">
+    <div class="tdg-header">
+      <span class="tdg-title" id="onayTalepTitle">Onay Talep Et</span>
+      <button class="tdg-close" id="onayTalepClose" aria-label="Kapat">
+        <i data-lucide="x" style="width:16px;height:16px;display:block;"></i>
+      </button>
+    </div>
+    <div class="tdg-body">
+      <div class="tdg-field">
+        <label class="tdg-label" for="onayTalepAciklama">Onay Talebi Açıklama</label>
+        <textarea class="tdg-textarea" id="onayTalepAciklama" rows="5" style="height:100px;" placeholder="Açıklama giriniz..."></textarea>
+      </div>
+    </div>
+    <div class="tdg-footer">
+      <button type="button" class="tdg-btn-cancel" id="onayTalepVazgec">Vazgeç</button>
+      <button type="button" class="tdg-btn-save"   id="onayTalepGonder">Gönder</button>
+    </div>
   </div>
 </div>
 
@@ -5259,11 +5973,16 @@
   (function () {
     const editPanel  = document.getElementById('editPanel');
     const editClose  = document.getElementById('editPanelClose');
-    const editSave   = document.getElementById('editPanelSave');
     const duzenleBtn = document.getElementById('duzenleBtn');
+
+    let _currentEditRow = null;
 
     /* ── Open / Close ── */
     function openEditPanel(tr) {
+      _currentEditRow = tr;
+      const isMst = !!tr.closest('#tableMst, #mainMst');
+      editPanel.classList.toggle('edit-panel--mst', isMst);
+      editPanel.classList.toggle('edit-panel--bnt', !isMst);
       fillEditPanel(readRowData(tr));
       editPanel.hidden = false;
       requestAnimationFrame(() => {
@@ -5289,34 +6008,143 @@
     });
 
     editClose.addEventListener('click', closeEditPanel);
-    editSave.addEventListener('click', () => {
-      /* Sync Sorumlu change to both BNT and MST grids */
-      const epIsNo       = document.getElementById('ep-is-no');
-      const sorumluTrigger = document.getElementById('ep-sorumlu-trigger');
-      const sorumluDisplay = document.getElementById('ep-sorumlu-display');
-      if (epIsNo && sorumluTrigger && sorumluDisplay) {
-        const isNo      = epIsNo.value.trim();
-        const hasValue  = sorumluTrigger.classList.contains('has-value');
-        const sorumluVal = hasValue ? (sorumluDisplay.textContent.trim() || '—') : '—';
-        function updateSorumluCell(tbody) {
-          if (!tbody) return;
-          tbody.querySelectorAll('tr').forEach(row => {
-            const link = row.querySelector('.td-isno-link');
-            if (!link || link.textContent.trim() !== isNo) return;
-            const td = row.querySelector('td:nth-child(10)');
-            if (!td) return;
-            if (sorumluVal === '—') {
-              td.innerHTML = '<div class="td-inner"><div class="td-cell"><span class="td-text">—</span></div></div>';
-            } else {
-              const initials = sorumluVal.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
-              td.innerHTML = `<div class="td-inner"><div class="sorumlu-avatar">${initials}</div><div class="td-cell"><span class="td-text">${sorumluVal}</span></div></div>`;
-            }
-          });
+
+    /* ── MST Onayla / Reddet ── */
+    function mstUpdateIsTuru(isTuruLabel, isTuruIconCls, durumLabel, durumBadgeCls) {
+      const isNo = document.getElementById('ep-is-no')?.value.trim();
+      if (!isNo) return;
+
+      /* read old durum from MST grid before update */
+      let oldDurum = '';
+      const mstRow = Array.from(document.querySelectorAll('#tableMst tbody tr')).find(r => r.querySelector('.td-isno-link')?.textContent.trim() === isNo);
+      if (mstRow) oldDurum = mstRow.querySelector('td:nth-child(7) .badge-text')?.textContent.trim() || '';
+
+      function updateRow(row) {
+        const tdIsTuru = row.querySelector('td:nth-child(4)');
+        if (tdIsTuru) {
+          tdIsTuru.innerHTML = `<div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon ${isTuruIconCls}"></i></div><div class="td-cell"><span class="td-text">${isTuruLabel}</span></div></div>`;
+          lucide.createIcons({ nodes: [tdIsTuru] });
         }
-        updateSorumluCell(document.getElementById('tableBnt')?.querySelector('tbody'));
-        updateSorumluCell(document.getElementById('tableMst')?.querySelector('tbody'));
+        const tdDurum = row.querySelector('td:nth-child(7)');
+        if (tdDurum) {
+          tdDurum.innerHTML = `<div class="td-inner"><div class="badge-cell"><div class="badge${durumBadgeCls ? ' ' + durumBadgeCls : ''}"><span class="badge-text">${durumLabel}</span></div></div></div>`;
+        }
       }
-      closeEditPanel();
+
+      /* MST grid */
+      document.querySelectorAll('#tableMst tbody tr').forEach(row => {
+        if (row.querySelector('.td-isno-link')?.textContent.trim() === isNo) updateRow(row);
+      });
+
+      /* BNT grid */
+      document.querySelectorAll('#tableBnt tbody tr').forEach(row => {
+        if (row.querySelector('.td-isno-link')?.textContent.trim() === isNo) updateRow(row);
+      });
+
+      /* MST edit panel — Talep Durumu display */
+      const epDisplay = document.getElementById('ep-durum-display');
+      if (epDisplay) {
+        epDisplay.textContent = durumLabel;
+        epDisplay.classList.remove('ep-dd-placeholder');
+      }
+
+      /* activity log card */
+      if (window._addActivityCard) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'numeric'}).replace(/\./g, '/') + ' - ' + now.toLocaleTimeString('tr-TR');
+        window._addActivityCard(oldDurum, durumLabel, '', [], dateStr, {initials: 'EG', name: 'Emre Göcer', avatarCls: 'ep-act-card__avatar--gray'});
+      }
+    }
+
+    document.getElementById('epMstOnayBtn')?.addEventListener('click', () => {
+      const overlay = document.getElementById('mstOnayAlertOverlay');
+      overlay.classList.add('is-open');
+      lucide.createIcons({ nodes: [overlay] });
+    });
+
+    document.getElementById('mstOnayAlertVazgec')?.addEventListener('click', () => {
+      document.getElementById('mstOnayAlertOverlay').classList.remove('is-open');
+    });
+
+    document.getElementById('mstOnayAlertOnayla')?.addEventListener('click', () => {
+      document.getElementById('mstOnayAlertOverlay').classList.remove('is-open');
+      mstUpdateIsTuru('Onaylanan', 'is-turu-icon--onaylandi', 'Onaylandı', 'badge--onaylandi');
+    });
+    document.getElementById('epMstReddetBtn')?.addEventListener('click', () => {
+      const overlay = document.getElementById('mstReddetAlertOverlay');
+      overlay.classList.add('is-open');
+      lucide.createIcons({ nodes: [overlay] });
+    });
+
+    document.getElementById('mstReddetAlertVazgec')?.addEventListener('click', () => {
+      document.getElementById('mstReddetAlertOverlay').classList.remove('is-open');
+    });
+
+    document.getElementById('mstReddetAlertReddet')?.addEventListener('click', () => {
+      document.getElementById('mstReddetAlertOverlay').classList.remove('is-open');
+      mstUpdateIsTuru('Reddedilen', 'is-turu-icon--redded', 'Reddedilen', 'badge--redded');
+    });
+
+    /* ── Onaya Gönder — dialog açar ── */
+    document.getElementById('epOnayaGonderBtn')?.addEventListener('click', () => {
+      const isNo = document.getElementById('bnt-ep-is-no')?.value.trim();
+      if (!isNo) return;
+      const overlay = document.getElementById('onayTalepOverlay');
+      document.getElementById('onayTalepAciklama').value = '';
+      overlay.classList.add('is-open');
+      lucide.createIcons({ nodes: [overlay] });
+    });
+
+    function _closeOnayTalep() {
+      document.getElementById('onayTalepOverlay').classList.remove('is-open');
+    }
+    document.getElementById('onayTalepClose')?.addEventListener('click', _closeOnayTalep);
+    document.getElementById('onayTalepVazgec')?.addEventListener('click', _closeOnayTalep);
+
+    document.getElementById('onayTalepGonder')?.addEventListener('click', () => {
+      _closeOnayTalep();
+
+      const isNo = document.getElementById('bnt-ep-is-no')?.value.trim();
+      if (!isNo) return;
+
+      const isTuruLabel   = 'Onay Bekleyen';
+      const isTuruIconCls = 'is-turu-icon--onay-bek';
+      const durumLabel    = 'Onay Bekliyor';
+      const durumBadgeCls = 'badge--onay-bkl';
+
+      function updateRow(row) {
+        const tdIsTuru = row.querySelector('td:nth-child(4)');
+        if (tdIsTuru) {
+          tdIsTuru.innerHTML = `<div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon ${isTuruIconCls}"></i></div><div class="td-cell"><span class="td-text">${isTuruLabel}</span></div></div>`;
+          lucide.createIcons({ nodes: [tdIsTuru] });
+        }
+        const tdDurum = row.querySelector('td:nth-child(7)');
+        if (tdDurum) {
+          tdDurum.innerHTML = `<div class="td-inner"><div class="badge-cell"><div class="badge ${durumBadgeCls}"><span class="badge-text">${durumLabel}</span></div></div></div>`;
+        }
+      }
+
+      let oldDurum = '';
+      document.querySelectorAll('#tableBnt tbody tr').forEach(row => {
+        if (row.querySelector('.td-isno-link')?.textContent.trim() !== isNo) return;
+        oldDurum = row.querySelector('td:nth-child(7) .badge-text')?.textContent.trim() || '';
+        updateRow(row);
+      });
+      document.querySelectorAll('#tableMst tbody tr').forEach(row => {
+        if (row.querySelector('.td-isno-link')?.textContent.trim() === isNo) updateRow(row);
+      });
+
+      const epDisplay = document.getElementById('bnt-ep-durum-display');
+      if (epDisplay) {
+        epDisplay.textContent = durumLabel;
+        epDisplay.classList.remove('ep-dd-placeholder');
+      }
+
+      if (window._addActivityCard) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'numeric'}).replace(/\./g, '/') + ' - ' + now.toLocaleTimeString('tr-TR');
+        window._addActivityCard(oldDurum, durumLabel, '', [], dateStr);
+      }
     });
 
     /* ── ClickUp İş Aç ── */
@@ -5324,15 +6152,16 @@
     epClickupBtn && epClickupBtn.addEventListener('click', () => {
       const label    = 'Üzerinde Çalışılıyor';
       const badgeCls = 'badge--calisiliyor';
+      const isMst    = editPanel.classList.contains('edit-panel--mst');
+      const durumDisplayId = isMst ? 'ep-durum-display' : 'bnt-ep-durum-display';
+      const isNoId         = isMst ? 'ep-is-no'         : 'bnt-ep-is-no';
 
       /* Edit panel status */
-      const epDisplay = document.getElementById('ep-durum-display');
+      const epDisplay = document.getElementById(durumDisplayId);
       if (epDisplay) { epDisplay.textContent = label; epDisplay.classList.remove('ep-dd-placeholder'); }
-      const epClear = document.getElementById('epDurumClear');
-      if (epClear) epClear.hidden = false;
 
-      /* Grid badge for matching row */
-      const epIsNo = document.getElementById('ep-is-no');
+      /* Grid badge + İş Türü for matching row */
+      const epIsNo = document.getElementById(isNoId);
       if (epIsNo) {
         getActiveMain().querySelectorAll('.data-table tbody tr').forEach(row => {
           const link = row.querySelector('.td-isno-link');
@@ -5342,6 +6171,8 @@
               badgeEl.className = 'badge ' + badgeCls;
               badgeEl.querySelector('.badge-text').textContent = label;
             }
+            if (!isMst && window._bntSyncDurumToMst) window._bntSyncDurumToMst(row, label, badgeCls);
+            if (!isMst && window._bntSetIsTuruOnaylanan) window._bntSetIsTuruOnaylanan(row);
           }
         });
       }
@@ -5355,6 +6186,27 @@
     /* ── Read row data ── */
     function readRowData(tr) {
       const tdText = (n) => tr.querySelector(`td:nth-child(${n}) .td-text`)?.textContent.trim() || '';
+      const isMstRow = !!tr.closest('#tableMst');
+      if (isMstRow) {
+        return {
+          isNo:       tdText(1),
+          isAdi:      tr.dataset.isAdi     || tdText(2),
+          aciklama:   tr.dataset.aciklama  || tdText(3),
+          isTuru:     tdText(4),
+          ht:         tdText(5),
+          oncelik:    tdText(6),
+          durum:      tr.querySelector('td:nth-child(7) .badge-text')?.textContent.trim() || tdText(7),
+          kullanici:  tdText(8),
+          org:        'Mengerler Otomotiv A.Ş',
+          sorumlu:    tdText(9),
+          uygulama:   tr.dataset.uygulama  || tdText(10),
+          clickupId:  '',
+          talepTarih: tr.dataset.talepTarih || '',
+          gun:        tr.dataset.gun       || '',
+          planlanan:  tr.dataset.planlanan || '',
+          faturaGun:  tr.dataset.faturaGun || '',
+        };
+      }
       return {
         isNo:       tdText(1),
         isAdi:      tr.dataset.isAdi     || tdText(2),
@@ -5369,6 +6221,9 @@
         uygulama:   tr.dataset.uygulama  || tdText(11),
         clickupId:  tdText(12),
         talepTarih: tr.dataset.talepTarih || '',
+        gun:        tr.dataset.gun       || '',
+        planlanan:  tr.dataset.planlanan || '',
+        faturaGun:  tr.dataset.faturaGun || '',
       };
     }
 
@@ -5382,47 +6237,70 @@
 
     /* ── Fill fields ── */
     /* ── Lock / Unlock left panel ── */
-    const epInteractiveTriggers = ['ep-oncelik-trigger', 'ep-sorumlu-trigger'];
-    const epInteractiveClearIds = ['epOncelikClear', 'epSorumluClear'];
-    const epEditableInputIds    = ['ep-gun', 'ep-fatura-gun'];
-    const epDpContainerIds      = ['epPlanlananDpBtn'];
-
-    function epDpContainers() {
-      return epDpContainerIds.map(id => document.getElementById(id)?.closest('.ep-datepicker')).filter(Boolean);
+    function _epPanelIds() {
+      const isMst = editPanel.classList.contains('edit-panel--mst');
+      return isMst ? {
+        triggers : ['ep-oncelik-trigger'],
+        clears   : ['epOncelikClear'],
+        inputs   : ['ep-gun', 'ep-fatura-gun'],
+        dpBtns   : ['epPlanlananDpBtn'],
+      } : {
+        triggers : ['bnt-ep-oncelik-trigger', 'bnt-ep-sorumlu-trigger'],
+        clears   : ['bntEpOncelikClear', 'bntEpSorumluClear'],
+        inputs   : ['bnt-ep-gun', 'bnt-ep-fatura-gun'],
+        dpBtns   : ['bntEpPlanlananDpBtn'],
+      };
     }
 
     function lockEditPanelLeft() {
-      epInteractiveTriggers.forEach(id => {
+      const ids = _epPanelIds();
+      ids.triggers.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.add('ep-dd-ro');
         el.setAttribute('tabindex', '-1');
         el.setAttribute('aria-disabled', 'true');
       });
-      epInteractiveClearIds.forEach(id => {
+      ids.clears.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.hidden = true;
       });
-      epEditableInputIds.forEach(id => {
+      ids.inputs.forEach(id => {
         const el = document.getElementById(id);
         if (el) { el.setAttribute('readonly', ''); el.classList.add('ep-input-ro'); el.classList.remove('ep-input-edit'); }
       });
-      epDpContainers().forEach(dp => dp.classList.add('ep-datepicker--ro'));
+      ids.dpBtns.forEach(id => {
+        const dp = document.getElementById(id)?.closest('.ep-datepicker');
+        if (dp) dp.classList.add('ep-datepicker--ro');
+      });
     }
 
     function unlockEditPanelLeft() {
-      epInteractiveTriggers.forEach(id => {
+      const ids = _epPanelIds();
+      ids.triggers.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.remove('ep-dd-ro');
         el.removeAttribute('tabindex');
         el.removeAttribute('aria-disabled');
       });
-      epEditableInputIds.forEach(id => {
+      ids.inputs.forEach(id => {
         const el = document.getElementById(id);
         if (el) { el.removeAttribute('readonly'); el.classList.remove('ep-input-ro'); el.classList.add('ep-input-edit'); }
       });
-      epDpContainers().forEach(dp => dp.classList.remove('ep-datepicker--ro'));
+      ids.dpBtns.forEach(id => {
+        const dp = document.getElementById(id)?.closest('.ep-datepicker');
+        if (dp) dp.classList.remove('ep-datepicker--ro');
+      });
+    }
+
+    function lockMstTimingFields() {
+      ['ep-gun', 'ep-fatura-gun'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.setAttribute('readonly', ''); el.classList.add('ep-input-ro'); el.classList.remove('ep-input-edit'); }
+      });
+      const dp = document.getElementById('epPlanlananDpBtn')?.closest('.ep-datepicker');
+      if (dp) dp.classList.add('ep-datepicker--ro');
     }
 
     /* expose so TT panel can call lockEditPanelLeft after Gönder */
@@ -5431,32 +6309,50 @@
     function fillEditPanel(d) {
       unlockEditPanelLeft(); /* reset on each open */
       document.getElementById('editPanelTitle').textContent = 'İş Numarası ' + d.isNo;
-      document.getElementById('ep-is-no').value    = d.isNo;
-      document.getElementById('ep-clickup').value  = d.clickupId;
-      document.getElementById('ep-org-display').textContent      = d.org      || '—';
-      document.getElementById('ep-uygulama-display').textContent = d.uygulama || '—';
-      document.getElementById('ep-gun').value = '';
-      document.getElementById('ep-is-adi-r').value     = d.isAdi || d.aciklama || '';
-      document.getElementById('ep-aciklama-r').value   = d.aciklama || '';
-      /* Öncelik */
-      setDd('epOncelikDd', 'ep-oncelik-trigger', 'ep-oncelik-display', 'epOncelikList', 'epOncelikClear', d.oncelik, 'Öncelik');
-      /* Hata / Talep */
-      document.getElementById('ep-hata-talep-display').textContent = 'Talep';
-      /* Talep Durumu */
-      setDd('epDurumDd', 'ep-durum-trigger', 'ep-durum-display', 'epDurumList', null, d.durum, 'Talep Durumu');
-      /* Sorumlu */
-      setDd('epSorumluDd', 'ep-sorumlu-trigger', 'ep-sorumlu-display', 'epSorumluList', 'epSorumluClear', d.sorumlu === '—' ? '' : d.sorumlu, 'Sorumlu');
-      /* Talep Edilen Tarih */
-      if (d.talepTarih) {
-        const [y, m, day] = d.talepTarih.split('-');
-        document.getElementById('ep-talep-tarih').value = day ? `${day}/${m}/${y}` : '';
+      const isMst = editPanel.classList.contains('edit-panel--mst');
+      if (isMst) {
+        document.getElementById('ep-is-no').value = d.isNo;
+        document.getElementById('ep-uygulama-display').textContent = d.uygulama || '—';
+        document.getElementById('ep-gun').value = d.gun || '';
+        setDd('epOncelikDd', 'ep-oncelik-trigger', 'ep-oncelik-display', 'epOncelikList', 'epOncelikClear', d.oncelik, 'Öncelik');
+        document.getElementById('ep-hata-talep-display').textContent = 'Talep';
+        setDd('epDurumDd', 'ep-durum-trigger', 'ep-durum-display', 'epDurumList', null, d.durum, 'Talep Durumu');
+        if (d.talepTarih) {
+          const [y, m, day] = d.talepTarih.split('-');
+          document.getElementById('ep-talep-tarih').value = day ? `${day}/${m}/${y}` : '';
+        } else {
+          document.getElementById('ep-talep-tarih').value = '';
+        }
+        document.getElementById('ep-onay-tarih').value = '';
+        document.getElementById('ep-planlanan-tarih').value = d.planlanan || '';
+        document.getElementById('ep-fatura-gun').value = d.faturaGun || '';
+        lockMstTimingFields();
       } else {
-        document.getElementById('ep-talep-tarih').value = '';
+        document.getElementById('bnt-ep-is-no').value = d.isNo;
+        document.getElementById('bnt-ep-clickup').value = d.clickupId;
+        document.getElementById('bnt-ep-org-display').textContent = d.org || '—';
+        document.getElementById('bnt-ep-uygulama-display').textContent = d.uygulama || '—';
+        document.getElementById('bnt-ep-gun').value = d.gun || '';
+        setDd('bntEpOncelikDd', 'bnt-ep-oncelik-trigger', 'bnt-ep-oncelik-display', 'bntEpOncelikList', 'bntEpOncelikClear', d.oncelik, 'Öncelik');
+        document.getElementById('bnt-ep-hata-talep-display').textContent = 'Talep';
+        setDd('bntEpDurumDd', 'bnt-ep-durum-trigger', 'bnt-ep-durum-display', 'bntEpDurumList', null, d.durum, 'Talep Durumu');
+        setDd('bntEpSorumluDd', 'bnt-ep-sorumlu-trigger', 'bnt-ep-sorumlu-display', 'bntEpSorumluList', 'bntEpSorumluClear', d.sorumlu === '—' ? '' : d.sorumlu, 'Sorumlu');
+        if (d.talepTarih) {
+          const [y, m, day] = d.talepTarih.split('-');
+          document.getElementById('bnt-ep-talep-tarih').value = day ? `${day}/${m}/${y}` : '';
+        } else {
+          document.getElementById('bnt-ep-talep-tarih').value = '';
+        }
+        document.getElementById('bnt-ep-onay-tarih').value = '';
+        document.getElementById('bnt-ep-planlanan-tarih').value = d.planlanan || '';
+        document.getElementById('bnt-ep-fatura-gun').value = d.faturaGun || '';
       }
-      document.getElementById('ep-onay-tarih').value  = '';
-      document.getElementById('ep-planlanan-tarih').value = '';
-      /* Lock if already Tamamlandı */
+      /* shared right panel */
+      document.getElementById('ep-is-adi-r').value   = d.isAdi || d.aciklama || '';
+      document.getElementById('ep-aciklama-r').value = d.aciklama || '';
+      /* Lock if already Tamamlandı or BNT Üzerinde Çalışılıyor */
       if (d.durum === 'Tamamlandı' || d.durum === 'Tamamlandi') lockEditPanelLeft();
+      else if (!isMst && d.durum === 'Üzerinde Çalışılıyor') lockEditPanelLeft();
     }
 
     function setDd(ddId, triggerId, displayId, listId, clearId, value, placeholder) {
@@ -5523,10 +6419,15 @@
       document.addEventListener('click', (e) => { if (!dd.contains(e.target)) close(); });
     }
 
+    /* MST panel dropdowns */
     initDd('epOncelikDd',   'ep-oncelik-trigger',   'ep-oncelik-display',   'epOncelikList',   'epOncelikClear',   'Öncelik');
     initDd('epHataTalepDd','ep-hata-talep-trigger','ep-hata-talep-display','epHataTalepList','epHataTalepClear','Talep');
     initDd('epDurumDd',    'ep-durum-trigger',     'ep-durum-display',     'epDurumList',    'epDurumClear',    'Talep Durumu');
-    initDd('epSorumluDd',  'ep-sorumlu-trigger',   'ep-sorumlu-display',   'epSorumluList',  'epSorumluClear',  'Sorumlu');
+    /* BNT panel dropdowns */
+    initDd('bntEpOncelikDd',   'bnt-ep-oncelik-trigger',   'bnt-ep-oncelik-display',   'bntEpOncelikList',   'bntEpOncelikClear',   'Öncelik');
+    initDd('bntEpHataTalepDd','bnt-ep-hata-talep-trigger','bnt-ep-hata-talep-display','bntEpHataTalepList', null,                   'Talep');
+    initDd('bntEpDurumDd',    'bnt-ep-durum-trigger',     'bnt-ep-durum-display',     'bntEpDurumList',    'bntEpDurumClear',     'Talep Durumu');
+    initDd('bntEpSorumluDd',  'bnt-ep-sorumlu-trigger',   'bnt-ep-sorumlu-display',   'bntEpSorumluList',  'bntEpSorumluClear',   'Sorumlu');
 
     /* ── Date picker init ── */
     function initDp(iconBtnId, displayId, nativeId) {
@@ -5546,9 +6447,53 @@
       });
     }
 
+    /* MST date pickers */
     initDp('epTalepDpBtn', 'ep-talep-tarih', 'ep-talep-tarih-n');
     initDp('epOnayDpBtn',  'ep-onay-tarih',  'ep-onay-tarih-n');
     initDp('epPlanlananDpBtn', 'ep-planlanan-tarih', 'ep-planlanan-tarih-n');
+    /* BNT date pickers */
+    initDp('bntEpTalepDpBtn', 'bnt-ep-talep-tarih', 'bnt-ep-talep-tarih-n');
+    initDp('bntEpOnayDpBtn',  'bnt-ep-onay-tarih',  'bnt-ep-onay-tarih-n');
+    initDp('bntEpPlanlananDpBtn', 'bnt-ep-planlanan-tarih', 'bnt-ep-planlanan-tarih-n');
+
+    /* ── BNT → MST timing field sync ── */
+    function syncBntTimingToMst() {
+      const bntIsNo = document.getElementById('bnt-ep-is-no')?.value.trim();
+      if (!bntIsNo) return;
+      const gun      = document.getElementById('bnt-ep-gun')?.value || '';
+      const planlanan = document.getElementById('bnt-ep-planlanan-tarih')?.value || '';
+      const faturaGun = document.getElementById('bnt-ep-fatura-gun')?.value || '';
+
+      /* persist on the BNT row */
+      if (_currentEditRow && !_currentEditRow.closest('#tableMst')) {
+        _currentEditRow.dataset.gun      = gun;
+        _currentEditRow.dataset.planlanan = planlanan;
+        _currentEditRow.dataset.faturaGun = faturaGun;
+      }
+
+      /* find matching MST row and persist there too */
+      const mstRow = Array.from(document.querySelectorAll('#tableMst tbody tr'))
+        .find(r => (r.querySelector('.td-isno-link') || r.querySelector('td:nth-child(1) .td-text'))
+                    ?.textContent.trim() === bntIsNo);
+      if (mstRow) {
+        mstRow.dataset.gun      = gun;
+        mstRow.dataset.planlanan = planlanan;
+        mstRow.dataset.faturaGun = faturaGun;
+        /* live-update MST edit panel if it is currently open for the same row */
+        if (!editPanel.hidden && editPanel.classList.contains('edit-panel--mst')) {
+          const mstIsNo = document.getElementById('ep-is-no')?.value.trim();
+          if (mstIsNo === bntIsNo) {
+            document.getElementById('ep-gun').value           = gun;
+            document.getElementById('ep-planlanan-tarih').value = planlanan;
+            document.getElementById('ep-fatura-gun').value    = faturaGun;
+          }
+        }
+      }
+    }
+
+    document.getElementById('bnt-ep-gun').addEventListener('input', syncBntTimingToMst);
+    document.getElementById('bnt-ep-fatura-gun').addEventListener('input', syncBntTimingToMst);
+    document.getElementById('bnt-ep-planlanan-tarih-n').addEventListener('change', syncBntTimingToMst);
 
     /* ── Activity card collapse/expand ── */
     editPanel.addEventListener('click', (e) => {
@@ -5588,6 +6533,7 @@
       'Tamamlandı'           : 'badge--tamamlandi',
       'Bilgi Bekleniyor'     : 'badge--bilgi-bek',
       'Onaylandı'            : 'badge--onaylandi',
+      'Reddedilen'           : 'badge--redded',
     };
 
     /* ── open / close ── */
@@ -5612,9 +6558,10 @@
     mainBtn && mainBtn.addEventListener('click', () => {
       const sel = getActiveMain().querySelectorAll('.data-table tbody tr.is-selected-row');
       if (!sel.length) return;
+      openedFrom = 'grid';
       openDialog();
     });
-    epBtn && epBtn.addEventListener('click', openDialog);
+    epBtn && epBtn.addEventListener('click', () => { openedFrom = 'edit'; openDialog(); });
 
     closeBtn.addEventListener('click', closeDialog);
     cancelBtn.addEventListener('click', closeDialog);
@@ -5694,41 +6641,68 @@
       const now         = new Date();
       const dateStr     = now.toLocaleDateString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\./g,'/') + ' - ' + now.toLocaleTimeString('tr-TR');
 
-      /* 1. Update selected grid rows */
-      const selRows = getActiveMain().querySelectorAll('.data-table tbody tr.is-selected-row');
-      selRows.forEach(tr => {
-        /* store old status */
-        const badgeEl   = tr.querySelector('td:nth-child(7) .badge');
-        const oldDurum  = badgeEl ? badgeEl.querySelector('.badge-text')?.textContent.trim() : '';
-        tr.dataset.oldDurum = oldDurum;
+      const _ep    = document.getElementById('editPanel');
+      const _isMst = _ep && _ep.classList.contains('edit-panel--mst');
 
-        /* update badge */
+      const shouldSetOnaylanan = !_isMst && (selectedDurum === 'Üzerinde Çalışılıyor' || selectedDurum === 'Tamamlandı');
+
+      function applyBadge(tr) {
+        const badgeEl = tr.querySelector('td:nth-child(7) .badge');
+        const oldDurum = badgeEl?.querySelector('.badge-text')?.textContent.trim() || '';
         if (badgeEl) {
           badgeEl.className = 'badge' + (newBadgeCls ? ' ' + newBadgeCls : '');
           badgeEl.querySelector('.badge-text').textContent = selectedDurum;
         }
+        if (!_isMst && window._bntSyncDurumToMst) window._bntSyncDurumToMst(tr, selectedDurum, newBadgeCls);
+        if (shouldSetOnaylanan && window._bntSetIsTuruOnaylanan) window._bntSetIsTuruOnaylanan(tr);
+        return oldDurum;
+      }
 
-        /* 2. If edit panel is open for this row, update dropdown display */
-        const epIsNo = document.getElementById('ep-is-no');
-        if (epIsNo && epIsNo.value === tr.querySelector('.td-isno-link')?.textContent.trim()) {
-          const epDisplay = document.getElementById('ep-durum-display');
-          if (epDisplay) {
-            epDisplay.textContent = selectedDurum;
-            epDisplay.classList.remove('ep-dd-placeholder');
-          }
-          const epClear = document.getElementById('epDurumClear');
-          if (epClear) epClear.hidden = false;
+      if (openedFrom === 'edit') {
+        /* find row by edit panel İş No */
+        const epIsNoEl = document.getElementById(_isMst ? 'ep-is-no' : 'bnt-ep-is-no');
+        const isNo = epIsNoEl?.value.trim();
+        const matchRow = isNo
+          ? Array.from(getActiveMain().querySelectorAll('.data-table tbody tr'))
+              .find(r => r.querySelector('.td-isno-link')?.textContent.trim() === isNo)
+          : null;
+
+        const oldDurum = matchRow ? applyBadge(matchRow) : '';
+
+        /* update edit panel display */
+        const epDisplay = document.getElementById(_isMst ? 'ep-durum-display' : 'bnt-ep-durum-display');
+        if (epDisplay) {
+          epDisplay.textContent = selectedDurum;
+          epDisplay.classList.remove('ep-dd-placeholder');
         }
 
-        /* 3. Add activity log card */
         addActivityCard(oldDurum, selectedDurum, aciklama, pendingFiles.slice(), dateStr);
-      });
+      } else {
+        /* grid mode — iterate selected rows */
+        const selRows = getActiveMain().querySelectorAll('.data-table tbody tr.is-selected-row');
+        selRows.forEach(tr => {
+          const oldDurum = applyBadge(tr);
+
+          /* sync edit panel if open for this row */
+          const epIsNo = document.getElementById(_isMst ? 'ep-is-no' : 'bnt-ep-is-no');
+          if (epIsNo && epIsNo.value === tr.querySelector('.td-isno-link')?.textContent.trim()) {
+            const epDisplay = document.getElementById(_isMst ? 'ep-durum-display' : 'bnt-ep-durum-display');
+            if (epDisplay) {
+              epDisplay.textContent = selectedDurum;
+              epDisplay.classList.remove('ep-dd-placeholder');
+            }
+          }
+
+          addActivityCard(oldDurum, selectedDurum, aciklama, pendingFiles.slice(), dateStr);
+        });
+      }
 
       closeDialog();
+      if (!_isMst && selectedDurum === 'Üzerinde Çalışılıyor' && window._lockEditPanelLeft) window._lockEditPanelLeft();
       if (window._showDashAlert) window._showDashAlert('Talep durumu başarıyla güncellendi');
     });
 
-    function addActivityCard(oldDurum, newDurum, aciklama, files, dateStr) {
+    function addActivityCard(oldDurum, newDurum, aciklama, files, dateStr, user) {
       const epRight = document.querySelector('.edit-panel__right');
       if (!epRight) return;
 
@@ -5760,13 +6734,16 @@
            </div>`
         : '';
 
+      const userInitials  = user ? user.initials  : 'SA';
+      const userName      = user ? user.name      : 'Selda Akdeniz';
+      const userAvatarCls = user ? user.avatarCls : 'ep-act-card__avatar--blue';
       card.innerHTML = `
         <div class="ep-act-card__header">
           <div class="ep-act-card__user-log">
             <div class="ep-act-card__user">
-              <div class="ep-act-card__avatar ep-act-card__avatar--blue">SA</div>
+              <div class="ep-act-card__avatar ${userAvatarCls}">${userInitials}</div>
               <div class="ep-act-card__info">
-                <span class="name">Selda Akdeniz güncelledi</span>
+                <span class="name">${userName} güncelledi</span>
                 <span class="date">${dateStr}</span>
               </div>
             </div>
@@ -5795,6 +6772,8 @@
         card.classList.toggle('is-collapsed');
       });
     }
+
+    window._addActivityCard = addActivityCard;
   })();
 
   /* ── Talep Tamamlama Panel ── */
@@ -5830,7 +6809,9 @@
 
     function buildChipsFromEditPanel() {
       chipsWrap.innerHTML = '';
-      const isNo = document.getElementById('ep-is-no');
+      const _ep = document.getElementById('editPanel');
+      const _isMst = _ep && _ep.classList.contains('edit-panel--mst');
+      const isNo = document.getElementById(_isMst ? 'ep-is-no' : 'bnt-ep-is-no');
       if (isNo && isNo.value) chipsWrap.appendChild(makeChip(isNo.value.trim()));
     }
 
@@ -5838,9 +6819,12 @@
       const badgeCls = 'badge--tamamlandi';
       const label    = 'Tamamlandı';
 
+      const _ep    = document.getElementById('editPanel');
+      const _isMst = _ep && _ep.classList.contains('edit-panel--mst');
+
       if (openedFrom === 'edit') {
         /* Update the grid row matching the open edit panel */
-        const epIsNo = document.getElementById('ep-is-no');
+        const epIsNo = document.getElementById(_isMst ? 'ep-is-no' : 'bnt-ep-is-no');
         if (epIsNo) {
           getActiveMain().querySelectorAll('.data-table tbody tr').forEach(row => {
             const link = row.querySelector('.td-isno-link');
@@ -5850,6 +6834,8 @@
                 badgeEl.className = 'badge ' + badgeCls;
                 badgeEl.querySelector('.badge-text').textContent = label;
               }
+              if (!_isMst && window._bntSyncDurumToMst) window._bntSyncDurumToMst(row, label, badgeCls);
+              if (!_isMst && window._bntSetIsTuruOnaylanan) window._bntSetIsTuruOnaylanan(row);
             }
           });
         }
@@ -5861,17 +6847,17 @@
             badgeEl.className = 'badge ' + badgeCls;
             badgeEl.querySelector('.badge-text').textContent = label;
           }
+          if (!_isMst && window._bntSyncDurumToMst) window._bntSyncDurumToMst(tr, label, badgeCls);
+          if (!_isMst && window._bntSetIsTuruOnaylanan) window._bntSetIsTuruOnaylanan(tr);
         });
       }
 
       /* Update edit panel status display if open */
-      const epDisplay = document.getElementById('ep-durum-display');
+      const epDisplay = document.getElementById(_isMst ? 'ep-durum-display' : 'bnt-ep-durum-display');
       if (epDisplay) {
         epDisplay.textContent = label;
         epDisplay.classList.remove('ep-dd-placeholder');
       }
-      const epClear = document.getElementById('epDurumClear');
-      if (epClear) epClear.hidden = false;
     }
 
     function openTTPanel(source) {
@@ -5931,48 +6917,60 @@
     closeBtn.addEventListener('click', closeTTPanel);
     overlay.addEventListener('click', closeTTPanel);
     /* ── Konfeti ── */
-    function showConfetti() {
+    function showConfetti(selCount) {
+      selCount = selCount || 1;
       const wrap = document.getElementById('ttConfettiWrap');
       if (!wrap) return;
       wrap.innerHTML = '';
 
-      const colors  = ['#4ade80','#f59e0b','#3b82f6','#ef4444','#a855f7','#ec4899','#10b981','#f97316','#facc15','#60a5fa'];
-      const count   = 90;
+      const colors = ['#4ade80','#f59e0b','#3b82f6','#ef4444','#a855f7','#ec4899','#10b981','#f97316','#facc15','#60a5fa'];
+      const multi  = selCount > 1;
 
-      for (let i = 0; i < count; i++) {
-        const piece        = document.createElement('div');
-        piece.className    = 'tt-confetti-piece';
-        const color        = colors[i % colors.length];
-        const left         = (Math.random() * 100).toFixed(2) + '%';
-        const fallDur      = (2.2 + Math.random() * 2.2).toFixed(2) + 's';
-        const fallDelay    = (Math.random() * 1.6).toFixed(2) + 's';
-        const swayDur      = (1.2 + Math.random() * 1.6).toFixed(2) + 's';
-        const size         = (6 + Math.floor(Math.random() * 8)) + 'px';
-        const height       = (4 + Math.floor(Math.random() * 10)) + 'px';
-        const borderRadius = i % 4 === 0 ? '50%' : i % 4 === 1 ? '2px' : '0';
+      function burst(n, delayBase) {
+        for (let i = 0; i < n; i++) {
+          const piece        = document.createElement('div');
+          piece.className    = 'tt-confetti-piece';
+          const color        = colors[Math.floor(Math.random() * colors.length)];
+          const left         = (Math.random() * 100).toFixed(2) + '%';
+          const fallDur      = (multi ? 1.5 + Math.random() * 1.5 : 2.2 + Math.random() * 2.2).toFixed(2) + 's';
+          const fallDelay    = (delayBase + Math.random() * (multi ? 0.8 : 1.6)).toFixed(2) + 's';
+          const swayDur      = (1.0 + Math.random() * 1.4).toFixed(2) + 's';
+          const size         = (multi ? 7 : 6) + Math.floor(Math.random() * (multi ? 10 : 8)) + 'px';
+          const height       = (4 + Math.floor(Math.random() * 12)) + 'px';
+          const borderRadius = i % 4 === 0 ? '50%' : i % 4 === 1 ? '2px' : '0';
 
-        piece.style.cssText =
-          'left:' + left + ';' +
-          'width:' + size + ';' +
-          'height:' + height + ';' +
-          'background:' + color + ';' +
-          'border-radius:' + borderRadius + ';' +
-          'animation:' +
-            'confettiFall ' + fallDur + ' ' + fallDelay + ' ease-in forwards,' +
-            'confettiSway ' + swayDur + ' ' + fallDelay + ' ease-in-out infinite;';
+          piece.style.cssText =
+            'left:' + left + ';' +
+            'width:' + size + ';' +
+            'height:' + height + ';' +
+            'background:' + color + ';' +
+            'border-radius:' + borderRadius + ';' +
+            'animation:' +
+              'confettiFall ' + fallDur + ' ' + fallDelay + ' ease-in forwards,' +
+              'confettiSway ' + swayDur + ' ' + fallDelay + ' ease-in-out infinite;';
 
-        wrap.appendChild(piece);
+          wrap.appendChild(piece);
+        }
       }
 
-      setTimeout(() => { wrap.innerHTML = ''; }, 5500);
+      const baseCount = Math.min(90 + (selCount - 1) * 130, 580);
+      burst(baseCount, 0);
+
+      if (multi) {
+        setTimeout(() => burst(Math.round(baseCount * 0.55), 0),  420);
+        setTimeout(() => burst(Math.round(baseCount * 0.35), 0),  900);
+      }
+
+      setTimeout(() => { wrap.innerHTML = ''; }, multi ? 7500 : 5500);
     }
 
     gonderBtn.addEventListener('click', () => {
+      const selCount = getActiveMain().querySelectorAll('.data-table tbody tr.is-selected-row').length || 1;
       applyTamamlandi();
       if (window._lockEditPanelLeft) window._lockEditPanelLeft();
       closeTTPanel();
       showAlert('Talep başarıyla tamamlandı', 'Talep sahibine bildirim gönderildi.');
-      showConfetti();
+      showConfetti(selCount);
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && panel.classList.contains('is-open')) closeTTPanel();
@@ -6037,6 +7035,50 @@
         e.stopPropagation();
         const isOn = sw.classList.toggle('is-on');
         table.classList.toggle('col-hidden-' + sw.dataset.col, !isOn);
+      });
+    });
+
+    lucide.createIcons({ nodes: [btn] });
+  })();
+
+  /* ── Görünüm toggle (BNT footer) ── */
+  (function () {
+    const btn    = document.getElementById('gorunumBtn');
+    const menu   = document.getElementById('gorunumMenu');
+    const footer = document.getElementById('bntGridFooter');
+
+    function openMenu()  { menu.classList.add('is-open');    btn.classList.add('is-active');    btn.setAttribute('aria-expanded','true');  }
+    function closeMenu() { menu.classList.remove('is-open'); btn.classList.remove('is-active'); btn.setAttribute('aria-expanded','false'); }
+
+    btn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.contains('is-open') ? closeMenu() : openMenu(); });
+    document.addEventListener('click', (e) => { if (!menu.contains(e.target) && !btn.contains(e.target)) closeMenu(); });
+
+    const items = [
+      { swId: 'swAcik',      ftrId: 'ftrAcik',      cntId: 'cntAcik',      match: tr => !!tr.querySelector('.is-turu-icon--acik') },
+      { swId: 'swOnayBek',   ftrId: 'ftrOnayBek',   cntId: 'cntOnayBek',   match: tr => !!tr.querySelector('.badge--onay-bkl') },
+      { swId: 'swCalisilan', ftrId: 'ftrCalisilan',  cntId: 'cntCalisilan', match: tr => !!tr.querySelector('.badge--calisiliyor') },
+      { swId: 'swTamamlanan',ftrId: 'ftrTamamlanan', cntId: 'cntTamamlanan',match: tr => !!tr.querySelector('.badge--tamamlandi') },
+    ];
+
+    function syncFooter() {
+      const anyOn = items.some(i => document.getElementById(i.swId).classList.contains('is-on'));
+      footer.classList.toggle('is-visible', anyOn);
+    }
+
+    items.forEach(({ swId, ftrId, cntId, match }) => {
+      const sw  = document.getElementById(swId);
+      const ftr = document.getElementById(ftrId);
+      const cnt = document.getElementById(cntId);
+      sw.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOn = sw.classList.toggle('is-on');
+        ftr.hidden = !isOn;
+        if (isOn) {
+          const rows = document.querySelectorAll('#tableBnt tbody tr:not(.sc-hidden)');
+          let n = 0; rows.forEach(tr => { if (match(tr)) n++; });
+          cnt.textContent = n;
+        }
+        syncFooter();
       });
     });
 
@@ -6198,6 +7240,376 @@
     });
     lucide.createIcons({ nodes: [colToggleBtn] });
   })();
+
+  /* ── BNT Toolbar Search ── */
+  (function () {
+    const input  = document.getElementById('bntSearchInput');
+    const btn    = document.getElementById('bntSearchBtn');
+    const tbody  = document.getElementById('tableBnt').querySelector('tbody');
+
+    function runSearch() {
+      const q = input.value.trim().toLowerCase();
+      tbody.querySelectorAll('tr').forEach(tr => {
+        if (!q) { tr.classList.remove('search-hidden'); return; }
+        const text = Array.from(tr.querySelectorAll('.td-text, .badge-text'))
+          .map(el => el.textContent.trim().toLowerCase())
+          .join(' ');
+        tr.classList.toggle('search-hidden', !text.includes(q));
+      });
+    }
+
+    input.addEventListener('input', runSearch);
+    btn.addEventListener('click', runSearch);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(); });
+  })();
+
+  /* ── BNT Filter Panel ── */
+  (function () {
+    const filterBtn = document.getElementById('bntFilterBtn');
+    const panel     = document.getElementById('bntFilterPanel');
+    const closeBtn  = document.getElementById('bntFilterClose');
+    const applyBtn  = document.getElementById('bntFilterApply');
+    const fpIsNo    = document.getElementById('fpIsNo');
+    const tbody     = document.getElementById('tableBnt').querySelector('tbody');
+    const overlay   = document.getElementById('panelOverlay');
+
+    /* custom dropdown state */
+    const fpValues = { fpIsTuruDropdown: '', fpOncelikDropdown: '', fpDurumDropdown: '' };
+    const fpPlaceholders = { fpIsTuruDropdown: 'İş Türü', fpOncelikDropdown: 'Öncelik', fpDurumDropdown: 'Durum' };
+
+    /* generic dropdown wiring — same pattern as task panel */
+    function wireDropdown(dropdownId) {
+      const dd      = document.getElementById(dropdownId);
+      const trigger = dd.querySelector('.tp-dropdown-trigger');
+      const display = dd.querySelector('.tp-dropdown-display');
+      const list    = dd.querySelector('.tp-dropdown-list');
+      const options = dd.querySelectorAll('.tp-dropdown-option');
+
+      function openDD() {
+        list.hidden = false;
+        dd.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        lucide.createIcons({ nodes: [list] });
+      }
+      function closeDD() {
+        list.hidden = true;
+        dd.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      trigger.addEventListener('click', (e) => { e.stopPropagation(); list.hidden ? openDD() : closeDD(); });
+
+      options.forEach(opt => {
+        opt.addEventListener('click', () => {
+          fpValues[dropdownId] = opt.dataset.value;
+          display.textContent  = opt.querySelector('span:last-child').textContent.trim();
+          trigger.classList.add('has-value');
+          options.forEach(o => o.classList.remove('is-selected'));
+          opt.classList.add('is-selected');
+          closeDD();
+          updateApplyBtn();
+        });
+      });
+
+      document.addEventListener('click', (e) => { if (!dd.contains(e.target)) closeDD(); });
+      dd.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDD(); });
+
+      dd._fpReset = () => {
+        fpValues[dropdownId] = '';
+        display.textContent  = fpPlaceholders[dropdownId];
+        trigger.classList.remove('has-value');
+        options.forEach(o => o.classList.remove('is-selected'));
+        closeDD();
+      };
+    }
+
+    wireDropdown('fpIsTuruDropdown');
+    wireDropdown('fpOncelikDropdown');
+    wireDropdown('fpDurumDropdown');
+
+    function hasActiveFilters() {
+      return fpIsNo.value.trim() !== ''
+          || fpValues.fpIsTuruDropdown  !== ''
+          || fpValues.fpOncelikDropdown !== ''
+          || fpValues.fpDurumDropdown   !== '';
+    }
+    function updateApplyBtn() {
+      const active = hasActiveFilters();
+      applyBtn.disabled = !active;
+      filterBtn.classList.toggle('fp-active', active);
+    }
+
+    function openPanel() {
+      panel.classList.add('is-open');
+      panel.setAttribute('aria-hidden', 'false');
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      filterBtn.classList.add('is-active');
+      lucide.createIcons({ nodes: [panel] });
+    }
+    function closePanel() {
+      panel.classList.remove('is-open');
+      panel.setAttribute('aria-hidden', 'true');
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      filterBtn.classList.remove('is-active');
+    }
+
+    overlay.addEventListener('click', () => { if (panel.classList.contains('is-open')) closePanel(); });
+    filterBtn.addEventListener('click', () => panel.classList.contains('is-open') ? closePanel() : openPanel());
+    closeBtn.addEventListener('click', closePanel);
+
+    /* Expand / collapse */
+    const expandBtn = document.getElementById('bntFilterExpand');
+    expandBtn.addEventListener('click', () => {
+      const full = panel.classList.toggle('is-fullscreen');
+      const icon = expandBtn.querySelector('i');
+      icon.setAttribute('data-lucide', full ? 'shrink' : 'expand');
+      lucide.createIcons({ nodes: [expandBtn] });
+    });
+
+    function applyFilters() {
+      const isNo    = fpIsNo.value.trim().toLowerCase();
+      const isTuru  = fpValues.fpIsTuruDropdown;
+      const oncelik = fpValues.fpOncelikDropdown;
+      const durum   = fpValues.fpDurumDropdown;
+
+      tbody.querySelectorAll('tr').forEach(tr => {
+        const rowIsNo    = tr.querySelector('td:nth-child(1) .td-text')?.textContent.trim().toLowerCase() || '';
+        const rowIsTuru  = tr.querySelector('td:nth-child(4) .td-text')?.textContent.trim() || '';
+        const rowOncelik = tr.querySelector('td:nth-child(6) .td-text')?.textContent.trim() || '';
+        const rowDurum   = tr.querySelector('td:nth-child(7) .badge-text')?.textContent.trim()
+                        || tr.querySelector('td:nth-child(7) .td-text')?.textContent.trim() || '';
+
+        const match = (!isNo    || rowIsNo.includes(isNo))
+                   && (!isTuru  || rowIsTuru === isTuru)
+                   && (!oncelik || rowOncelik === oncelik)
+                   && (!durum   || rowDurum === durum);
+
+        tr.classList.toggle('fp-hidden', !match);
+      });
+
+      updateApplyBtn();
+    }
+
+    fpIsNo.addEventListener('input', updateApplyBtn);
+    applyBtn.addEventListener('click', applyFilters);
+    fpIsNo.addEventListener('keydown', (e) => { if (e.key === 'Enter') applyFilters(); });
+
+    /* "..." more dropdown */
+    const moreBtn  = document.getElementById('bntFilterMore');
+    const moreMenu = document.getElementById('fpMoreMenu');
+
+    function openMore()  { moreMenu.hidden = false; moreBtn.setAttribute('aria-expanded','true');  lucide.createIcons({ nodes: [moreMenu] }); }
+    function closeMore() { moreMenu.hidden = true;  moreBtn.setAttribute('aria-expanded','false'); }
+
+    moreBtn.addEventListener('click', (e) => { e.stopPropagation(); moreMenu.hidden ? openMore() : closeMore(); });
+    document.addEventListener('click', (e) => { if (!document.getElementById('fpMoreWrap').contains(e.target)) closeMore(); });
+
+    function clearAllFilters() {
+      fpIsNo.value = '';
+      ['fpIsTuruDropdown','fpOncelikDropdown','fpDurumDropdown'].forEach(id => document.getElementById(id)._fpReset());
+      tbody.querySelectorAll('tr').forEach(tr => tr.classList.remove('fp-hidden'));
+      updateApplyBtn();
+      closeMore();
+    }
+
+    document.getElementById('fpClearFilters').addEventListener('click', clearAllFilters);
+
+    /* Sorumlu column visibility switch */
+
+    const swSorumlu = document.getElementById('fpSwSorumlu');
+    const tableBnt  = document.getElementById('tableBnt');
+    swSorumlu.addEventListener('click', () => {
+      const isOn = swSorumlu.classList.toggle('is-on');
+      tableBnt.classList.toggle('col-hidden-10', isOn);
+      const kolonSw = document.querySelector('.col-toggle-list .col-sw[data-col="10"]');
+      if (kolonSw) kolonSw.classList.toggle('is-on', !isOn);
+    });
+  })();
+
+  /* ── BNT Column Header Filters ── */
+  (function () {
+    const table      = document.getElementById('tableBnt');
+    const tbody      = table.querySelector('tbody');
+    const panel      = document.getElementById('bntColFP');
+    const searchInp  = document.getElementById('bntColFPInput');
+    const listEl     = document.getElementById('bntColFPList');
+    const clearBtn   = document.getElementById('bntColFPClear');
+    const applyBtn   = document.getElementById('bntColFPApply');
+
+    const filters    = {};  /* colIdx → Set of accepted values; absent = no filter */
+    let activeCol    = null;
+    let activeDiv    = null; /* the .th-filter element that opened the panel */
+
+    function cellText(tr, col) {
+      const td = tr.querySelector(`td:nth-child(${col})`);
+      return (td?.querySelector('.badge-text') || td?.querySelector('.td-text') || td)?.textContent.trim() || '';
+    }
+
+    function uniqueVals(col) {
+      const s = new Set();
+      tbody.querySelectorAll('tr').forEach(tr => { const v = cellText(tr, col); if (v) s.add(v); });
+      return [...s].sort((a, b) => a.localeCompare(b, 'tr'));
+    }
+
+    function applyFilters() {
+      tbody.querySelectorAll('tr').forEach(tr => {
+        let hide = false;
+        for (const [col, sel] of Object.entries(filters)) {
+          if (!sel || !sel.size) continue;
+          if (!sel.has(cellText(tr, +col))) { hide = true; break; }
+        }
+        tr.classList.toggle('cf-hidden', hide);
+      });
+    }
+
+    function buildList(col) {
+      const vals    = uniqueVals(col);
+      const current = filters[col] || null;
+      searchInp.value = '';
+      listEl.innerHTML = '';
+
+      /* "Tümünü Seç" row */
+      const allChecked = !current || current.size === vals.length;
+      const allItem = document.createElement('div');
+      allItem.className = 'col-fp-item' + (allChecked ? ' is-checked' : '');
+      allItem.dataset.value = '__all__';
+      allItem.innerHTML = '<span class="col-fp-item-check"></span><span>Tümünü Seç</span>';
+      listEl.appendChild(allItem);
+
+      const div = document.createElement('div');
+      div.className = 'col-fp-divider';
+      listEl.appendChild(div);
+
+      vals.forEach(v => {
+        const item = document.createElement('div');
+        const chk  = (!current || current.has(v)) ? ' is-checked' : '';
+        item.className = 'col-fp-item' + chk;
+        item.dataset.value = v;
+        item.innerHTML = `<span class="col-fp-item-check"></span><span>${v}</span>`;
+        listEl.appendChild(item);
+      });
+    }
+
+    function openPanel(filterDiv) {
+      if (activeDiv === filterDiv && !panel.hidden) { closePanel(); return; }
+      activeDiv = filterDiv;
+      activeCol = parseInt(filterDiv.closest('th').dataset.col);
+      buildList(activeCol);
+
+      panel.hidden = false;
+      const rect   = filterDiv.getBoundingClientRect();
+      const pw     = panel.offsetWidth || 220;
+      let left     = rect.left;
+      if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+      panel.style.top  = (rect.bottom + 2) + 'px';
+      panel.style.left = Math.max(4, left) + 'px';
+    }
+
+    function closePanel() {
+      panel.hidden = true;
+      activeDiv = null;
+      activeCol = null;
+    }
+
+    /* item click — toggle checked */
+    listEl.addEventListener('click', e => {
+      const item = e.target.closest('.col-fp-item');
+      if (!item) return;
+      if (item.dataset.value === '__all__') {
+        const valueItems = listEl.querySelectorAll('.col-fp-item:not([data-value="__all__"])');
+        const allChecked = [...valueItems].every(i => i.classList.contains('is-checked'));
+        valueItems.forEach(i => i.classList.toggle('is-checked', !allChecked));
+        item.classList.toggle('is-checked', !allChecked);
+      } else {
+        item.classList.toggle('is-checked');
+        const valueItems = listEl.querySelectorAll('.col-fp-item:not([data-value="__all__"])');
+        const allNowChecked = [...valueItems].every(i => i.classList.contains('is-checked'));
+        listEl.querySelector('[data-value="__all__"]')?.classList.toggle('is-checked', allNowChecked);
+      }
+    });
+
+    /* search input — filter visible items */
+    searchInp.addEventListener('input', () => {
+      const q = searchInp.value.toLowerCase();
+      listEl.querySelectorAll('.col-fp-item:not([data-value="__all__"])').forEach(item => {
+        item.style.display = item.querySelector('span:last-child').textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+
+    /* Apply */
+    applyBtn.addEventListener('click', () => {
+      const valueItems = listEl.querySelectorAll('.col-fp-item:not([data-value="__all__"])');
+      const checked    = [...listEl.querySelectorAll('.col-fp-item.is-checked:not([data-value="__all__"])')].map(i => i.dataset.value);
+      const thFilter   = table.querySelector(`th[data-col="${activeCol}"] .th-filter`);
+      if (checked.length === 0 || checked.length === valueItems.length) {
+        delete filters[activeCol];
+        thFilter?.classList.remove('th-filter--active');
+      } else {
+        filters[activeCol] = new Set(checked);
+        thFilter?.classList.add('th-filter--active');
+      }
+      applyFilters();
+      closePanel();
+    });
+
+    /* Clear */
+    clearBtn.addEventListener('click', () => {
+      const thFilter = table.querySelector(`th[data-col="${activeCol}"] .th-filter`);
+      delete filters[activeCol];
+      thFilter?.classList.remove('th-filter--active');
+      applyFilters();
+      closePanel();
+    });
+
+    /* open on filter icon click (stop sort from firing) */
+    table.querySelector('thead').addEventListener('click', e => {
+      const fd = e.target.closest('.th-filter');
+      if (!fd) return;
+      e.stopPropagation();
+      openPanel(fd);
+    });
+
+    /* close on outside click */
+    document.addEventListener('click', e => {
+      if (!panel.hidden && !panel.contains(e.target) && !e.target.closest('#tableBnt .th-filter')) closePanel();
+    });
+
+    /* close on Escape */
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) closePanel(); });
+  })();
+
+  /* ── BNT Durum badge → MST sync helper ── */
+  window._bntSyncDurumToMst = function (bntRow, label, badgeCls) {
+    const isNo = bntRow.querySelector('.td-isno-link')?.textContent.trim();
+    if (!isNo) return;
+    const mstRow = Array.from(document.querySelectorAll('#tableMst tbody tr'))
+      .find(r => r.querySelector('.td-isno-link')?.textContent.trim() === isNo);
+    if (!mstRow) return;
+    const badgeEl = mstRow.querySelector('td:nth-child(7) .badge');
+    if (!badgeEl) return;
+    badgeEl.className = 'badge' + (badgeCls ? ' ' + badgeCls : '');
+    badgeEl.querySelector('.badge-text').textContent = label;
+  };
+
+  /* ── BNT İş Türü → Onaylanan helper (BNT + eşleşen MST satırı) ── */
+  window._bntSetIsTuruOnaylanan = function (tr) {
+    const INNER = '<div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon is-turu-icon--onaylandi"></i></div><div class="td-cell"><span class="td-text">Onaylanan</span></div></div>';
+
+    /* BNT satırını güncelle */
+    const bntTd = tr.querySelector('td:nth-child(4)');
+    if (bntTd) { bntTd.innerHTML = INNER; lucide.createIcons({ nodes: [bntTd] }); }
+
+    /* Eşleşen MST satırını bul ve güncelle */
+    const isNo = tr.querySelector('.td-isno-link')?.textContent.trim();
+    if (!isNo) return;
+    const mstRow = Array.from(document.querySelectorAll('#tableMst tbody tr'))
+      .find(r => r.querySelector('.td-isno-link')?.textContent.trim() === isNo);
+    if (!mstRow) return;
+    const mstTd = mstRow.querySelector('td:nth-child(4)');
+    if (mstTd) { mstTd.innerHTML = INNER; lucide.createIcons({ nodes: [mstTd] }); }
+  };
   </script>
 
 </body>

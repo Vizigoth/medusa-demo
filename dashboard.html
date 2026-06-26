@@ -2546,7 +2546,7 @@
   #tableMst th[data-col="5"], #tableMst td:nth-child(5),
   #tableMst th[data-col="9"], #tableMst td:nth-child(9),
   #tableMst th[data-col="12"], #tableMst td:nth-child(12) { display: none; }
-  #tableMst col.col-ht, #tableMst col.col-org, #tableMst col.col-clickup { width: 0; }
+  #tableMst col.col-ht, #tableMst col.col-org, #tableMst col.col-clickup { width: 0 !important; }
   /* Tablo genişliğini gizlenen kolonlar kadar (414px) düşür: 1950 - 414 = 1536 */
   #tableMst { width: 1536px; }
   </style>
@@ -3395,14 +3395,14 @@
           <col class="col-adi">
           <col class="col-aciklama">
           <col class="col-is-turu">
-          <col class="col-ht">
+          <col class="col-ht" style="width:0">
           <col class="col-oncelik">
           <col class="col-durum">
           <col class="col-kullanici">
-          <col class="col-org">
+          <col class="col-org" style="width:0">
           <col class="col-sorumlu">
           <col class="col-uygulama">
-          <col class="col-clickup">
+          <col class="col-clickup" style="width:0">
         </colgroup>
         <thead>
           <tr>

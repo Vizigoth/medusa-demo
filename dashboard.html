@@ -3328,14 +3328,6 @@
           <i data-lucide="loader" class="btn-icon"></i>
           Düzenle
         </button>
-        <button class="btn-flat-sm" id="talepDurumuBtnMst" disabled>
-          <i data-lucide="loader" class="btn-icon"></i>
-          Talep Durumu
-        </button>
-        <button class="btn-flat-sm" id="talepTamamlamaBtnMst" disabled>
-          <i data-lucide="loader" class="btn-icon"></i>
-          Talep Tamamlama
-        </button>
         <!-- Column visibility toggle -->
         <div class="col-toggle-wrap" id="colToggleWrapMst">
         <button class="btn-flat-sm" id="colToggleBtnMst" aria-haspopup="true" aria-expanded="false" aria-label="Kolon görünümü">
@@ -6055,17 +6047,10 @@
     const tbody    = tableMst.querySelector('tbody');
     const ths      = tableMst.querySelectorAll('thead th[data-col]');
 
-    const selBtnIds = ['duzenleBtnMst', 'talepDurumuBtnMst', 'talepTamamlamaBtnMst'];
-    const duzenleBtn        = document.getElementById('duzenleBtnMst');
-    const talepDurumuBtn    = document.getElementById('talepDurumuBtnMst');
-    const talepTamamlamaBtn = document.getElementById('talepTamamlamaBtnMst');
+    const duzenleBtn = document.getElementById('duzenleBtnMst');
 
     function updateToolbar() {
       const count = mainMst.querySelectorAll('.data-table tbody tr.is-selected-row').length;
-      selBtnIds.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) btn.disabled = count === 0;
-      });
       if (duzenleBtn) duzenleBtn.disabled = count !== 1;
     }
 

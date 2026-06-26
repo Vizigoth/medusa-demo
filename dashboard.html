@@ -5415,7 +5415,7 @@
       /* Talep Durumu */
       setDd('epDurumDd', 'ep-durum-trigger', 'ep-durum-display', 'epDurumList', 'epDurumClear', d.durum, 'Talep Durumu');
       /* Sorumlu */
-      setDd('epSorumluDd', 'ep-sorumlu-trigger', 'ep-sorumlu-display', 'epSorumluList', 'epSorumluClear', 'Selda Akdeniz', 'Sorumlu');
+      setDd('epSorumluDd', 'ep-sorumlu-trigger', 'ep-sorumlu-display', 'epSorumluList', 'epSorumluClear', d.sorumlu === '—' ? '' : d.sorumlu, 'Sorumlu');
       /* Talep Edilen Tarih */
       if (d.talepTarih) {
         const [y, m, day] = d.talepTarih.split('-');

@@ -3377,7 +3377,6 @@
 
         <!-- Segmented Control — iş türüne göre filtre -->
         <div class="sc-tabs" id="gridSegControlMst" role="tablist">
-          <button class="sc-tab" data-filter="tumu"      role="tab" aria-pressed="false">Tümü</button>
           <button class="sc-tab" data-filter="acik"      role="tab" aria-pressed="false">Açık İşler</button>
           <button class="sc-tab" data-filter="onay-bek"  role="tab" aria-pressed="false">Onay Bekleyen</button>
           <button class="sc-tab" data-filter="org"       role="tab" aria-pressed="false">Organizasyon İşleri</button>
@@ -6094,7 +6093,7 @@
           .map(t => t.dataset.filter);
 
         tbody.querySelectorAll('tr').forEach(tr => {
-          if (active.length === 0 || active.includes('tumu')) {
+          if (active.length === 0) {
             tr.classList.remove('sc-hidden');
           } else {
             const icon = tr.querySelector('td:nth-child(4) .is-turu-icon');
@@ -6106,16 +6105,8 @@
 
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-          if (tab.dataset.filter === 'tumu') {
-            tabs.forEach(t => { t.classList.remove('is-active'); t.setAttribute('aria-pressed', 'false'); });
-            tab.classList.add('is-active');
-            tab.setAttribute('aria-pressed', 'true');
-          } else {
-            const tumuTab = segControl.querySelector('[data-filter="tumu"]');
-            if (tumuTab) { tumuTab.classList.remove('is-active'); tumuTab.setAttribute('aria-pressed', 'false'); }
-            tab.classList.toggle('is-active');
-            tab.setAttribute('aria-pressed', tab.classList.contains('is-active'));
-          }
+          tab.classList.toggle('is-active');
+          tab.setAttribute('aria-pressed', tab.classList.contains('is-active'));
           applyMstFilter();
         });
       });

@@ -2553,9 +2553,11 @@
   #tableMst th[data-col="9"], #tableMst td:nth-child(9),
   #tableMst th[data-col="12"], #tableMst td:nth-child(12) { display: none; }
   #tableMst col.col-org, #tableMst col.col-clickup { width: 0 !important; }
-  /* Tablo ve kapsayıcı genişliğini gizlenen kolonlar kadar (326px) düşür: 1950 - 326 = 1624 */
-  #tableMst { width: 1624px; }
-  #mainMst .grid-table-inner { width: 1624px; }
+  /* MST Açıklama kolonu BNT'den daha dar (görünür alan sığdırmak için 320→200px) */
+  #tableMst col.col-aciklama { width: 200px; }
+  /* Toplam görünür genişlik: 149+170+200+129+88+150+157+150+157+154 = 1504px */
+  #tableMst { width: 1504px; }
+  #mainMst .grid-table-inner { width: 1504px; }
   </style>
 </head>
 <body>
@@ -5287,7 +5289,35 @@
     });
 
     editClose.addEventListener('click', closeEditPanel);
-    editSave.addEventListener('click', closeEditPanel);
+    editSave.addEventListener('click', () => {
+      /* Sync Sorumlu change to both BNT and MST grids */
+      const epIsNo       = document.getElementById('ep-is-no');
+      const sorumluTrigger = document.getElementById('ep-sorumlu-trigger');
+      const sorumluDisplay = document.getElementById('ep-sorumlu-display');
+      if (epIsNo && sorumluTrigger && sorumluDisplay) {
+        const isNo      = epIsNo.value.trim();
+        const hasValue  = sorumluTrigger.classList.contains('has-value');
+        const sorumluVal = hasValue ? (sorumluDisplay.textContent.trim() || '—') : '—';
+        function updateSorumluCell(tbody) {
+          if (!tbody) return;
+          tbody.querySelectorAll('tr').forEach(row => {
+            const link = row.querySelector('.td-isno-link');
+            if (!link || link.textContent.trim() !== isNo) return;
+            const td = row.querySelector('td:nth-child(10)');
+            if (!td) return;
+            if (sorumluVal === '—') {
+              td.innerHTML = '<div class="td-inner"><div class="td-cell"><span class="td-text">—</span></div></div>';
+            } else {
+              const initials = sorumluVal.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
+              td.innerHTML = `<div class="td-inner"><div class="sorumlu-avatar">${initials}</div><div class="td-cell"><span class="td-text">${sorumluVal}</span></div></div>`;
+            }
+          });
+        }
+        updateSorumluCell(document.getElementById('tableBnt')?.querySelector('tbody'));
+        updateSorumluCell(document.getElementById('tableMst')?.querySelector('tbody'));
+      }
+      closeEditPanel();
+    });
 
     /* ── ClickUp İş Aç ── */
     const epClickupBtn = document.getElementById('epClickupIsAcBtn');
@@ -6068,16 +6098,6 @@
       const selected = mainMst.querySelectorAll('.data-table tbody tr.is-selected-row');
       if (selected.length !== 1) return;
       if (window._openEditPanel) window._openEditPanel(selected[0]);
-    });
-
-    talepDurumuBtn && talepDurumuBtn.addEventListener('click', () => {
-      const sel = mainMst.querySelectorAll('.data-table tbody tr.is-selected-row');
-      if (!sel.length) return;
-      if (window._openTalepDurumu) window._openTalepDurumu();
-    });
-
-    talepTamamlamaBtn && talepTamamlamaBtn.addEventListener('click', () => {
-      if (window._openTTPanel) window._openTTPanel('grid');
     });
 
     /* Segmented tabs filter — multi-select, same logic as BNT */

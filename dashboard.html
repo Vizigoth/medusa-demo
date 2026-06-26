@@ -2547,8 +2547,9 @@
   #tableMst th[data-col="9"], #tableMst td:nth-child(9),
   #tableMst th[data-col="12"], #tableMst td:nth-child(12) { display: none; }
   #tableMst col.col-ht, #tableMst col.col-org, #tableMst col.col-clickup { width: 0 !important; }
-  /* Tablo genişliğini gizlenen kolonlar kadar (414px) düşür: 1950 - 414 = 1536 */
+  /* Tablo ve kapsayıcı genişliğini gizlenen kolonlar kadar (414px) düşür: 1950 - 414 = 1536 */
   #tableMst { width: 1536px; }
+  #mainMst .grid-table-inner { width: 1536px; }
   </style>
 </head>
 <body>

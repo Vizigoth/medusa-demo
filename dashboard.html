@@ -2682,11 +2682,7 @@
     <!-- Toolbar -->
     <div class="toolbar" role="toolbar" aria-label="Sayfa araçları">
       <div class="toolbar-actions">
-        <button class="btn btn-primary">
-          <i data-lucide="plus" class="btn-icon"></i>
-          Ekle
-        </button>
-        <button class="btn-flat-sm" id="duzenleBtn" disabled>
+        <button class="btn btn-primary" id="duzenleBtn" disabled>
           <i data-lucide="loader" class="btn-icon"></i>
           Düzenle
         </button>
@@ -4977,9 +4973,10 @@
       dropzone.style.borderColor = '';
     });
 
-    /* ── Kaydet: form → grid ── */
+    /* ── Kaydet: form → MST + BNT grid (en üste) ── */
     document.getElementById('taskPanelSave').addEventListener('click', () => {
-      const tbody = getActiveMain().querySelector('.data-table tbody');
+      const tbodyMst = document.getElementById('tableMst').querySelector('tbody');
+      const tbodyBnt = document.getElementById('tableBnt').querySelector('tbody');
 
       // Form değerleri
       const aciklama  = document.getElementById('tp-aciklama').value.trim()
@@ -5056,7 +5053,12 @@
       tr.dataset.aciklama   = document.getElementById('tp-aciklama').value.trim();
       tr.dataset.talepTarih = document.getElementById('tp-tarih').value;
       tr.dataset.uygulama   = uygulama !== '—' ? uygulama : '';
-      tbody.appendChild(tr);
+
+      // Her iki tabloya en üste ekle
+      tbodyMst.prepend(tr);
+      const trBnt = tr.cloneNode(true);
+      tbodyBnt.prepend(trBnt);
+      lucide.createIcons({ nodes: [tr, trBnt] });
 
       // Formu sıfırla
       document.getElementById('tp-is-adi').value   = '';

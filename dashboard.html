@@ -3319,7 +3319,7 @@
     <!-- Toolbar -->
     <div class="toolbar" role="toolbar" aria-label="Sayfa araçları">
       <div class="toolbar-actions">
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" id="mstEkleBtn">
           <i data-lucide="plus" class="btn-icon"></i>
           Ekle
         </button>
@@ -4811,7 +4811,7 @@
     const panel   = document.getElementById('taskPanel');
     const overlay = document.getElementById('panelOverlay');
     const closeBtn = document.getElementById('taskPanelClose');
-    const ekleBtn = document.querySelectorAll('.toolbar-actions .btn-primary');
+    const ekleBtn = document.querySelectorAll('#mstEkleBtn');
 
     function openPanel() {
       panel.hidden = false;

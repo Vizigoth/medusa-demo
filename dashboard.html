@@ -3324,7 +3324,7 @@
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001003</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Fatura onay akisi</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Fatura onayinda cok seviyeli yetkilendirme yapisi kurulmali, limit asiminda ust onaya yonlendirilmeli.</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon is-turu-icon--onaylandi"></i></div><div class="td-cell"><span class="td-text">Onaylanan</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon is-turu-icon--acik"></i></div><div class="td-cell"><span class="td-text">Açık</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
@@ -4107,7 +4107,7 @@
             <td><div class="td-inner"><div class="td-checkbox"><div class="checkbox-box"><i data-lucide="check"></i></div></div><div class="td-cell"><span class="td-text td-isno-link" data-action="open-edit">1000001003</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Fatura onay akisi</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Fatura onayinda cok seviyeli yetkilendirme yapisi kurulmali, limit asiminda ust onaya yonlendirilmeli.</span></div></div></td>
-            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon is-turu-icon--onaylandi"></i></div><div class="td-cell"><span class="td-text">Onaylanan</span></div></div></td>
+            <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon is-turu-icon--acik"></i></div><div class="td-cell"><span class="td-text">Açık</span></div></div></td>
             <td><div class="td-inner"><div class="td-cell"><span class="td-text">Talep</span></div></div></td>
             <td><div class="td-inner"><div class="dot-wrap"><i data-lucide="siren" class="oncelik-icon oncelik-icon--yuksek"></i></div><div class="td-cell"><span class="td-text">Yüksek</span></div></div></td>
             <td><div class="td-inner"><div class="badge-cell"><div class="badge"><span class="badge-text">Yeni Talep</span></div></div></div></td>
@@ -6143,7 +6143,8 @@
       if (window._addActivityCard) {
         const now = new Date();
         const dateStr = now.toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'numeric'}).replace(/\./g, '/') + ' - ' + now.toLocaleTimeString('tr-TR');
-        window._addActivityCard(oldDurum, durumLabel, '', [], dateStr);
+        const aciklama = document.getElementById('onayTalepAciklama')?.value.trim() || '';
+        window._addActivityCard(oldDurum, durumLabel, aciklama, [], dateStr);
       }
     });
 
@@ -6644,7 +6645,15 @@
       const _ep    = document.getElementById('editPanel');
       const _isMst = _ep && _ep.classList.contains('edit-panel--mst');
 
-      const shouldSetOnaylanan = !_isMst && (selectedDurum === 'Üzerinde Çalışılıyor' || selectedDurum === 'Tamamlandı');
+      const bntIsTuruMap = {
+        'Yeni Talep':           { label: 'Açık',          cls: 'is-turu-icon--acik' },
+        'Onay Bekliyor':        { label: 'Onay Bekleyen',  cls: 'is-turu-icon--onay-bek' },
+        'Bilgi Bekleniyor':     { label: 'Açık',           cls: 'is-turu-icon--acik' },
+        'Onaylandı':            { label: 'Onaylanan',      cls: 'is-turu-icon--onaylandi' },
+        'Reddedilen':           { label: 'Reddedilen',     cls: 'is-turu-icon--redded' },
+        'Üzerinde Çalışılıyor': { label: 'Onaylanan',      cls: 'is-turu-icon--onaylandi' },
+        'Tamamlandı':           { label: 'Onaylanan',      cls: 'is-turu-icon--onaylandi' },
+      };
 
       function applyBadge(tr) {
         const badgeEl = tr.querySelector('td:nth-child(7) .badge');
@@ -6654,7 +6663,8 @@
           badgeEl.querySelector('.badge-text').textContent = selectedDurum;
         }
         if (!_isMst && window._bntSyncDurumToMst) window._bntSyncDurumToMst(tr, selectedDurum, newBadgeCls);
-        if (shouldSetOnaylanan && window._bntSetIsTuruOnaylanan) window._bntSetIsTuruOnaylanan(tr);
+        const isTuruMatch = !_isMst && bntIsTuruMap[selectedDurum];
+        if (isTuruMatch && window._bntSetIsTuru) window._bntSetIsTuru(tr, isTuruMatch.label, isTuruMatch.cls);
         return oldDurum;
       }
 
@@ -7593,15 +7603,11 @@
     badgeEl.querySelector('.badge-text').textContent = label;
   };
 
-  /* ── BNT İş Türü → Onaylanan helper (BNT + eşleşen MST satırı) ── */
-  window._bntSetIsTuruOnaylanan = function (tr) {
-    const INNER = '<div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon is-turu-icon--onaylandi"></i></div><div class="td-cell"><span class="td-text">Onaylanan</span></div></div>';
-
-    /* BNT satırını güncelle */
+  /* ── BNT İş Türü güncelle — BNT satırı + eşleşen MST satırı ── */
+  window._bntSetIsTuru = function (tr, label, iconCls) {
+    const INNER = '<div class="td-inner"><div class="dot-wrap"><i data-lucide="locate" class="is-turu-icon ' + iconCls + '"></i></div><div class="td-cell"><span class="td-text">' + label + '</span></div></div>';
     const bntTd = tr.querySelector('td:nth-child(4)');
     if (bntTd) { bntTd.innerHTML = INNER; lucide.createIcons({ nodes: [bntTd] }); }
-
-    /* Eşleşen MST satırını bul ve güncelle */
     const isNo = tr.querySelector('.td-isno-link')?.textContent.trim();
     if (!isNo) return;
     const mstRow = Array.from(document.querySelectorAll('#tableMst tbody tr'))
@@ -7610,6 +7616,8 @@
     const mstTd = mstRow.querySelector('td:nth-child(4)');
     if (mstTd) { mstTd.innerHTML = INNER; lucide.createIcons({ nodes: [mstTd] }); }
   };
+  /* backward-compat alias */
+  window._bntSetIsTuruOnaylanan = function (tr) { window._bntSetIsTuru(tr, 'Onaylanan', 'is-turu-icon--onaylandi'); };
   </script>
 
 </body>

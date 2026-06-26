@@ -2542,6 +2542,10 @@
       color: var(--bt-text-primary-muted);
       pointer-events: none;
     }
+  /* ── MST: H/T, Organizasyon, ClickUp ID — grid'de gizli, data DOM'da saklı ── */
+  #tableMst th[data-col="5"], #tableMst td:nth-child(5),
+  #tableMst th[data-col="9"], #tableMst td:nth-child(9),
+  #tableMst th[data-col="12"], #tableMst td:nth-child(12) { display: none; }
   </style>
 </head>
 <body>
@@ -3341,14 +3345,11 @@
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="2"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Adı</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="3"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Açıklama</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="4"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">İş Türü</span></div>
-            <div class="col-toggle-item"><div class="col-sw is-on" data-col="5"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">H / T</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="6"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Öncelik</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="7"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Durum</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="8"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Kullanıcı</span></div>
-            <div class="col-toggle-item"><div class="col-sw is-on" data-col="9"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Organizasyon</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="10"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Sorumlu</span></div>
             <div class="col-toggle-item"><div class="col-sw is-on" data-col="11"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">Uygulama</span></div>
-            <div class="col-toggle-item"><div class="col-sw is-on" data-col="12"><div class="col-sw-thumb"></div></div><span class="col-toggle-name">ClickUp ID</span></div>
           </div>
         </div>
       </div>

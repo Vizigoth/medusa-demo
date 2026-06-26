@@ -1892,6 +1892,7 @@
       background: var(--bt-surface-primary-subtle);
       color: var(--bt-text-primary-default);
       cursor: default;
+      pointer-events: none;
       padding-right: 36px;
     }
     .ep-dd-display { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -4302,10 +4303,9 @@
       <div class="ep-field">
         <label class="ep-label">Talep Durumu</label>
         <div class="ep-dropdown" id="epDurumDd">
-          <button type="button" class="ep-dd-trigger" id="ep-durum-trigger"
-                  aria-haspopup="listbox" aria-expanded="false">
+          <button type="button" class="ep-dd-trigger ep-dd-ro" id="ep-durum-trigger"
+                  tabindex="-1" aria-disabled="true">
             <span class="ep-dd-display" id="ep-durum-display">Talep Durumu</span>
-            <span class="ep-dd-clear" id="epDurumClear" hidden><i data-lucide="x" style="width:14px;height:14px;display:block;"></i></span>
             <span class="ep-dd-chevron"><i data-lucide="chevron-down" class="icon-tp-sm"></i></span>
           </button>
           <div class="ep-dd-list" id="epDurumList" role="listbox" hidden>
@@ -4323,7 +4323,7 @@
       <div class="ep-row">
         <div class="ep-col">
           <label class="ep-label">Talep Edilen Tarih</label>
-          <div class="ep-datepicker">
+          <div class="ep-datepicker ep-datepicker--ro">
             <button class="ep-dp-icon" id="epTalepDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
             <input type="text" class="ep-dp-input" id="ep-talep-tarih" placeholder="01 / 01 / 2026" readonly>
             <input type="date" class="ep-dp-native" id="ep-talep-tarih-n" tabindex="-1" aria-hidden="true">
@@ -4331,7 +4331,7 @@
         </div>
         <div class="ep-col">
           <label class="ep-label">Talep Onay Tarihi</label>
-          <div class="ep-datepicker">
+          <div class="ep-datepicker ep-datepicker--ro">
             <button class="ep-dp-icon" id="epOnayDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
             <input type="text" class="ep-dp-input" id="ep-onay-tarih" placeholder="01 / 01 / 2026" readonly>
             <input type="date" class="ep-dp-native" id="ep-onay-tarih-n" tabindex="-1" aria-hidden="true">
@@ -5352,10 +5352,10 @@
 
     /* ── Fill fields ── */
     /* ── Lock / Unlock left panel ── */
-    const epInteractiveTriggers = ['ep-oncelik-trigger', 'ep-sorumlu-trigger', 'ep-durum-trigger'];
-    const epInteractiveClearIds = ['epOncelikClear', 'epSorumluClear', 'epDurumClear'];
+    const epInteractiveTriggers = ['ep-oncelik-trigger', 'ep-sorumlu-trigger'];
+    const epInteractiveClearIds = ['epOncelikClear', 'epSorumluClear'];
     const epEditableInputIds    = ['ep-gun', 'ep-fatura-gun'];
-    const epDpContainerIds      = ['epTalepDpBtn', 'epOnayDpBtn', 'epPlanlananDpBtn'];
+    const epDpContainerIds      = ['epPlanlananDpBtn'];
 
     function epDpContainers() {
       return epDpContainerIds.map(id => document.getElementById(id)?.closest('.ep-datepicker')).filter(Boolean);
@@ -5413,7 +5413,7 @@
       /* Hata / Talep */
       document.getElementById('ep-hata-talep-display').textContent = 'Talep';
       /* Talep Durumu */
-      setDd('epDurumDd', 'ep-durum-trigger', 'ep-durum-display', 'epDurumList', 'epDurumClear', d.durum, 'Talep Durumu');
+      setDd('epDurumDd', 'ep-durum-trigger', 'ep-durum-display', 'epDurumList', null, d.durum, 'Talep Durumu');
       /* Sorumlu */
       setDd('epSorumluDd', 'ep-sorumlu-trigger', 'ep-sorumlu-display', 'epSorumluList', 'epSorumluClear', d.sorumlu === '—' ? '' : d.sorumlu, 'Sorumlu');
       /* Talep Edilen Tarih */

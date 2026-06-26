@@ -1983,7 +1983,7 @@
       line-height: var(--lh-xs);
       color: var(--bt-text-primary-default);
       outline: none;
-      padding: 0;
+      padding: var(--space-sm) var(--space-xs);
       cursor: text;
     }
     .ep-dp-input::placeholder { color: var(--bt-text-primary-muted); }
@@ -3993,12 +3993,10 @@
       <!-- Talep Edilen Teslim Tarihi (Figma 43:5996) -->
       <div class="tp-field">
         <label class="tp-label" for="tp-tarih">Talep Edilen Teslim Tarihi</label>
-        <div class="tp-input-wrap">
-          <div class="tp-input-icon tp-input-icon--left" id="tpCalendarBtn" style="cursor:pointer; pointer-events:all;">
-            <i data-lucide="calendar" class="icon-tp-sm"></i>
-          </div>
-          <input id="tp-tarih" class="tp-input tp-input-date" type="text" placeholder="Talep Edilen Teslim Tarihi" readonly>
-          <input id="tp-tarih-native" class="tp-date-native" type="date" tabindex="-1" aria-hidden="true">
+        <div class="ep-datepicker">
+          <button class="ep-dp-icon" id="tpCalendarBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
+          <input type="text" class="ep-dp-input" id="tp-tarih" placeholder="Talep Edilen Teslim Tarihi" readonly>
+          <input type="date" class="ep-dp-native" id="tp-tarih-native" tabindex="-1" aria-hidden="true">
         </div>
       </div>
 

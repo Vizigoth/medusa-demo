@@ -1597,7 +1597,7 @@
       right: 0;
       width: 653px;
       height: 100vh;
-      z-index: 101;
+      z-index: 201;
       display: flex;
       flex-direction: column;
       background: var(--bt-surface-primary-light);
@@ -1886,21 +1886,45 @@
 
     /* Selected row highlight */
     .data-table tbody tr.is-selected-row td { background: var(--bt-surface-brand-subtle); }
+    @keyframes textBlurInFlash {
+      0%   { filter: blur(5px); opacity: 0;   background-color: transparent; }
+      8%   { filter: blur(5px); opacity: 0.2; background-color: #dcfce7; }
+      55%  { filter: blur(0px); opacity: 1;   background-color: #dcfce7; }
+      100% { filter: blur(0px); opacity: 1;   background-color: transparent; }
+    }
+    .tr-blur-in td { animation: textBlurInFlash 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
     /* Edit panel — full viewport, slides in from right */
     .edit-panel {
       position: fixed;
-      inset: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       z-index: 200;
       display: flex;
       flex-direction: column;
       background: var(--bt-surface-primary-light);
       transform: translateX(100%);
-      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.3s ease, right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .edit-panel.is-open.is-pushed-panel { right: 653px; }
     .edit-panel.is-open {
       transform: translateX(0);
     }
+    .edit-panel.is-collapsed {
+      left: 50%;
+      box-shadow: -12px 0 32px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    /* Expand/collapse button in edit panel header */
+    .ep-expand-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      border: none; background: transparent;
+      cursor: pointer; border-radius: var(--radius-sm);
+      color: var(--bt-icon-primary-strong);
+      flex-shrink: 0;
+    }
+    .ep-expand-btn:hover { background: var(--bt-surface-primary-subtle); }
+    .ep-expand-btn svg { width: 14px; height: 14px; stroke-width: 1.5; }
 
     /* Header */
     .edit-panel__header {
@@ -1917,7 +1941,7 @@
     .edit-panel__header-left {
       display: flex;
       align-items: center;
-      gap: var(--space-md);
+      gap: var(--space-xs);
     }
     .edit-panel__header-right {
       display: flex;
@@ -1932,7 +1956,7 @@
       height: 28px;
       padding: var(--space-sm);
       border-radius: var(--radius-sm);
-      color: var(--bt-text-primary-default);
+      color: var(--bt-icon-primary-strong);
       transition: background 0.15s;
     }
     .edit-panel__close:hover { background: var(--bt-surface-primary-subtle); }
@@ -2018,6 +2042,7 @@
       width: 465px;
       flex-shrink: 0;
       height: 100%;
+      transition: width 0.3s ease;
       background: var(--bt-surface-primary-default);
       border-right: 1px solid var(--bt-border-primary-default);
       overflow-y: auto;
@@ -2158,6 +2183,31 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+    }
+
+    /* Collapsed edit panel → left panel single-column layout */
+    .edit-panel.is-collapsed .edit-panel__left {
+      width: 320px;
+    }
+    .edit-panel.is-collapsed .edit-panel__right {
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+    .edit-panel.is-collapsed .ep-act-card__user-log {
+      flex-direction: column;
+      gap: 6px;
+    }
+    .edit-panel.is-collapsed .ep-act-card__log {
+      white-space: normal;
+      flex-wrap: wrap;
+    }
+    .edit-panel.is-collapsed .ep-row {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .edit-panel.is-collapsed .ep-col {
+      flex: none;
+      width: 100%;
     }
 
     /* Read-only input (gray bg) */
@@ -5140,6 +5190,9 @@
       <button class="edit-panel__close" id="editPanelClose" aria-label="Kapat">
         <i data-lucide="x" class="icon-close-panel"></i>
       </button>
+      <button class="ep-expand-btn" id="bntEpExpandBtn" aria-label="Daralt / Genişlet">
+        <i data-lucide="minimize-2"></i>
+      </button>
       <span class="edit-panel__title" id="editPanelTitle">İş Numarası</span>
     </div>
     <div class="edit-panel__header-right">
@@ -5163,7 +5216,7 @@
     </button>
     <button class="btn btn-primary" id="epMstYorumEkleBtn">
       <i data-lucide="loader" class="btn-icon"></i>
-      Not Ekle
+      Bilgi Ekle
     </button>
     <div class="sb-flat" id="epKararVerDd">
       <button class="sb-flat__btn" id="epKararVerBtn">Talep Karar</button>
@@ -5298,7 +5351,7 @@
       <!-- Talep Edilen Tarih + Talep Onay Tarihi -->
       <div class="ep-row">
         <div class="ep-col">
-          <label class="ep-label">Talep Edilen Tarih</label>
+          <label class="ep-label">Talep Edilen Teslim Tarihi</label>
           <div class="ep-datepicker ep-datepicker--ro">
             <button class="ep-dp-icon" id="bntEpTalepDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
             <input type="text" class="ep-dp-input" id="bnt-ep-talep-tarih" placeholder="01 / 01 / 2026" readonly>
@@ -5428,7 +5481,7 @@
       <!-- Talep Edilen Tarih + Talep Onay Tarihi -->
       <div class="ep-row">
         <div class="ep-col">
-          <label class="ep-label">Talep Edilen Tarih</label>
+          <label class="ep-label">Talep Edilen Teslim Tarihi</label>
           <div class="ep-datepicker ep-datepicker--ro">
             <button class="ep-dp-icon" id="epTalepDpBtn" type="button"><i data-lucide="calendar" class="icon-tp-sm"></i></button>
             <input type="text" class="ep-dp-input" id="ep-talep-tarih" placeholder="01 / 01 / 2026" readonly>
@@ -5783,6 +5836,7 @@
 
 <!-- ── Talep Durumu Güncelle Dialog ── -->
 <!-- ── Konfeti container ── -->
+
 <div id="ttConfettiWrap" class="tt-confetti-wrap"></div>
 
 <!-- ── Alert Banner (Talep Tamamlama success — fixed, slides from top) ── -->
@@ -6019,17 +6073,17 @@
     const ekleBtn = document.querySelectorAll('#mstEkleBtn');
 
     function openPanel() {
+      if (editPanel.classList.contains('is-open')) editPanel.classList.add('is-pushed-panel');
       panel.hidden = false;
-      // Force reflow so transition fires after hidden is removed
       panel.getBoundingClientRect();
       panel.classList.add('is-open');
       overlay.classList.add('is-open');
       overlay.setAttribute('aria-hidden', 'false');
-      // Re-init Lucide icons that were inside hidden panel
       lucide.createIcons();
     }
 
     function closePanel() {
+      editPanel.classList.remove('is-pushed-panel');
       panel.classList.remove('is-open');
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
@@ -6255,15 +6309,34 @@
       `;
       tr.dataset.isAdi      = document.getElementById('tp-is-adi').value.trim();
       tr.dataset.aciklama   = document.getElementById('tp-aciklama').value.trim();
-      tr.dataset.talepTarih = document.getElementById('tp-tarih').value;
+      tr.dataset.talepTarih = document.getElementById('tp-tarih-native').value;
       tr.dataset.uygulama   = uygulama !== '—' ? uygulama : '';
       tr.dataset.deletable  = 'true';
 
-      // Her iki tabloya en üste ekle
-      tbodyMst.prepend(tr);
+      // BNT clone'u önce al (ClickUp hücresi dahil)
       const trBnt = tr.cloneNode(true);
+
+      // MST satırından Org (9. hücre) ve ClickUp (12. hücre) çıkar — MST'de bu kolonlar yok
+      const mstCells = Array.from(tr.children);
+      mstCells[11].remove(); // ClickUp (önce sondakini kaldır, index kaymasın)
+      mstCells[8].remove();  // Organizasyon
+      tbodyMst.prepend(tr);
+
+      // BNT clone'una 3 tarih hücresi ekle (col 12-14) — ClickUp (son hücre) öncesine
+      const girisTar  = new Date().toLocaleDateString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\./g,'/');
+      const emptyDate = '<div class="td-inner"><div class="td-cell"><span class="td-text td-date--empty">—</span></div></div>';
+      const girisTd   = document.createElement('td'); girisTd.innerHTML = `<div class="td-inner"><div class="td-cell"><span class="td-text">${girisTar}</span></div></div>`;
+      const onayTd    = document.createElement('td'); onayTd.innerHTML  = emptyDate;
+      const tamTd     = document.createElement('td'); tamTd.innerHTML   = emptyDate;
+      const clickupTd = trBnt.lastElementChild;
+      trBnt.insertBefore(tamTd,   clickupTd);
+      trBnt.insertBefore(onayTd,  tamTd);
+      trBnt.insertBefore(girisTd, onayTd);
+      trBnt.dataset.girisTarihi = girisTar;
       tbodyBnt.prepend(trBnt);
+
       lucide.createIcons({ nodes: [tr, trBnt] });
+      if (window._initCopyBtn) window._initCopyBtn(clickupTd);
 
       // Formu sıfırla
       document.getElementById('tp-is-adi').value   = '';
@@ -6522,6 +6595,7 @@
       const isMst = !!tr.closest('#tableMst, #mainMst');
       editPanel.classList.toggle('edit-panel--mst', isMst);
       editPanel.classList.toggle('edit-panel--bnt', !isMst);
+      _resetCollapsed();
       fillEditPanel(readRowData(tr));
       editPanel.hidden = false;
       requestAnimationFrame(() => {
@@ -6541,7 +6615,31 @@
     window._openEditPanel  = openEditPanel;
     window._closeEditPanel = _doCloseEditPanel;
 
+    /* ── Expand / collapse (BNT + MST) ── */
+    const epExpandBtn = document.getElementById('bntEpExpandBtn');
+
+    function setExpandIcon(iconName) {
+      if (!epExpandBtn) return;
+      epExpandBtn.querySelector('svg')?.remove();
+      epExpandBtn.querySelector('i')?.remove();
+      const i = document.createElement('i');
+      i.setAttribute('data-lucide', iconName);
+      epExpandBtn.appendChild(i);
+      lucide.createIcons({ nodes: [epExpandBtn] });
+    }
+
+    epExpandBtn?.addEventListener('click', () => {
+      const collapsed = editPanel.classList.toggle('is-collapsed');
+      setExpandIcon(collapsed ? 'expand' : 'minimize-2');
+    });
+
+    function _resetCollapsed() {
+      editPanel.classList.remove('is-collapsed');
+      setExpandIcon('minimize-2');
+    }
+
     function _doCloseEditPanel() {
+      _resetCollapsed();
       editPanel.classList.remove('is-open');
       editPanel.addEventListener('transitionend', function hide() {
         editPanel.hidden = true;
@@ -6741,12 +6839,21 @@
       const durumDisplayId = isMst ? 'ep-durum-display' : 'bnt-ep-durum-display';
       const isNoId         = isMst ? 'ep-is-no'         : 'bnt-ep-is-no';
 
+      /* eski durumu badge güncellenmeden önce oku */
+      const epIsNo = document.getElementById(isNoId);
+      const matchRow = epIsNo
+        ? Array.from(getActiveMain().querySelectorAll('.data-table tbody tr'))
+            .find(r => r.querySelector('.td-isno-link')?.textContent.trim() === epIsNo.value.trim())
+        : null;
+      const oldDurum = matchRow
+        ? matchRow.querySelector('td:nth-child(7) .badge-text')?.textContent.trim() || ''
+        : '';
+
       /* Edit panel status */
       const epDisplay = document.getElementById(durumDisplayId);
       if (epDisplay) { epDisplay.textContent = label; epDisplay.classList.remove('ep-dd-placeholder'); }
 
       /* Grid badge + İş Türü for matching row */
-      const epIsNo = document.getElementById(isNoId);
       if (epIsNo) {
         getActiveMain().querySelectorAll('.data-table tbody tr').forEach(row => {
           const link = row.querySelector('.td-isno-link');
@@ -6763,6 +6870,14 @@
       }
 
       lockEditPanelLeft();
+
+      /* activity card */
+      if (window._addActivityCard) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'numeric'}).replace(/\./g, '/') + ' - ' + now.toLocaleTimeString('tr-TR');
+        window._addActivityCard(oldDurum, label, '', [], dateStr, {initials: 'EG', name: 'Emre Göcer', avatarCls: 'ep-act-card__avatar--gray'});
+      }
+      if (window._clearDeletable && epIsNo) window._clearDeletable(epIsNo.value.trim());
     });
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
@@ -7229,16 +7344,51 @@
       try {
         selectedDurum = '';
         pendingFiles  = [];
-        if (durumDisplay) { durumDisplay.textContent = 'Talep Durumu'; durumDisplay.classList.add('tdg-placeholder'); }
-        if (durumTrigger) durumTrigger.classList.remove('has-value');
-        if (durumList) durumList.querySelectorAll('.tdg-select-opt').forEach(o => o.classList.remove('is-selected'));
+        durumDisplay.textContent = 'Talep Durumu';
+        durumDisplay.classList.add('tdg-placeholder');
+        durumTrigger.classList.remove('has-value');
+        durumList.querySelectorAll('.tdg-select-opt').forEach(o => o.classList.remove('is-selected'));
         if (aciklamaEl) aciklamaEl.value = '';
         if (fileListEl) fileListEl.innerHTML = '';
+
+        /* mevcut atanmış durumu oku ve dropdown'da ön-seç */
+        let currentDurum = '';
+        if (openedFrom === 'edit') {
+          const _epEl = document.getElementById('editPanel');
+          const isMstNow = _epEl && _epEl.classList.contains('edit-panel--mst');
+          const dispEl = document.getElementById(isMstNow ? 'ep-durum-display' : 'bnt-ep-durum-display');
+          if (dispEl && !dispEl.classList.contains('ep-dd-placeholder')) {
+            currentDurum = dispEl.textContent.trim();
+          }
+        } else {
+          const firstSel = getActiveMain().querySelector('.data-table tbody tr.is-selected-row');
+          if (firstSel) {
+            const bt = firstSel.querySelector('td:nth-child(7) .badge-text');
+            if (bt) currentDurum = bt.textContent.trim();
+          }
+        }
+
+        if (currentDurum) {
+          const matchOpt = Array.from(durumList.querySelectorAll('.tdg-select-opt'))
+            .find(o => o.dataset.value === currentDurum);
+          if (matchOpt) {
+            selectedDurum = currentDurum;
+            durumDisplay.textContent = currentDurum;
+            durumDisplay.classList.remove('tdg-placeholder');
+            durumTrigger.classList.add('has-value');
+            matchOpt.classList.add('is-selected');
+          }
+        }
+
         lucide.createIcons();
       } catch(e) { console.error('openDialog error:', e); }
     }
 
-    function closeDialog() { overlay.classList.remove('is-open'); durumList.hidden = true; durumTrigger.setAttribute('aria-expanded','false'); }
+    function closeDialog() {
+      overlay.classList.remove('is-open');
+      durumList.hidden = true;
+      durumTrigger.setAttribute('aria-expanded','false');
+    }
     window._openTalepDurumu = openDialog;
 
     mainBtn && mainBtn.addEventListener('click', () => {
@@ -7408,8 +7558,11 @@
     function addActivityCard(oldDurum, newDurum, aciklama, files, dateStr, user) {
       const epRight = document.querySelector('.edit-panel__right');
       if (!epRight) return;
+      /* panel modunu sınıftan oku — _isMst click-handler scope'unda, burada erişilemez */
+      const _ep2 = document.getElementById('editPanel');
+      const isMstNow = _ep2 && _ep2.classList.contains('edit-panel--mst');
       /* activity eklenir eklenmez kaydı artık silinemez */
-      const isNoEl = document.getElementById(_isMst ? 'ep-is-no' : 'bnt-ep-is-no');
+      const isNoEl = document.getElementById(isMstNow ? 'ep-is-no' : 'bnt-ep-is-no');
       if (isNoEl && window._clearDeletable) window._clearDeletable(isNoEl.value.trim());
 
       const oldLabel = oldDurum || '—';
@@ -7473,10 +7626,7 @@
       epRight.insertBefore(card, firstCard);
       lucide.createIcons({ nodes: [card] });
 
-      /* chevron toggle for new card */
-      card.querySelector('.ep-act-card__chevron').addEventListener('click', () => {
-        card.classList.toggle('is-collapsed');
-      });
+      /* chevron toggle for new card — global header listener zaten is-open toggle ediyor */
     }
 
     window._addActivityCard = addActivityCard;
@@ -7505,7 +7655,9 @@
       overlay.removeAttribute('aria-hidden');
       lucide.createIcons();
     }
-    function closeDialog() { overlay.classList.remove('is-open'); }
+    function closeDialog() {
+      overlay.classList.remove('is-open');
+    }
 
     epBtn?.addEventListener('click', openDialog);
     closeBtn.addEventListener('click', closeDialog);
@@ -7589,7 +7741,7 @@
               <div class="ep-act-card__user">
                 <div class="ep-act-card__avatar ep-act-card__avatar--gray">EG</div>
                 <div class="ep-act-card__info">
-                  <span class="name">Emre Göcer not ekledi</span>
+                  <span class="name">Emre Göcer bilgi ekledi</span>
                   <span class="date">${dateStr}</span>
                 </div>
               </div>
@@ -7718,6 +7870,7 @@
       if (openedFrom === 'edit') buildChipsFromEditPanel();
       else                       buildChipsFromGrid();
       if (body) body.textContent = defaultBodyText;
+      if (editPanel.classList.contains('is-open')) editPanel.classList.add('is-pushed-panel');
       panel.hidden = false;
       panel.getBoundingClientRect();
       panel.classList.add('is-open');
@@ -7727,6 +7880,7 @@
     }
 
     function closeTTPanel() {
+      editPanel.classList.remove('is-pushed-panel');
       panel.classList.remove('is-open');
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
@@ -7818,12 +7972,21 @@
     }
 
     gonderBtn.addEventListener('click', () => {
-      const selCount = getActiveMain().querySelectorAll('.data-table tbody tr.is-selected-row').length || 1;
+      const completedRows = Array.from(getActiveMain().querySelectorAll('.data-table tbody tr.is-selected-row'));
+      const selCount = completedRows.length || 1;
       applyTamamlandi();
       if (window._lockEditPanelLeft) window._lockEditPanelLeft();
       closeTTPanel();
       showAlert('Talep başarıyla tamamlandı', 'Talep sahibine bildirim gönderildi.');
-      showConfetti(selCount);
+      // showConfetti(selCount);
+      completedRows.forEach((row, i) => {
+        setTimeout(() => {
+          row.classList.remove('tr-blur-in');
+          void row.offsetWidth;
+          row.classList.add('tr-blur-in');
+          row.addEventListener('animationend', () => row.classList.remove('tr-blur-in'), { once: true });
+        }, i * 60);
+      });
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && panel.classList.contains('is-open')) closeTTPanel();
@@ -8673,6 +8836,8 @@
         }, 1500);
       });
     });
+
+    window._initCopyBtn = addCopyBtn;
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initCopyBtns);

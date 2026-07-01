@@ -2198,7 +2198,7 @@
 
     /* Collapsed edit panel → left panel single-column layout */
     .edit-panel.is-collapsed .edit-panel__left {
-      width: 320px;
+      width: 360px;
     }
     .edit-panel.is-collapsed .edit-panel__right {
       padding-left: 40px;
@@ -3165,7 +3165,7 @@
   }
 
   /* KPI row */
-  .dp-kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--space-xl); }
+  .dp-kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-xl); }
   .dp-kpi-card {
     display: flex; flex-direction: column;
     border-radius: var(--radius-md);
@@ -3223,21 +3223,7 @@
   .dp-kpi-desc--error   { color: var(--bt-text-error-default); }
   .dp-kpi-desc--success { color: var(--bt-text-success-default); }
 
-  /* Generic card */
-  .dp-card {
-    background: var(--bt-surface-primary-default);
-    border: 1px solid var(--bt-border-primary-default);
-    border-radius: 10px;
-    padding: 20px 22px;
-    display: flex; flex-direction: column; gap: 16px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  }
-  .dp-card-header { display: flex; align-items: flex-start; justify-content: space-between; }
-  .dp-card-header-left { display: flex; flex-direction: column; gap: 3px; }
-  .dp-card-title { font-family: var(--font-title); font-size: 14px; font-weight: 600; color: var(--bt-text-primary-default); }
-  .dp-card-sub   { font-size: 11px; color: #737373; font-family: var(--font-text); }
-
-  .dp-charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dp-charts-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; align-items: stretch; }
 
   /* Status distribution card — header/body split (Figma 238:11176) */
   .dp-status-card { display: flex; flex-direction: column; border-radius: var(--radius-md); }
@@ -3266,7 +3252,12 @@
     border-bottom-left-radius: var(--radius-md);
     border-bottom-right-radius: var(--radius-md);
     padding: var(--space-3xl);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  .dp-status-body > svg { flex-shrink: 0; }
 
   /* SVG column chart */
   .dp-col-chart { width: 100%; height: 190px; display: block; overflow: visible; }
@@ -3274,15 +3265,6 @@
   /* SVG horizontal (row) chart */
   .dp-row-chart { width: 100%; height: auto; display: block; overflow: visible; }
 
-  /* Bar list */
-  .dp-bar-list { display: flex; flex-direction: column; gap: 10px; }
-  .dp-bar-row  { display: flex; align-items: center; gap: 10px; }
-  .dp-bar-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .dp-bar-label { font-size: 12px; font-family: var(--font-text); color: var(--bt-text-primary-default); width: 144px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .dp-bar-track { flex: 1; height: 6px; background: var(--bt-border-primary-muted); border-radius: 99px; overflow: hidden; }
-  .dp-bar-fill  { height: 100%; border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
-  .dp-bar-count { font-size: 12px; font-family: var(--font-title); font-weight: 600; color: var(--bt-text-primary-default); width: 22px; text-align: right; flex-shrink: 0; }
-  .dp-bar-pct   { font-size: 11px; font-family: var(--font-text); color: #737373; width: 32px; text-align: right; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -5003,23 +4985,25 @@
 
       <!-- Charts Row — priority + org -->
       <div class="dp-charts-row">
-        <div class="dp-card">
-          <div class="dp-card-header">
-            <div class="dp-card-header-left">
-              <span class="dp-card-title">Öncelik Dağılımı</span>
-              <span class="dp-card-sub" id="dpOncelikTotal"></span>
-            </div>
+        <div class="dp-status-card">
+          <div class="dp-status-header">
+            <span class="dp-status-title">Öncelik Dağılımı</span>
+            <span class="dp-status-subtitle">Sistem üzerindeki tüm taleplerin öncelik dağılımı</span>
           </div>
-          <svg class="dp-row-chart" id="dpOncelikChart" aria-hidden="true"></svg>
+          <div class="dp-status-body">
+            <svg class="dp-row-chart" id="dpOncelikChart" aria-hidden="true"></svg>
+            <span hidden id="dpOncelikTotal"></span>
+          </div>
         </div>
-        <div class="dp-card">
-          <div class="dp-card-header">
-            <div class="dp-card-header-left">
-              <span class="dp-card-title">Organizasyon Dağılımı</span>
-              <span class="dp-card-sub" id="dpOrgTotal"></span>
-            </div>
+        <div class="dp-status-card">
+          <div class="dp-status-header">
+            <span class="dp-status-title">Organizasyon Dağılımı</span>
+            <span class="dp-status-subtitle">Sistem üzerindeki tüm taleplerin organizasyona göre dağılımı</span>
           </div>
-          <svg class="dp-row-chart" id="dpOrgChart" aria-hidden="true"></svg>
+          <div class="dp-status-body">
+            <svg class="dp-row-chart" id="dpOrgChart" aria-hidden="true"></svg>
+            <span hidden id="dpOrgTotal"></span>
+          </div>
         </div>
       </div>
 
@@ -8296,27 +8280,6 @@
       renderRowChart('dpOrgChart',     'dpOrgTotal',     orgCounts,     total, null, null);
     }
 
-    function renderBarChart(chartId, totalId, counts, total, colorMap, order) {
-      const el = document.getElementById(chartId);
-      const entries = order
-        ? order.filter(k => counts[k]).map(k => [k, counts[k]])
-        : Object.entries(counts).sort((a,b) => b[1] - a[1]);
-      const max = Math.max(...entries.map(e => e[1]), 1);
-      document.getElementById(totalId).textContent = total + ' kayıt';
-      el.innerHTML = entries.map(([label, count]) => {
-        const pct   = Math.round(count / total * 100);
-        const barW  = Math.round(count / max * 100);
-        const color = colorMap?.[label] || '#737373';
-        return `<div class="dp-bar-row">
-          <div class="dp-bar-dot" style="background:${color}"></div>
-          <span class="dp-bar-label" title="${label}">${label}</span>
-          <div class="dp-bar-track"><div class="dp-bar-fill" style="width:${barW}%;background:${color}"></div></div>
-          <span class="dp-bar-count">${count}</span>
-          <span class="dp-bar-pct">${pct}%</span>
-        </div>`;
-      }).join('');
-    }
-
     /* Horizontal (row) version of renderColumnChart — same visual language, sideways */
     function renderRowChart(svgId, totalId, counts, total, colorMap, order) {
       const svg = document.getElementById(svgId);
@@ -8335,8 +8298,8 @@
 
       if (!entries.length) { svg.innerHTML = ''; return; }
 
-      /* -44 = .dp-card yatay padding'i (22px * 2) */
-      const W      = svg.parentElement.clientWidth - 44 || 400;
+      /* -40 = dp-status-body'nin sol+sağ padding'i (space-3xl * 2) */
+      const W      = svg.parentElement.clientWidth - 40 || 400;
       const rowH   = 36;
       const n      = entries.length;
       /* Sol pay, en uzun etiketin uzunluğuna göre otomatik genişler (kısa "Düşük" ile uzun

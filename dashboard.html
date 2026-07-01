@@ -25,15 +25,20 @@
 
       --teal-600:   #0d9488;
 
+      --indigo-200: #c7d2fe;
+
       --orange-200: #fed7aa;
+      --orange-300: #fdba74;
       --orange-600: #ea580c;
 
       --red-500:    #e84b5b;
       --red-600:    #d83a52;
+      --red-700:    #b31d38;
 
       --green-100:  #daede5;
 
       --purple-100: #f3e8ff;
+      --purple-600: #9333ea;
 
       /* ── Semantic tokens — Color ── */
       --bt-primary-default:          #0d4e97;
@@ -61,6 +66,8 @@
       --bt-text-primary-emphasis:    #727272;
       --bt-text-primary-muted:       #a3a3a3;
       --bt-text-brand-default:       #0d4e97;
+      --bt-text-error-default:       #b31d38;
+      --bt-text-success-default:     #2d584b;
 
       /* ── Semantic tokens — Icon ── */
       --bt-icon-primary-default:     #1a1a1a;
@@ -93,6 +100,7 @@
       --space-md:   8px;
       --space-xl:   12px;
       --space-2xl:  16px;
+      --space-3xl:  20px;
 
       /* Border radius */
       --radius-none: 0px;
@@ -112,12 +120,14 @@
       --text-sm:  14px;
       --text-md:  16px;
       --text-xl:  20px;
+      --text-5xl: 36px;
 
       --lh-2xs: 12px;
       --lh-xs:  16px;
       --lh-sm:  20px;
       --lh-md:  24px;
       --lh-xl:  28px;
+      --lh-5xl: 44px;
     }
 
     /* ── Reset ── */
@@ -3155,43 +3165,63 @@
   }
 
   /* KPI row */
-  .dp-kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  .dp-kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--space-xl); }
   .dp-kpi-card {
+    display: flex; flex-direction: column;
+    border-radius: var(--radius-md);
+  }
+  .dp-kpi-header {
+    background: var(--bt-surface-primary-light);
+    border: 1px solid var(--bt-border-primary-default);
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+    display: flex; align-items: center; gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-xl);
+  }
+  .dp-kpi-header-text { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+  .dp-kpi-title {
+    font-family: var(--font-title); font-weight: 500;
+    font-size: var(--text-sm); line-height: var(--lh-sm);
+    color: var(--bt-text-primary-default);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .dp-kpi-subtitle {
+    font-family: var(--font-text); font-weight: 400;
+    font-size: var(--text-xs); line-height: var(--lh-xs);
+    color: var(--bt-text-primary-default);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .dp-kpi-badge {
+    flex-shrink: 0; font-family: var(--font-text); font-weight: 400;
+    font-size: var(--text-xs); line-height: var(--lh-xs);
+    color: var(--bt-text-primary-default); white-space: nowrap;
+  }
+  .dp-kpi-body {
     background: var(--bt-surface-primary-default);
     border: 1px solid var(--bt-border-primary-default);
-    border-radius: 10px;
-    padding: 22px 20px 18px;
-    display: flex; flex-direction: column;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    border-top: none;
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    padding: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-xs);
   }
-  .dp-kpi-top {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 8px;
-  }
-  .dp-kpi-label { font-size: 12px; color: #737373; font-family: var(--font-text); }
-  .dp-kpi-trend {
-    font-size: 11px; font-family: var(--font-text);
-    display: inline-flex; align-items: center; gap: 2px;
-  }
-  .dp-kpi-trend--up   { color: #047857; }
-  .dp-kpi-trend--down { color: var(--red-500); }
-  .dp-kpi-trend--neu  { color: #737373; }
-  .dp-kpi-trend svg   { width: 12px; height: 12px; display: block; }
   .dp-kpi-value {
-    font-size: 32px; font-weight: 700; font-family: var(--font-title);
-    color: var(--bt-text-primary-default); line-height: 1;
-    margin-bottom: 14px; letter-spacing: -1px;
+    font-family: var(--font-title); font-weight: 500;
+    font-size: var(--text-5xl); line-height: var(--lh-5xl);
+    color: var(--bt-text-primary-default);
   }
-  .dp-kpi-divider { height: 1px; background: var(--bt-border-primary-muted); margin-bottom: 12px; }
-  .dp-kpi-subtitle { font-size: 12px; font-weight: 600; font-family: var(--font-title); color: var(--bt-text-primary-default); margin-bottom: 3px; display: flex; align-items: center; gap: 4px; }
-  .dp-kpi-subtitle svg { width: 13px; height: 13px; display: block; color: #737373; }
-  .dp-kpi-desc { font-size: 11px; color: #737373; font-family: var(--font-text); }
-
-  /* Accent top-border variants */
-  .dp-kpi-card--blue   { border-top: 3px solid var(--bt-primary-default);  padding-top: 19px; }
-  .dp-kpi-card--amber  { border-top: 3px solid #b45309;                    padding-top: 19px; }
-  .dp-kpi-card--purple { border-top: 3px solid #7c3aed;                    padding-top: 19px; }
-  .dp-kpi-card--green  { border-top: 3px solid #047857;                    padding-top: 19px; }
+  .dp-kpi-content { display: flex; flex-direction: column; gap: 4px; }
+  .dp-kpi-content-title {
+    font-family: var(--font-title); font-weight: 400;
+    font-size: var(--text-sm); line-height: var(--lh-sm);
+    color: var(--bt-text-primary-default);
+  }
+  .dp-kpi-desc {
+    font-family: var(--font-text); font-weight: 400;
+    font-size: var(--text-xs); line-height: var(--lh-xs);
+    color: var(--bt-text-primary-emphasis);
+  }
+  .dp-kpi-desc--error   { color: var(--bt-text-error-default); }
+  .dp-kpi-desc--success { color: var(--bt-text-success-default); }
 
   /* Generic card */
   .dp-card {
@@ -3209,8 +3239,40 @@
 
   .dp-charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+  /* Status distribution card — header/body split (Figma 238:11176) */
+  .dp-status-card { display: flex; flex-direction: column; border-radius: var(--radius-md); }
+  .dp-status-header {
+    background: var(--bt-surface-primary-light);
+    border: 1px solid var(--bt-border-primary-default);
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-xl);
+    display: flex; flex-direction: column;
+  }
+  .dp-status-title {
+    font-family: var(--font-title); font-weight: 500;
+    font-size: var(--text-sm); line-height: var(--lh-sm);
+    color: var(--bt-text-primary-default);
+  }
+  .dp-status-subtitle {
+    font-family: var(--font-text); font-weight: 400;
+    font-size: var(--text-xs); line-height: var(--lh-xs);
+    color: var(--bt-text-primary-default);
+  }
+  .dp-status-body {
+    background: var(--bt-surface-primary-default);
+    border: 1px solid var(--bt-border-primary-default);
+    border-top: none;
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    padding: var(--space-3xl);
+  }
+
   /* SVG column chart */
   .dp-col-chart { width: 100%; height: 190px; display: block; overflow: visible; }
+
+  /* SVG horizontal (row) chart */
+  .dp-row-chart { width: 100%; height: auto; display: block; overflow: visible; }
 
   /* Bar list */
   .dp-bar-list { display: flex; flex-direction: column; gap: 10px; }
@@ -3260,13 +3322,13 @@
       <!-- Nav Items -->
       <nav class="nav-items" aria-label="Ana menü">
         <div class="nav-item">
-          <button class="nav-item-btn" id="navDashboard">
+          <button class="nav-item-btn active" id="navDashboard" aria-current="page">
             <span class="nav-icon-wrap"><i data-lucide="loader" class="nav-icon"></i></span>
             <span class="nav-label-wrap"><span class="nav-label">Dashboard</span></span>
           </button>
         </div>
         <div class="nav-item">
-          <button class="nav-item-btn active" id="navBnt" aria-current="page">
+          <button class="nav-item-btn" id="navBnt">
             <span class="nav-icon-wrap"><i data-lucide="loader" class="nav-icon"></i></span>
             <span class="nav-label-wrap"><span class="nav-label">Tüm İş Listesi BNT</span></span>
           </button>
@@ -3338,7 +3400,7 @@
   </aside>
 
   <!-- ══════════════ MAIN CONTENT ══════════════ -->
-  <main class="main-content" id="mainBnt">
+  <main class="main-content" id="mainBnt" hidden>
 
     <!-- Page Header -->
     <header class="page-header">
@@ -4851,7 +4913,7 @@
   </main>
 
   <!-- ── Kontrol Panel (Dashboard) ── -->
-  <main class="main-content" id="mainDashboard" hidden>
+  <main class="main-content" id="mainDashboard">
 
     <header class="page-header">
       <h1 class="page-title">Kontrol Panel</h1>
@@ -4861,57 +4923,82 @@
 
       <!-- KPI Cards -->
       <div class="dp-kpi-row">
-        <div class="dp-kpi-card dp-kpi-card--blue">
-          <div class="dp-kpi-top">
-            <span class="dp-kpi-label">Toplam Talep</span>
-            <span class="dp-kpi-trend dp-kpi-trend--neu" id="dpBadgeTotal">Tüm dönem</span>
+        <div class="dp-kpi-card">
+          <div class="dp-kpi-header">
+            <div class="dp-kpi-header-text">
+              <span class="dp-kpi-title">Toplam Talep</span>
+              <span class="dp-kpi-subtitle">Sistem üzerindeki tüm talep kayıtları</span>
+            </div>
+            <span class="dp-kpi-badge" id="dpBadgeTotal">— Kayıt</span>
           </div>
-          <div class="dp-kpi-value" id="dpKpiTotal">—</div>
-          <div class="dp-kpi-divider"></div>
-          <div class="dp-kpi-subtitle">Sisteme kayıtlı talepler</div>
-          <div class="dp-kpi-desc">BNT üzerindeki tüm kayıtlar</div>
+          <div class="dp-kpi-body">
+            <div class="dp-kpi-value" id="dpKpiTotal">—</div>
+            <div class="dp-kpi-content">
+              <div class="dp-kpi-content-title">Toplam Talep</div>
+              <div class="dp-kpi-desc">Sistem üzerindeki tüm talep kayıtları</div>
+            </div>
+          </div>
         </div>
-        <div class="dp-kpi-card dp-kpi-card--amber">
-          <div class="dp-kpi-top">
-            <span class="dp-kpi-label">Beklemede</span>
-            <span class="dp-kpi-trend dp-kpi-trend--down" id="dpBadgeBeklemede">—</span>
+        <div class="dp-kpi-card">
+          <div class="dp-kpi-header">
+            <div class="dp-kpi-header-text">
+              <span class="dp-kpi-title">Onay veya Bilgi Bekliyor</span>
+              <span class="dp-kpi-subtitle">Sistem üzerinde beklemede olan talepler</span>
+            </div>
+            <span class="dp-kpi-badge" id="dpBadgeBeklemede">— Kayıt</span>
           </div>
-          <div class="dp-kpi-value" id="dpKpiBeklemede">—</div>
-          <div class="dp-kpi-divider"></div>
-          <div class="dp-kpi-subtitle">Onay veya bilgi bekliyor</div>
-          <div class="dp-kpi-desc">Yeni Talep · Onay Bekliyor · Bilgi Bekleniyor</div>
+          <div class="dp-kpi-body">
+            <div class="dp-kpi-value" id="dpKpiBeklemede">—</div>
+            <div class="dp-kpi-content">
+              <div class="dp-kpi-content-title">Beklemede</div>
+              <div class="dp-kpi-desc dp-kpi-desc--error" id="dpDescBeklemede">—</div>
+            </div>
+          </div>
         </div>
-        <div class="dp-kpi-card dp-kpi-card--purple">
-          <div class="dp-kpi-top">
-            <span class="dp-kpi-label">Aktif</span>
-            <span class="dp-kpi-trend dp-kpi-trend--up" id="dpBadgeAktif">—</span>
+        <div class="dp-kpi-card">
+          <div class="dp-kpi-header">
+            <div class="dp-kpi-header-text">
+              <span class="dp-kpi-title">Onaylandı veya Üzerinde Çalışılıyor</span>
+              <span class="dp-kpi-subtitle">Sistem üzerinde onaylanan talepler</span>
+            </div>
+            <span class="dp-kpi-badge" id="dpBadgeAktif">— Kayıt</span>
           </div>
-          <div class="dp-kpi-value" id="dpKpiAktif">—</div>
-          <div class="dp-kpi-divider"></div>
-          <div class="dp-kpi-subtitle">İşlem sürecinde</div>
-          <div class="dp-kpi-desc">Onaylandı · Üzerinde Çalışılıyor</div>
+          <div class="dp-kpi-body">
+            <div class="dp-kpi-value" id="dpKpiAktif">—</div>
+            <div class="dp-kpi-content">
+              <div class="dp-kpi-content-title">Onaylandı</div>
+              <div class="dp-kpi-desc dp-kpi-desc--success" id="dpDescAktif">—</div>
+            </div>
+          </div>
         </div>
-        <div class="dp-kpi-card dp-kpi-card--green">
-          <div class="dp-kpi-top">
-            <span class="dp-kpi-label">Tamamlanan</span>
-            <span class="dp-kpi-trend dp-kpi-trend--up" id="dpBadgeTamamlanan">—</span>
+        <div class="dp-kpi-card">
+          <div class="dp-kpi-header">
+            <div class="dp-kpi-header-text">
+              <span class="dp-kpi-title">Tamamlanan</span>
+              <span class="dp-kpi-subtitle">Sistem üzerinde tamamlanan talepler</span>
+            </div>
+            <span class="dp-kpi-badge" id="dpBadgeTamamlanan">— Kayıt</span>
           </div>
-          <div class="dp-kpi-value" id="dpKpiTamamlanan">—</div>
-          <div class="dp-kpi-divider"></div>
-          <div class="dp-kpi-subtitle">Başarıyla kapatıldı</div>
-          <div class="dp-kpi-desc">Tamamlandı olarak işaretlenen talepler</div>
+          <div class="dp-kpi-body">
+            <div class="dp-kpi-value" id="dpKpiTamamlanan">—</div>
+            <div class="dp-kpi-content">
+              <div class="dp-kpi-content-title">Başarıyla tamamlandı</div>
+              <div class="dp-kpi-desc dp-kpi-desc--success" id="dpDescTamamlanan">—</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Status Column Chart — full width -->
-      <div class="dp-card">
-        <div class="dp-card-header">
-          <div class="dp-card-header-left">
-            <span class="dp-card-title">Talep Durumu Dağılımı</span>
-            <span class="dp-card-sub" id="dpDurumTotal"></span>
-          </div>
+      <!-- Status Column Chart — full width (Figma 238:11176) -->
+      <div class="dp-status-card">
+        <div class="dp-status-header">
+          <span class="dp-status-title">Talep Durumu Dağılımı</span>
+          <span class="dp-status-subtitle">Sistem üzerindeki tüm taleplerin dağılımı</span>
         </div>
-        <svg class="dp-col-chart" id="dpDurumSvg" aria-hidden="true"></svg>
+        <div class="dp-status-body">
+          <svg class="dp-col-chart" id="dpDurumSvg" aria-hidden="true"></svg>
+          <span hidden id="dpDurumTotal"></span>
+        </div>
       </div>
 
       <!-- Charts Row — priority + org -->
@@ -4923,7 +5010,7 @@
               <span class="dp-card-sub" id="dpOncelikTotal"></span>
             </div>
           </div>
-          <div class="dp-bar-list" id="dpOncelikChart"></div>
+          <svg class="dp-row-chart" id="dpOncelikChart" aria-hidden="true"></svg>
         </div>
         <div class="dp-card">
           <div class="dp-card-header">
@@ -4932,7 +5019,7 @@
               <span class="dp-card-sub" id="dpOrgTotal"></span>
             </div>
           </div>
-          <div class="dp-bar-list" id="dpOrgChart"></div>
+          <svg class="dp-row-chart" id="dpOrgChart" aria-hidden="true"></svg>
         </div>
       </div>
 
@@ -8124,6 +8211,17 @@
     navMstBtn.addEventListener('click', showMst);
     navDashboard.addEventListener('click', showDashboard);
 
+    /* Re-render dashboard charts on resize so bars/legend keep filling the available width */
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      if (mainDashboard.hidden) return;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => refreshDashboard(), 120);
+    });
+
+    /* Giriş sonrası varsayılan ekran artık Dashboard — açılışta kartları/grafikleri doldur */
+    showDashboard();
+
     /* ── Dashboard veri hesaplama ── */
     function refreshDashboard() {
       const rows = Array.from(document.querySelectorAll('#tableBnt tbody tr'));
@@ -8151,30 +8249,37 @@
       const pctBeklemede  = total ? Math.round(beklemede  / total * 100) : 0;
       const pctAktif      = total ? Math.round(aktif      / total * 100) : 0;
       const pctTamamlanan = total ? Math.round(tamamlanan / total * 100) : 0;
-      document.getElementById('dpBadgeBeklemede').textContent  = pctBeklemede  + '% beklemede';
-      document.getElementById('dpBadgeAktif').textContent      = pctAktif      + '% aktif';
-      document.getElementById('dpBadgeTamamlanan').textContent = pctTamamlanan + '% tamamlandı';
-      document.getElementById('dpBadgeTotal').textContent      = total + ' kayıt';
+      document.getElementById('dpBadgeTotal').textContent      = total      + ' Kayıt';
+      document.getElementById('dpBadgeBeklemede').textContent  = beklemede  + ' Kayıt';
+      document.getElementById('dpBadgeAktif').textContent      = aktif      + ' Kayıt';
+      document.getElementById('dpBadgeTamamlanan').textContent = tamamlanan + ' Kayıt';
+      document.getElementById('dpDescBeklemede').textContent  = '%' + pctBeklemede  + ' Beklemede';
+      document.getElementById('dpDescAktif').textContent      = '%' + pctAktif      + ' Onaylandı';
+      document.getElementById('dpDescTamamlanan').textContent = '%' + pctTamamlanan + ' Tamamlandı';
 
       /* Design system renkleri (CSS değişkeni resolved değerleri) */
       const cs = getComputedStyle(document.documentElement);
       const brandBlue  = cs.getPropertyValue('--bt-primary-default').trim()   || '#0d4e97';
       const warningAmb = cs.getPropertyValue('--bt-warning-subtle').trim()    || '#f9f2ce';
       const orange600  = cs.getPropertyValue('--orange-600').trim()           || '#ea580c';
+      const orange300  = cs.getPropertyValue('--orange-300').trim()           || '#fdba74';
+      const indigo200  = cs.getPropertyValue('--indigo-200').trim()           || '#c7d2fe';
+      const purple600  = cs.getPropertyValue('--purple-600').trim()           || '#9333ea';
+      const teal600    = cs.getPropertyValue('--teal-600').trim()             || '#0d9488';
       const red500     = cs.getPropertyValue('--red-500').trim()              || '#e84b5b';
       const red600     = cs.getPropertyValue('--red-600').trim()              || '#d83a52';
+      const red700     = cs.getPropertyValue('--red-700').trim()              || '#b31d38';
       const green100bg = '#047857'; /* onaylanan/tamamlanan metin rengi */
-      const purple     = '#7c3aed';
       const grayMuted  = '#737373';
 
       const durumColors = {
-        'Yeni Talep':           grayMuted,
-        'Onay Bekliyor':        '#b45309',
-        'Bilgi Bekleniyor':     purple,
-        'Onaylandı':            green100bg,
-        'Üzerinde Çalışılıyor': brandBlue,
-        'Tamamlandı':           green100bg,
-        'Reddedilen':           red500,
+        'Yeni Talep':           indigo200,
+        'Onay Bekliyor':        orange300,
+        'Bilgi Bekleniyor':     purple600,
+        'Onaylandı':            brandBlue,
+        'Üzerinde Çalışılıyor': orange600,
+        'Tamamlandı':           teal600,
+        'Reddedilen':           red700,
       };
       const oncelikColors = {
         'Düşük':  green100bg,
@@ -8187,8 +8292,8 @@
       const oncelikOrder = ['Düşük','Normal','Yüksek','Acil'];
 
       renderColumnChart('dpDurumSvg', 'dpDurumTotal', durumCounts, total, durumColors, durumOrder);
-      renderBarChart('dpOncelikChart', 'dpOncelikTotal', oncelikCounts, total, oncelikColors, oncelikOrder);
-      renderBarChart('dpOrgChart',     'dpOrgTotal',     orgCounts,     total, null, null);
+      renderRowChart('dpOncelikChart', 'dpOncelikTotal', oncelikCounts, total, oncelikColors, oncelikOrder);
+      renderRowChart('dpOrgChart',     'dpOrgTotal',     orgCounts,     total, null, null);
     }
 
     function renderBarChart(chartId, totalId, counts, total, colorMap, order) {
@@ -8212,25 +8317,119 @@
       }).join('');
     }
 
+    /* Horizontal (row) version of renderColumnChart — same visual language, sideways */
+    function renderRowChart(svgId, totalId, counts, total, colorMap, order) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+      document.getElementById(totalId).textContent = total + ' kayıt';
+
+      /* Figma "Chart Legend Label / Normal" (238:11899): Square Color Marker (Radius/none)
+         + Legend Label text (Font/Family/Text, Font/Size/text-xs, text-lh-xs, Text/Primary/--bt-text-primary-default) */
+      const cs          = getComputedStyle(document.documentElement);
+      const legendColor = cs.getPropertyValue('--bt-text-primary-default').trim() || '#1a1a1a';
+      const legendFont  = cs.getPropertyValue('--font-title').trim() || "'Geist', sans-serif";
+
+      const entries = order
+        ? order.filter(k => counts[k]).map(k => [k, counts[k]])
+        : Object.entries(counts).sort((a,b) => b[1] - a[1]);
+
+      if (!entries.length) { svg.innerHTML = ''; return; }
+
+      /* -44 = .dp-card yatay padding'i (22px * 2) */
+      const W      = svg.parentElement.clientWidth - 44 || 400;
+      const rowH   = 36;
+      const n      = entries.length;
+      /* Sol pay, en uzun etiketin uzunluğuna göre otomatik genişler (kısa "Düşük" ile uzun
+         "Mengerler Otomotiv A.Ş" gibi organizasyon adları arasında farkı karşılar) */
+      const longest  = Math.max(...entries.map(([label]) => label.length));
+      const padLeft  = Math.min(Math.max(70, 22 + longest * 6.5), 220);
+      const PAD    = { top: 4, right: 16, bottom: 24, left: padLeft };
+      const chartW = W - PAD.left - PAD.right;
+      const chartH = rowH * n;
+      const H      = PAD.top + chartH + PAD.bottom;
+      const max    = Math.max(...entries.map(e => e[1]), 1);
+      const barH   = Math.max(Math.min(rowH * 0.5, 22), 10);
+      const maxChars = Math.max(6, Math.floor((PAD.left - 25) / 6.5));
+
+      /* vertical grid lines + value axis */
+      const xTicks = 4;
+      let lines = '';
+      for (let i = 0; i <= xTicks; i++) {
+        const val = Math.round(max * i / xTicks);
+        const x   = PAD.left + chartW * (i / xTicks);
+        lines += `<line x1="${x}" x2="${x}" y1="${PAD.top}" y2="${PAD.top + chartH}"
+                    stroke="#f1f5f9" stroke-width="1"/>`;
+        lines += `<text x="${x}" y="${PAD.top + chartH + 16}" text-anchor="middle"
+                    font-size="10" fill="#9ca3af" font-family="Inter,sans-serif">${val}</text>`;
+      }
+
+      /* rows: color dot + label on the left, bar growing rightward + hover tooltip */
+      let bars = '';
+      let tips = '';
+      entries.forEach(([label, count], i) => {
+        const cy    = PAD.top + rowH * i + rowH / 2;
+        const bW    = Math.max(chartW * count / max, 3);
+        const y0    = cy - barH / 2;
+        const color = colorMap?.[label] || '#737373';
+
+        const dispLabel = label.length > maxChars ? label.slice(0, maxChars - 1) + '…' : label;
+        bars += `<rect x="6" y="${cy - 4.5}" width="9" height="9" rx="0" fill="${color}"/>`;
+        bars += `<text x="21" y="${cy + 4}" text-anchor="start" font-size="12"
+                   fill="${legendColor}" font-family="${legendFont}">${dispLabel}${dispLabel !== label ? `<title>${label}</title>` : ''}</text>`;
+        bars += `<rect class="dp-chart-bar" data-idx="${i}" x="${PAD.left}" y="${y0}" width="${bW}" height="${barH}" rx="0"
+                   fill="${color}" opacity="0.88" style="cursor:pointer"/>`;
+
+        const tipStr = `${label}: ${count}`;
+        const tipW   = Math.max(28, 14 + tipStr.length * 6.5);
+        const tipX   = PAD.left + bW + 6;
+        tips += `<g class="dp-chart-tip" data-idx="${i}" opacity="0" pointer-events="none">
+                   <rect x="${tipX}" y="${cy - 10}" width="${tipW}" height="20" rx="3" fill="${color}"/>
+                   <text x="${tipX + tipW/2}" y="${cy + 4}" text-anchor="middle" font-size="11"
+                     fill="#ffffff" font-family="Inter,sans-serif">${tipStr}</text>
+                 </g>`;
+      });
+
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.setAttribute('width',  W);
+      svg.setAttribute('height', H);
+      svg.innerHTML = lines + bars + tips;
+
+      svg.querySelectorAll('.dp-chart-bar').forEach(bar => {
+        const tip = svg.querySelector(`.dp-chart-tip[data-idx="${bar.dataset.idx}"]`);
+        if (!tip) return;
+        bar.addEventListener('mouseenter', () => tip.setAttribute('opacity', '1'));
+        bar.addEventListener('mouseleave', () => tip.setAttribute('opacity', '0'));
+      });
+    }
+
     function renderColumnChart(svgId, totalId, counts, total, colorMap, order) {
       const svg = document.getElementById(svgId);
       if (!svg) return;
       document.getElementById(totalId).textContent = total + ' kayıt';
 
+      /* Figma "Chart Legend Label / Normal" (238:11899): Square Color Marker (Radius/none)
+         + Legend Label text (Font/Family/Text, Font/Size/text-xs, text-lh-xs, Text/Primary/--bt-text-primary-default) */
+      const cs          = getComputedStyle(document.documentElement);
+      const legendColor = cs.getPropertyValue('--bt-text-primary-default').trim() || '#1a1a1a';
+      const legendFont  = cs.getPropertyValue('--font-title').trim() || "'Geist', sans-serif";
+
       const entries = order
         ? order.filter(k => counts[k]).map(k => [k, counts[k]])
         : Object.entries(counts).sort((a,b) => b[1] - a[1]);
+
       if (!entries.length) { svg.innerHTML = ''; return; }
 
-      const W   = svg.parentElement.clientWidth - 44 || 600;
+      /* -40 = dp-status-body'nin sol+sağ padding'i (space-3xl * 2) */
+      const W   = svg.parentElement.clientWidth - 40 || 600;
       const H   = 190;
-      const PAD = { top: 24, right: 16, bottom: 44, left: 28 };
+      const PAD = { top: 24, right: 16, bottom: 46, left: 28 };
       const chartW = W - PAD.left - PAD.right;
       const chartH = H - PAD.top - PAD.bottom;
       const max    = Math.max(...entries.map(e => e[1]), 1);
       const n      = entries.length;
       const slotW  = chartW / n;
-      const barW   = Math.max(Math.min(slotW * 0.52, 48), 12);
+      /* Kart genişledikçe çubuklar da orantılı büyüsün — sabit tavan yerine slot genişliğine göre ölçekle */
+      const barW   = Math.max(Math.min(slotW * 0.62, 120), 12);
 
       /* horizontal grid lines */
       const yTicks = 4;
@@ -8244,27 +8443,49 @@
                     font-size="10" fill="#9ca3af" font-family="Inter,sans-serif">${val}</text>`;
       }
 
-      /* bars + labels */
+      /* bars + aligned color-marker legend labels + hover tooltips */
+      const maxChars = Math.max(6, Math.floor(slotW / 7));
       let bars = '';
+      let tips = '';
       entries.forEach(([label, count], i) => {
         const cx    = PAD.left + slotW * i + slotW / 2;
         const bH    = Math.max(chartH * count / max, 3);
         const bY    = PAD.top + chartH - bH;
         const color = colorMap?.[label] || '#737373';
-        const short = label.length > 12 ? label.slice(0, 11) + '…' : label;
 
-        bars += `<rect x="${cx - barW/2}" y="${bY}" width="${barW}" height="${bH}" rx="4"
-                   fill="${color}" opacity="0.88"/>`;
-        bars += `<text x="${cx}" y="${bY - 6}" text-anchor="middle" font-size="11"
-                   font-weight="700" fill="${color}" font-family="Inter,sans-serif">${count}</text>`;
-        bars += `<text x="${cx}" y="${H - PAD.bottom + 14}" text-anchor="middle" font-size="10"
-                   fill="#737373" font-family="Inter,sans-serif">${short}</text>`;
+        bars += `<rect class="dp-chart-bar" data-idx="${i}" x="${cx - barW/2}" y="${bY}" width="${barW}" height="${bH}" rx="0"
+                   fill="${color}" opacity="0.88" style="cursor:pointer"/>`;
+
+        /* Legend entry (square marker + label), centered under its own bar */
+        const dispLabel = label.length > maxChars ? label.slice(0, maxChars - 1) + '…' : label;
+        const markerD = 9, gap = 4, charW = 6.5;
+        const totalW  = markerD + gap + dispLabel.length * charW;
+        const startX  = cx - totalW / 2;
+        const labelY  = H - PAD.bottom + 22;
+        bars += `<rect x="${startX}" y="${labelY - markerD + 2}" width="${markerD}" height="${markerD}" rx="0" fill="${color}"/>`;
+        bars += `<text x="${startX + markerD + gap}" y="${labelY}" text-anchor="start" font-size="12"
+                   fill="${legendColor}" font-family="${legendFont}">${dispLabel}${dispLabel !== label ? `<title>${label}</title>` : ''}</text>`;
+
+        const tipStr = `${label}: ${count}`;
+        const tipW   = Math.max(28, 14 + tipStr.length * 6.5);
+        tips += `<g class="dp-chart-tip" data-idx="${i}" opacity="0" pointer-events="none">
+                   <rect x="${cx - tipW/2}" y="${bY - 26}" width="${tipW}" height="20" rx="3" fill="${color}"/>
+                   <text x="${cx}" y="${bY - 12}" text-anchor="middle" font-size="11"
+                     fill="#ffffff" font-family="Inter,sans-serif">${tipStr}</text>
+                 </g>`;
       });
 
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       svg.setAttribute('width',  W);
       svg.setAttribute('height', H);
-      svg.innerHTML = lines + bars;
+      svg.innerHTML = lines + bars + tips;
+
+      svg.querySelectorAll('.dp-chart-bar').forEach(bar => {
+        const tip = svg.querySelector(`.dp-chart-tip[data-idx="${bar.dataset.idx}"]`);
+        if (!tip) return;
+        bar.addEventListener('mouseenter', () => tip.setAttribute('opacity', '1'));
+        bar.addEventListener('mouseleave', () => tip.setAttribute('opacity', '0'));
+      });
     }
   })();
 

@@ -1984,7 +1984,7 @@
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      padding: var(--space-sm) 20px;
+      padding: var(--space-sm) var(--space-3xl);
       background: var(--bt-surface-primary-default);
       border-bottom: 1px solid var(--color-gray-300);
       gap: 10px;
@@ -1997,7 +1997,7 @@
     }
     .sb-flat__btn {
       display: inline-flex; align-items: center;
-      padding: 2px 6px;
+      padding: var(--space-2xs) var(--space-sm);
       font-size: var(--text-xs); font-family: var(--font-text); font-weight: 400;
       line-height: var(--lh-xs); color: var(--bt-text-primary-default);
       background: transparent; border: none; cursor: pointer; white-space: nowrap;
@@ -2012,7 +2012,7 @@
     }
     .sb-flat__split {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 2px; width: 20px;
+      padding: var(--space-2xs); width: 20px;
       background: transparent; border: none; cursor: pointer;
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       transition: background 0.12s;
@@ -2034,7 +2034,7 @@
     .sb-flat__list[hidden] { display: none; }
     .sb-flat__item {
       display: flex; align-items: center; gap: var(--space-sm);
-      padding: 8px 12px;
+      padding: var(--space-md) var(--space-xl);
       font-size: var(--text-xs); font-family: var(--font-text);
       cursor: pointer; color: var(--bt-text-primary-default); transition: background 0.1s;
     }
@@ -2060,7 +2060,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-2xl);
-      padding: 20px;
+      padding: var(--space-3xl);
     }
 
     #editPanel.edit-panel--bnt #epLeftMst,
@@ -2094,7 +2094,7 @@
       background: var(--bt-surface-primary-default);
       border: 1px solid var(--bt-border-primary-default);
       border-radius: var(--radius-sm);
-      padding: 20px;
+      padding: var(--space-3xl);
       display: flex;
       flex-direction: column;
       gap: var(--space-2xl);
@@ -2107,7 +2107,7 @@
       background: var(--bt-surface-primary-default);
       border: 1px solid var(--bt-border-primary-default);
       border-radius: var(--radius-sm);
-      padding: 10px 20px;
+      padding: 10px var(--space-3xl);
       display: flex;
       gap: 28px;
       align-items: flex-start;
@@ -2477,7 +2477,7 @@
       background: var(--bt-surface-primary-subtle);
       border: 1px solid var(--bt-border-primary-default);
       border-radius: var(--radius-md);
-      padding: 2px;
+      padding: var(--space-2xs);
       flex-shrink: 0;
     }
     .ep-tab {
@@ -2507,7 +2507,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      padding-bottom: 4px;
+      padding-bottom: var(--space-xs);
       border-bottom: 1px solid var(--bt-border-primary-default);
       width: 100%;
       flex-shrink: 0;
@@ -2541,7 +2541,7 @@
       align-items: flex-start;
       justify-content: space-between;
       cursor: pointer;
-      padding: var(--space-md) var(--space-xs) var(--space-md) 20px;
+      padding: var(--space-md) var(--space-xs) var(--space-md) var(--space-3xl);
     }
     .ep-act-card__user-log {
       display: flex;
@@ -2617,7 +2617,7 @@
       gap: var(--space-2xl);
       overflow: hidden;
       max-height: 0;
-      padding: 0 20px;
+      padding: 0 var(--space-3xl);
       /* inset shadow = header/body separator, invisible when height is 0 */
       box-shadow: inset 0 1px 0 var(--bt-border-primary-default);
       background: var(--bt-surface-primary-default);
@@ -2625,7 +2625,7 @@
     }
     .ep-act-card.is-open .ep-act-card__body {
       max-height: 500px;
-      padding: var(--space-2xl) 20px;
+      padding: var(--space-2xl) var(--space-3xl);
     }
 
     /* ── Log arrow (move-down rotated -90deg = right arrow) ── */
@@ -2672,7 +2672,7 @@
     /* Toolbar "Talep Kapama" butonu border */
     .btn-outline-sm {
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 6px 8px;
+      padding: var(--space-sm) var(--space-md);
       border: 1px solid var(--bt-border-primary-default);
       border-radius: var(--radius-sm);
       background: transparent;
@@ -2684,7 +2684,7 @@
 
     .btn-flat-sm {
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 6px 8px;
+      padding: var(--space-sm) var(--space-md);
       border: none;
       border-radius: var(--radius-sm);
       background: transparent;
@@ -6434,12 +6434,7 @@
     const ths   = Array.from(table.querySelectorAll('thead th'));
     const minW  = 60;
 
-    /* 1. Gerçek render edilmiş genişlikleri px'e çevir (th.offsetWidth güvenilir) */
-    ths.forEach((th, idx) => {
-      if (cols[idx]) cols[idx].style.width = th.offsetWidth + 'px';
-    });
-
-    /* 2. Her th'ye resize handle ekle */
+    /* Her th'ye resize handle ekle */
     ths.forEach((th, i) => {
       /* Son kolona handle ekleme */
       if (i === ths.length - 1) return;
@@ -6450,22 +6445,27 @@
 
       handle.addEventListener('mousedown', (e) => {
         e.preventDefault();
+        e.stopPropagation();
 
-        const startX     = e.pageX;
-        const startCurW  = parseInt(cols[i].style.width, 10);
+        const startX  = e.pageX;
         /* Sağdaki kolon: önce bir sonraki, yoksa son kolon */
-        const nextIdx    = i + 1 < cols.length ? i + 1 : i;
-        const startNextW = parseInt(cols[nextIdx].style.width, 10);
+        const nextIdx = i + 1 < cols.length ? i + 1 : i;
+        /* Canlı render genişliği kullanılır: sayfa yüklenirken tablo gizli olabilir
+           (ör. varsayılan ekran artık Dashboard), bu durumda offsetWidth 0 döner ve
+           tüm kolonları bozardı — bu yüzden ölçüm sürükleme başladığı anda yapılır */
+        const startCurW  = th.getBoundingClientRect().width;
+        const startNextW = ths[nextIdx].getBoundingClientRect().width;
 
         handle.classList.add('is-resizing');
         document.body.style.cursor = 'col-resize';
 
         function onMove(e) {
-          const diff    = e.pageX - startX;
-          const newCurW = Math.max(minW, startCurW + diff);
-          /* Sağ kolona farkı yansıt, minimum genişliği koru */
-          const taken   = newCurW - startCurW;
-          const newNextW = Math.max(minW, startNextW - taken);
+          const diff = e.pageX - startX;
+          /* Mevcut kolon, komşu kolonun min genişliğe düşmeden verebileceği kadar büyüyebilir */
+          const maxCurW = startCurW + (startNextW - minW);
+          const newCurW = Math.min(Math.max(minW, startCurW + diff), Math.max(minW, maxCurW));
+          const taken    = newCurW - startCurW;
+          const newNextW = startNextW - taken;
 
           cols[i].style.width      = newCurW  + 'px';
           cols[nextIdx].style.width = newNextW + 'px';
@@ -6576,8 +6576,8 @@
 
     ths.forEach(th => {
       th.addEventListener('click', (e) => {
-        /* ignore clicks on checkbox area and filter button */
-        if (e.target.closest('.td-checkbox, .checkbox-box, .th-filter')) return;
+        /* ignore clicks on checkbox area, filter button and column resize handle */
+        if (e.target.closest('.td-checkbox, .checkbox-box, .th-filter, .col-resize-handle')) return;
         const col = parseInt(th.dataset.col);
         if (sortCol === col) {
           if (sortDir === 'asc') {
